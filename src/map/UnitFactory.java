@@ -17,6 +17,8 @@ class UnitFactory {
                 return new Archer(owner);
             case "Knight":
                 return new Knight(owner);
+            case "Catapult":
+                return new Catapult(owner);
         }
         return null;
     }
