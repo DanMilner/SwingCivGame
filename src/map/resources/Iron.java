@@ -9,7 +9,7 @@ public class Iron extends Tile {
     public Iron(int Xcoord, int Ycoord, Player owner) {
         super(Xcoord, Ycoord, owner);
         // TODO Auto-generated constructor stub
-        this.tileImage = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\iron.png");
+        this.tileImage = new ImageIcon("textures\\terrain\\iron.png");
         this.type = "Iron";
     }
 }

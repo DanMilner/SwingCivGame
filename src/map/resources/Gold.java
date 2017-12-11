@@ -9,7 +9,7 @@ public class Gold extends Tile {
     public Gold(int Xcoord, int Ycoord, Player owner) {
         super(Xcoord, Ycoord, owner);
         // TODO Auto-generated constructor stub
-        this.tileImage = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\gold.png");
+        this.tileImage = new ImageIcon("textures\\terrain\\gold.png");
         this.type = "Gold";
     }
 }
