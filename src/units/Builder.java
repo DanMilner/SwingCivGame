@@ -10,7 +10,7 @@ public class Builder extends Unit {
 
 	public Builder(Player owner) {
 		super(owner);
-		this.Img = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\unit\\Builder.png");
+		this.Img = new ImageIcon("textures\\unit\\Builder.png");
 		this.type = "Builder";
 		this.moves = 4;
 		this.movesAvaliable = 4;

@@ -22,37 +22,37 @@ class UITextManager {
 
         UIComponents[3].setBounds(1430, 25, 250, 20);
         UIComponents[4].setBounds(1370, 10, 50, 50);
-        ImageIcon icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\Tree.png");
+        ImageIcon icon = new ImageIcon("textures\\terrain\\Tree.png");
         UIComponents[4].setIcon(icon);
 
         UIComponents[5].setBounds(1430, 80, 250, 20);
         UIComponents[6].setBounds(1370, 65, 50, 50);
-        icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\iron.png");
+        icon = new ImageIcon("textures\\terrain\\iron.png");
         UIComponents[6].setIcon(icon);
 
         UIComponents[7].setBounds(1590, 25, 250, 20);
         UIComponents[8].setBounds(1530, 10, 50, 50);
-        icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\gold.png");
+        icon = new ImageIcon("textures\\terrain\\gold.png");
         UIComponents[8].setIcon(icon);
 
         UIComponents[9].setBounds(1590, 80, 250, 20);
         UIComponents[10].setBounds(1530, 65, 50, 50);
-        icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\coal.png");
+        icon = new ImageIcon("textures\\terrain\\coal.png");
         UIComponents[10].setIcon(icon);
 
         UIComponents[11].setBounds(1750, 25, 250, 20);
         UIComponents[12].setBounds(1690, 10, 50, 50);
-        icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\copper.png");
+        icon = new ImageIcon("textures\\terrain\\copper.png");
         UIComponents[12].setIcon(icon);
 
         UIComponents[13].setBounds(1750, 80, 250, 20);
         UIComponents[14].setBounds(1690, 65, 50, 50);
-        icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\Mountain.png");
+        icon = new ImageIcon("textures\\terrain\\Mountain.png");
         UIComponents[14].setIcon(icon);
 
         UIComponents[15].setBounds(1270, 25, 250, 20);
         UIComponents[16].setBounds(1210, 10, 50, 50);
-        icon = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\farmFood.jpg");
+        icon = new ImageIcon("textures\\terrain\\farmFood.jpg");
         UIComponents[16].setIcon(icon);
     }
 

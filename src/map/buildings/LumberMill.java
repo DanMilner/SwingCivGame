@@ -8,7 +8,7 @@ import javax.swing.*;
 public class LumberMill extends Tile {
     public LumberMill(int Xcoord, int Ycoord, Player owner) {
         super(Xcoord, Ycoord, owner);
-        this.tileImage = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\buildings\\Lumber_Mill.png");
+        this.tileImage = new ImageIcon("textures\\buildings\\Lumber_Mill.png");
         this.type = "Lumber Mill";
         this.isOccupied = true;
         this.resourceType = 0; //wood

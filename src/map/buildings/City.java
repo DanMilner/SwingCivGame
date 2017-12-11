@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class City extends Tile {
     public City(int Xcoord, int Ycoord, Player owner) {
         super(Xcoord, Ycoord, owner);
-        this.tileImage = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\buildings\\village.png");
+        this.tileImage = new ImageIcon("textures\\buildings\\village.png");
         this.type = "City";
         this.isOccupied = true;
         this.cost[0] = 20; //20 wood

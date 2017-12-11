@@ -10,7 +10,7 @@ public class Settler extends Unit {
 
 	public Settler(Player owner) {
 		super(owner);
-		this.Img = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\unit\\settler.png");
+		this.Img = new ImageIcon("textures\\unit\\settler.png");
 		this.type = "Settler";
 		this.moves = 2;
 		this.movesAvaliable = 2;

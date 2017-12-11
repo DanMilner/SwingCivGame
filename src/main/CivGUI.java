@@ -46,7 +46,7 @@ public class CivGUI extends JFrame implements ActionListener
         boardPanel = new BoardPanel(MAPSIZE);
         JPanel uiPanel = new JPanel();
 
-        BufferedImage image = ImageIO.read(new File("C:\\Users\\Daniel\\workspace\\Civ\\textures\\backgrounds\\UI_texture.png"));
+        BufferedImage image = ImageIO.read(new File("textures\\backgrounds\\UI_texture.png"));
         JPanel panelUIContent = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -136,8 +136,6 @@ public class CivGUI extends JFrame implements ActionListener
         updateGUI();
         updateUI();
         setButtonText(typesToCheck);
-
-//        ColourUIButtons(ButtonNum, type);
     }
 
     private void hideUIButtons(){

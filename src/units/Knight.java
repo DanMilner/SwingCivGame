@@ -8,7 +8,7 @@ public class Knight extends Unit {
 
     public Knight(Player owner){
         super(owner);
-        this.Img = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\unit\\Knight.png");
+        this.Img = new ImageIcon("textures\\unit\\Knight.png");
         this.type = "Knight";
         this.moves = 6;
         this.movesAvaliable = 6;

@@ -11,7 +11,7 @@ public class BoardPanel extends JPanel {
     private BufferedImage imageTop;
 
     BoardPanel(int MAPSIZE) throws IOException {
-        imageTop = ImageIO.read(new File("C:\\Users\\Daniel\\workspace\\Civ\\textures\\backgrounds\\OldMap4.jpg"));
+        imageTop = ImageIO.read(new File("textures\\backgrounds\\OldMap4.jpg"));
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(MAPSIZE*50, MAPSIZE*50));
     }

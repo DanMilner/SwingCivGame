@@ -9,7 +9,7 @@ public class Copper extends Tile {
     public Copper(int Xcoord, int Ycoord, Player owner) {
         super(Xcoord, Ycoord, owner);
         // TODO Auto-generated constructor stub
-        this.tileImage = new ImageIcon("C:\\Users\\Daniel\\workspace\\Civ\\textures\\terrain\\copper.png");
+        this.tileImage = new ImageIcon("textures\\terrain\\copper.png");
         this.type = "Copper";
     }
 }
