@@ -14,7 +14,7 @@ class UnitFactory {
             case "Swordsman":
                 return new Swordsman(owner);
             case "Archer":
-                return new Knight(owner);
+                return new Archer(owner);
             case "Knight":
                 return new Knight(owner);
         }
