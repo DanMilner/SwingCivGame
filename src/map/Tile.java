@@ -1,6 +1,8 @@
 package map;
 
 import main.Player;
+import map.buildings.Building;
+import map.resources.Resource;
 import units.Unit;
 
 import javax.swing.*;
@@ -10,100 +12,65 @@ public class Tile {
     // Instance variables.
     int Xcoord;
     int Ycoord;
-    public String type;
-    protected ImageIcon tileImage;
-    protected boolean isOccupied = false;
-    protected int[] cost = new int[8];
-    protected int resourceType;
     private Player owner;
     private Unit currentUnit;
-    private int[] resourceAmount = new int[7];
-    protected boolean hasCityConnection = false;
-    private boolean inUse = false;
-    private boolean visited;
-    protected ArrayList<String> buttonList;
-    protected int borderSize;
+    private Resource currentResource;
+    private Building currentBuilding;
 
     public Tile(int Xcoord, int Ycoord, Player owner) {
         this.Xcoord = Xcoord;
         this.Ycoord = Ycoord;
         this.owner = owner;
+        currentResource = null;
+        currentBuilding = null;
     }
 
-    public int getBorderSize() {
-        return borderSize;
+
+    public Resource getCurrentResource() {
+        return currentResource;
     }
 
-    public ArrayList<String> getButtonList() {
-        return buttonList;
+    public Building getCurrentBuilding() {
+        return currentBuilding;
     }
 
-    public boolean isInUse() {
-        return inUse;
+    public boolean hasUnit() {
+        return currentUnit != null;
     }
 
-    void setInUse() {
-        this.inUse = true;
-    }
-
-    public boolean getHasCityConnection() {
-        return hasCityConnection;
-    }
-
-    void setHasCityConnection(boolean connected) {
-        this.hasCityConnection = connected;
-    }
-
-    public boolean isOccupied() {
-        return isOccupied;
+    public boolean hasBuilding() {
+        return currentBuilding != null;
     }
 
     public Player getOwner() {
         return owner;
     }
 
-    public void setOwner(Player owner) {
-        this.owner = owner;
+    public void setOwner(Player newOwner) {
+        owner = newOwner;
     }
 
-    void increaseResourceAmount(int type) {
-        this.resourceAmount[type]++;
+    public void setCurrentBuilding(Building currentBuilding) {
+        this.currentBuilding = currentBuilding;
     }
 
-    public int getResourceAmount(int type) {
-        if(hasCityConnection)
-            return resourceAmount[type]*2;
-        return resourceAmount[type];
+    public void setCurrentResource(Resource currentResource) {
+        this.currentResource = currentResource;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    Unit getUnit() {
+    Unit getCurrentUnit() {
         return currentUnit;
     }
 
-    void setUnit(Unit currentUnit) {
-        this.currentUnit = currentUnit;
-    }
-
-    public int getCost(int type) {
-        return cost[type];
+    void setUnit(Unit newUnit) {
+        currentUnit = newUnit;
     }
 
     public ImageIcon getImage() {
-        return tileImage;
-    }
-
-    public ImageIcon getImage(boolean north, boolean south, boolean east, boolean west) {
-        return null;
-    }
-
-    void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-    Boolean isVisited(){
-        return visited;
+        if(hasUnit())
+            return currentUnit.getImage();
+        if(hasBuilding())
+            return currentBuilding.getImage();
+        return currentResource.getImage();
     }
 }

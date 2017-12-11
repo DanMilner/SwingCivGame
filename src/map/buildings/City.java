@@ -1,19 +1,14 @@
 package map.buildings;
 
-import main.Player;
-import map.Tile;
-
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class City extends Tile {
-    public City(int Xcoord, int Ycoord, Player owner) {
-        super(Xcoord, Ycoord, owner);
-        this.tileImage = new ImageIcon("textures\\buildings\\village.png");
+public class City extends Building {
+    public City() {
+        this.buildingImage = new ImageIcon("textures\\buildings\\village.png");
         this.type = "City";
-        this.isOccupied = true;
-        this.cost[0] = 20; //20 wood
-        this.cost[5] = 10; //10 stone
+        this.resourceCost[0] = 20; //20 wood
+        this.resourceCost[5] = 10; //10 stone
         this.hasCityConnection = true;
         this.borderSize = 3;
 

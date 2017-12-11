@@ -1,16 +1,10 @@
 package map.resources;
 
-import main.Player;
-import map.Tile;
-
 import javax.swing.*;
 
-public class Mountain extends Tile {
-    public Mountain(int Xcoord, int Ycoord, Player owner) {
-        super(Xcoord, Ycoord, owner);
-        // TODO Auto-generated constructor stub
-        this.tileImage = new ImageIcon("textures\\terrain\\Mountain.png");
+public class Mountain extends Resource {
+    public Mountain() {
+        this.resourceImage = new ImageIcon("textures\\terrain\\Mountain.png");
         this.type = "Mountain";
-        this.isOccupied = true;
     }
 }

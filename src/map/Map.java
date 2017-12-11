@@ -2,6 +2,9 @@ package map;
 
 import main.CivGUI;
 import main.Player;
+import map.buildings.Building;
+import map.buildings.Road;
+import map.resources.Resource;
 import units.Unit;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,6 +15,12 @@ public class Map {
     private RoadManager roadManager;
 
     public Map() {
+        for (int x = 0; x <= MAPSIZE; x++) {
+            for (int y = 0; y <= MAPSIZE; y++) {
+                currentMap[x][y] = new Tile(x,y,null);
+            }
+        }
+
         //create board of just grass;
         for (int x = 0; x <= MAPSIZE; x++) {
             for (int y = 0; y <= MAPSIZE; y++) {
@@ -61,7 +70,8 @@ public class Map {
         do {
             int Xcoords = ThreadLocalRandom.current().nextInt(3, MAPSIZE - 3);
             int Ycoords = ThreadLocalRandom.current().nextInt(3, MAPSIZE - 3);
-            if(!getTile(Xcoords, Ycoords).getType().equals("Water") && !getTile(Xcoords, Ycoords).getType().equals("Mountain")) {
+            String currentResource = getTile(Xcoords, Ycoords).getCurrentResource().getType();
+            if(!currentResource.equals("Water") && !currentResource.equals("Mountain")) {
                 boolean placeCity = true;
                 //check the surrounding tiles to not collide with existing cities
                 for (int x = Xcoords - 3; x < (Xcoords + 4); x++) {
@@ -122,7 +132,7 @@ public class Map {
                     Xcoords = Xcoords - 1;
                 }
                 if (Ycoords <= MAPSIZE && Xcoords <= MAPSIZE && Ycoords >= 0 && Xcoords >= 0) {
-                    if (!getTile(Xcoords, Ycoords).getType().equals("Water")) {
+                    if (!getTile(Xcoords, Ycoords).getCurrentResource().getType().equals("Water")) {
                         constructResourceTile("Water", Xcoords, Ycoords);
                         Xcoords = originalX;
                         Ycoords = originalY;
@@ -145,7 +155,7 @@ public class Map {
             do {
                 Xcoords = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
                 Ycoords = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-            } while (currentMap[Xcoords][Ycoords].getType().equals("Water"));
+            } while (currentMap[Xcoords][Ycoords].getCurrentResource().getType().equals("Water"));
 
             if (type.equals("Forest")) {
                 constructResourceTile("Forest", Xcoords, Ycoords);
@@ -163,9 +173,9 @@ public class Map {
                         Xcoords = Xcoords - 1;
                     }
                     if (Ycoords <= MAPSIZE && Xcoords <= MAPSIZE && Ycoords >= 0 && Xcoords >= 0) {
-                        String tempType = getTile(Xcoords, Ycoords).getType();
+                        String currentResource = getTile(Xcoords, Ycoords).getCurrentResource().getType();
 
-                        if (tempType.equals("Mountain") || tempType.equals("Iron") || tempType.equals("Gold") || tempType.equals("Copper") || tempType.equals("Coal")) {
+                        if (currentResource.equals("Mountain") || currentResource.equals("Iron") || currentResource.equals("Gold") || currentResource.equals("Copper") || currentResource.equals("Coal")) {
                             i--;
                         } else {
                             constructResourceTile(type, Xcoords, Ycoords);
@@ -181,18 +191,19 @@ public class Map {
     }
 
     public Unit getUnit(int x, int y) {
-        return currentMap[x][y].getUnit();
+        return currentMap[x][y].getCurrentUnit();
     }
 
     public void moveUnit(int oldX, int oldY, int newX, int newY) {
-        currentMap[newX][newY].setUnit(currentMap[oldX][oldY].getUnit());
+        currentMap[newX][newY].setUnit(currentMap[oldX][oldY].getCurrentUnit());
         currentMap[oldX][oldY].setUnit(null);
     }
 
     public boolean checkCost (String type, Player owner){
+
         TileFactory tileFactory = new TileFactory();
-        Tile tileType = tileFactory.buildBuildingTile(type, 0,0,null);
-        if(tileType == null){
+        Building buildingType = tileFactory.buildBuildingTile(type);
+        if(buildingType == null){
             UnitFactory factory = new UnitFactory();
             Unit unitType = factory.BuildUnit(type, null);
             for (int i = 0; i < 8; i++) {
@@ -202,7 +213,7 @@ public class Map {
             }
         }else{
             for (int i = 0; i < 8; i++) {
-                if (tileType.getCost(i) > owner.getResource(i)) {
+                if (buildingType.getCost(i) > owner.getResource(i)) {
                     return false;
                 }
             }
@@ -210,52 +221,52 @@ public class Map {
         return true;
     }
 
-    private void calculateResourceYields(int x, int y, Tile tile, Player currentPlayer) {
+    private void calculateResourceYields(int x, int y, Building building, Player currentPlayer) {
         for (int i = (x - 1); i < (x + 2); i++) {
             for (int j = (y - 1); j < (y + 2); j++) {
-                Tile tileBeingChecked = currentMap[i][j];
-                if (tileBeingChecked.getOwner() != currentPlayer)
+                Resource resourceBeingChecked = currentMap[i][j].getCurrentResource();
+                if (currentMap[i][j].getOwner() != currentPlayer)
                     return;
-                if (tileBeingChecked.isInUse())
+                if (resourceBeingChecked.isInUse())
                     return;
-                calculateAdjacentResources(tileBeingChecked, tile);
+                calculateAdjacentResources(resourceBeingChecked, building);
             }
         }
     }
 
-    private void calculateAdjacentResources(Tile resourceTile, Tile tile) {
-        String type = tile.getType();
+    private void calculateAdjacentResources(Resource resourceTile, Building building) {
+        String type = building.getType();
         switch(type){
             case "Lumber Mill":
                 if (resourceTile.getType().equals("Forest")) {
-                    incrementTileResource(0, tile, resourceTile);
+                    incrementTileResource(0, building, resourceTile);
                 }
                 break;
             case "Mine":
                 String tempType = resourceTile.getType();
                 switch (tempType) {
                     case "Iron":
-                        incrementTileResource(1, tile, resourceTile);
+                        incrementTileResource(1, building, resourceTile);
                         break;
                     case "Gold":
-                        incrementTileResource(2, tile, resourceTile);
+                        incrementTileResource(2, building, resourceTile);
                         break;
                     case "Coal":
-                        incrementTileResource(3, tile, resourceTile);
+                        incrementTileResource(3, building, resourceTile);
                         break;
                     case "Copper":
-                        incrementTileResource(4, tile, resourceTile);
+                        incrementTileResource(4, building, resourceTile);
                         break;
                     case "Mountain":
-                        incrementTileResource(5, tile, resourceTile);
+                        incrementTileResource(5, building, resourceTile);
                         break;
                 }
                 break;
         }
     }
 
-    private void incrementTileResource(int type, Tile tile, Tile resourceTile){
-        tile.increaseResourceAmount(type);
+    private void incrementTileResource(int type, Building building, Resource resourceTile){
+        building.increaseResourceHarvestAmount(type);
         resourceTile.setInUse();
     }
 
@@ -269,16 +280,9 @@ public class Map {
         return factory.BuildUnit(type,owner);
     }
 
-    public void setRoad(int x, int y, Unit unit) {
-        Player owner = currentMap[x][y].getOwner();
-        Road newRoad = new Road(x, y, owner, unit);
-        this.currentMap[x][y] = newRoad;
-        roadManager.addRoad(newRoad);
-    }
-
     private void killUnit(int x, int y) {
-        if(this.currentMap[x][y].getUnit() != null){
-            this.currentMap[x][y].getUnit().getOwner().refundUnitCost(this.currentMap[x][y].getUnit());
+        if(this.currentMap[x][y].getCurrentUnit() != null){
+            this.currentMap[x][y].getCurrentUnit().getOwner().refundUnitCost(this.currentMap[x][y].getCurrentUnit());
             this.currentMap[x][y].setUnit(null);
         }
     }
@@ -287,13 +291,13 @@ public class Map {
         for (int x = Xcoords; x < (Xcoords + 3); x++) {
             for (int y = Ycoords - 2; y < (Ycoords + 1); y++) {
                 if (x <= MAPSIZE && y <= MAPSIZE && y >= 0) {
-                    if (currentMap[x][y].getType().equals("Grass")) {
-                        Unit tempUnit = currentMap[x][y].getUnit();
+                    if (currentMap[x][y].getCurrentResource().getType().equals("Grass")) {
+                        Unit tempUnit = currentMap[x][y].getCurrentUnit();
                         constructBuildingTile("Wheat", x, y, owner);
                         if(tempUnit != null)
                             setUnit(x, y, tempUnit);
-                        currentMap[Xcoords][Ycoords].increaseResourceAmount(6);
-                        currentMap[Xcoords][Ycoords].setInUse();
+                        currentMap[Xcoords][Ycoords].getCurrentBuilding().increaseResourceHarvestAmount(6);
+                        currentMap[x][y].getCurrentResource().setInUse();
                     }
                 }
             }
@@ -304,7 +308,7 @@ public class Map {
         for (int x = Xcoords-1; x <= Xcoords+1; x++) {
             for (int y = Ycoords-1; y <= Ycoords+1; y++) {
                 if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
-                    if (currentMap[x][y].getType().equals("Water")) {
+                    if (currentMap[x][y].getCurrentResource().getType().equals("Water")) {
                         return true;
                     }
                 }
@@ -318,11 +322,15 @@ public class Map {
             if(!checkForNearbyWater(Xcoords, Ycoords))
                 return false;
         }
-        if (currentMap[Xcoords][Ycoords].getOwner() != null && currentMap[Xcoords][Ycoords].getOwner() != owner)
+        Tile candidateTile = currentMap[Xcoords][Ycoords];
+        //tile must be in nature or the current players territory.
+        if(candidateTile.getOwner() == null && candidateTile.getOwner() == owner)
             return false;
-        if (currentMap[Xcoords][Ycoords].isOccupied() || currentMap[Xcoords][Ycoords].isInUse())
+        //cannot build onto of another building unless it is a road.
+        if(candidateTile.hasBuilding() && !candidateTile.getCurrentBuilding().getType().equals("Road"))
             return false;
-        return true;
+        //cannot build on top of resources currently being harvested.
+        return !candidateTile.getCurrentResource().isInUse();
     }
 
     public boolean constructBuildingTile(String type, int x, int y, Player owner){
@@ -330,25 +338,25 @@ public class Map {
             return false;
 
         TileFactory factory = new TileFactory();
-        Tile newTile = factory.buildBuildingTile(type, x, y, owner);
+        Building newBuilding = factory.buildBuildingTile(type);
 
-        int borderSize = newTile.getBorderSize();
+        int borderSize = newBuilding.getBorderSize();
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
 
         if(!type.equals("Wheat"))
             killUnit(x,y);
 
-        this.currentMap[x][y] = newTile;
+        this.currentMap[x][y].setCurrentBuilding(newBuilding);
 
         if(type.equals("City")) {
-            roadManager.addCity(newTile);
+            roadManager.addCity(this.currentMap[x][y]);
         }else{
-            roadManager.addRoad(newTile);
+            roadManager.addRoad(this.currentMap[x][y]);
         }
-        owner.addBuilding(newTile);
+        owner.addBuilding(newBuilding);
 
         if(type.equals("Lumber Mill") || type.equals("Mine")){
-            calculateResourceYields(x, y, newTile, owner);
+            calculateResourceYields(x, y, newBuilding, owner);
         }else if(type.equals("Farm")){
             placeWheat(x,y,owner);
         }
@@ -359,8 +367,8 @@ public class Map {
 
     private void constructResourceTile(String type, int x, int y){
         TileFactory factory = new TileFactory();
-        Tile newTile = factory.buildResourceTile(type, x, y);
-        this.currentMap[x][y] = newTile;
+        Resource newResource = factory.buildResourceTile(type);
+        this.currentMap[x][y].setCurrentResource(newResource);
         System.out.println(type + " spawned at " + x + " " + y);
     }
 }

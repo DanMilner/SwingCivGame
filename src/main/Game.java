@@ -2,6 +2,7 @@ package main;
 
 import map.Map;
 import map.Tile;
+import map.buildings.Building;
 import units.Unit;
 
 import java.awt.*;
@@ -58,7 +59,7 @@ public class Game {
         }
     }
 
-    private void subtractUsedResourcesBuilding(Tile newBuilding, Player player) {
+    private void subtractUsedResourcesBuilding(Building newBuilding, Player player) {
         for (int i = 0; i < 8; i++) {
             player.setResource(i, player.getResource(i) - newBuilding.getCost(i));
         }
@@ -69,7 +70,7 @@ public class Game {
     }
 
     private boolean avaliableTile(int x, int y) {
-        if (!gameMap.getTile(x, y).isOccupied()) {
+        if (!gameMap.getTile(x, y).hasUnit()) {
             if (gameMap.getUnit(x, y) == null && gameMap.getTile(x, y).getOwner() == currentPlayer) {
                 return true;
             }
@@ -89,7 +90,7 @@ public class Game {
             return false;    //not enough moves available
         if (gameMap.getUnit(newX, newY) != null)
             return false;
-        return !gameMap.getTile(newX, newY).isOccupied();
+        return !gameMap.getTile(newX, newY).hasUnit();
 
     }
 
@@ -109,7 +110,7 @@ public class Game {
 
         giveStartingResources(player);
 
-        for (Tile currentBuilding : player.getBuildings()) {
+        for (Building currentBuilding : player.getBuildings()) {
             for (int type = 0; type < 7; type++) {
                 player.increaseResource(type, currentBuilding.getResourceAmount(type));
             }
@@ -154,11 +155,14 @@ public class Game {
         String buttonText = data.getText();
         int x = data.getCurrentX();
         int y = data.getCurrentY();
+
+        Unit tempUnit = gameMap.getUnit(x, y);
+
+        if (!gameMap.constructBuildingTile(buttonText, x, y, currentPlayer))
+            System.out.println(buttonText + " not built");
+
         if(buttonText.equals("Road")){
-            gameMap.setRoad(x, y, gameMap.getUnit(x, y));
-        }else{
-            if (!gameMap.constructBuildingTile(buttonText, x, y, currentPlayer))
-                System.out.println(buttonText + " not built");
+            gameMap.setUnit(x,y,tempUnit);
         }
         calculateResources(currentPlayer);
     }

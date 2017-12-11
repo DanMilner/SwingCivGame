@@ -4,18 +4,17 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import map.Tile;
+import map.buildings.Building;
 import units.Unit;
 
 
 public class Player {
 	private String name;
 	private Color Colour;
-    private ArrayList<Tile> buildings;
+    private ArrayList<Building> buildings;
 	private ArrayList<Unit> Units;
 
-
 	private int[] Resources = new int[8];
-	//int[] ResourcesSpent = new int[8];
 	//resources are
 	//wood = 0
 	//iron = 1
@@ -33,11 +32,11 @@ public class Player {
         Units = new ArrayList<>();
 	}
 
-	ArrayList<Tile> getBuildings(){
+	ArrayList<Building> getBuildings(){
 	    return buildings;
     }
 
-    public void addBuilding(Tile structure){
+    public void addBuilding(Building structure){
 	    buildings.add(structure);
     }
 
@@ -85,5 +84,6 @@ public class Player {
 	    for (int type= 0; type<7;type++){
 	        increaseResource(type, deadUnit.getCost(type));
         }
+        Units.remove(deadUnit);
     }
 }

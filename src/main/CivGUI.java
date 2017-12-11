@@ -119,8 +119,8 @@ public class CivGUI extends JFrame implements ActionListener
         ArrayList<String> typesToCheck;
         if(game.getMap().getUnit(CurrentX, CurrentY) == null){
             //no unit on this tile
-            type = game.gameMap.getTile(CurrentX, CurrentY).getType();
-            typesToCheck = game.gameMap.getTile(CurrentX, CurrentY).getButtonList();
+            type = game.gameMap.getTile(CurrentX, CurrentY).getCurrentBuilding().getType();
+            typesToCheck = game.gameMap.getTile(CurrentX, CurrentY).getCurrentBuilding().getButtonList();
         }else{
             type = game.gameMap.getUnit(CurrentX, CurrentY).getType();
             typesToCheck = game.gameMap.getUnit(CurrentX, CurrentY).getButtonList();
@@ -249,7 +249,12 @@ public class CivGUI extends JFrame implements ActionListener
 
         CurrentX = buttonXcoord;
         CurrentY = buttonYcoord;
-        String tileType = game.getMap().getTile(buttonXcoord, buttonYcoord).getType();
+        String tileType;
+        if(game.getMap().getTile(buttonXcoord, buttonYcoord).getCurrentBuilding() == null){
+            tileType = game.getMap().getTile(buttonXcoord, buttonYcoord).getCurrentResource().getType();
+        }else{
+            tileType = game.getMap().getTile(buttonXcoord, buttonYcoord).getCurrentBuilding().getType();
+        }
         Player tileOwner = game.getMap().getTile(buttonXcoord, buttonYcoord).getOwner();
 
         hideUIButtons();
@@ -259,7 +264,8 @@ public class CivGUI extends JFrame implements ActionListener
         if(game.getMap().getUnit(CurrentX, CurrentY) == null){ // no unit on the tile
             uiTextManager.setComponentText(2,tileType);
             if(tileOwner == game.getCurrentPlayer() || tileOwner == null){
-                setButtonText(game.getMap().getTile(CurrentX, CurrentY).getButtonList());
+                if(game.getMap().getTile(CurrentX, CurrentY).hasBuilding())
+                    setButtonText(game.getMap().getTile(CurrentX, CurrentY).getCurrentBuilding().getButtonList());
             }
         }else{	// unit on the tile
             String unitType = game.getMap().getUnit(CurrentX, CurrentY).getType();
@@ -279,7 +285,8 @@ public class CivGUI extends JFrame implements ActionListener
         for (String button: buttonsToBuild) {
             UIButtons.get(index).setText(button);
             UIButtons.get(index).setVisible(true);
-            ColourUIButtons(index, button);
+            if(!button.equals("Road"))
+                ColourUIButtons(index, button);
             index++;
         }
     }
@@ -305,7 +312,7 @@ public class CivGUI extends JFrame implements ActionListener
         boolean East = game.gameMap.RoadAdjacent(x+1, y); //east
         boolean West = game.gameMap.RoadAdjacent(x-1, y); //west
 
-        ImageIcon icon = game.getMap().getTile(x,y).getImage(North,South,East,West);
+        ImageIcon icon = game.getMap().getTile(x,y).getCurrentBuilding().getImage(North,South,East,West);
 
         tiles[x][y].setIcon(icon);
     }
@@ -329,17 +336,17 @@ public class CivGUI extends JFrame implements ActionListener
                     tiles[x][y].setIcon(currentUnit.getImage());
                     tiles[x][y].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, currentUnit.getOwner().getColour()));
                 }else if(currentTile.getOwner() != null){    //tile belongs to a player
-                    if(currentTile.getType().equals("Road")){
+                    if(currentTile.hasBuilding() && currentTile.getCurrentBuilding().getType().equals("Road")){
                         drawRoad(x,y);
                     }else{
                         tiles[x][y].setIcon(game.gameMap.getTile(x, y).getImage());
                     }
                     drawBorder(x,y);
 
-                    if(currentTile.isInUse() && !currentTile.getType().equals("Wheat")){
+                    if(currentTile.getCurrentResource().isInUse() && !currentTile.getCurrentResource().getType().equals("Wheat")){
                         tiles[x][y].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, currentTile.getOwner().getColour()));
                     }
-                    if(currentTile.getHasCityConnection() ){ //TEMPORARY
+                    if(currentTile.hasBuilding() && currentTile.getCurrentBuilding().getHasCityConnection() ){ //TEMPORARY
                         tiles[x][y].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.green));
                     }
                     tiles[x][y].setBorderPainted(true);

@@ -1,17 +1,12 @@
-package map;
-
-import main.Player;
-import units.Unit;
+package map.buildings;
 
 import javax.swing.*;
 
-class Road extends Tile {
-    Road(int Xcoord, int Ycoord, Player owner, Unit unit) {
-        super(Xcoord, Ycoord, owner);
-        // TODO Auto-generated constructor stub
-        this.tileImage = new ImageIcon("textures/roads/Road.png");
+public class Road extends Building {
+    public Road() {
+        this.buildingImage = new ImageIcon("textures/roads/Road.png");
         this.type = "Road";
-        this.setUnit(unit);
+        this.borderSize = 0;
     }
 
     public ImageIcon getImage(boolean North, boolean South, boolean East, boolean West){

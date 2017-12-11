@@ -1,15 +1,10 @@
 package map.resources;
 
-import main.Player;
-import map.Tile;
-
 import javax.swing.*;
 
-public class Coal extends Tile {
-    public Coal(int Xcoord, int Ycoord, Player owner) {
-        super(Xcoord, Ycoord, owner);
-        // TODO Auto-generated constructor stub
-        this.tileImage = new ImageIcon("textures\\terrain\\coal.png");
+public class Coal extends Resource {
+    public Coal() {
+        this.resourceImage = new ImageIcon("textures\\terrain\\coal.png");
         this.type = "Coal";
     }
 }

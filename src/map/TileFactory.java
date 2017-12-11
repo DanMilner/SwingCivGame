@@ -1,53 +1,52 @@
 package map;
 
-import main.Player;
 import map.buildings.*;
 import map.resources.*;
 
 class TileFactory {
 
-    Tile buildBuildingTile(String type, int x, int y, Player owner) {
+    Building buildBuildingTile(String type) {
         switch (type){
             case "Tower":
-                return new Tower(x,y,owner);
+                return new Tower();
             case "Mine":
-                return new Mine(x,y,owner);
+                return new Mine();
             case "Lumber Mill":
-                return new LumberMill(x,y,owner);
+                return new LumberMill();
             case "Farm":
-                return new Farm(x,y,owner);
+                return new Farm();
             case "Aqueduct":
-                return new Aqueduct(x,y,owner);
+                return new Aqueduct();
             case "Dock":
-                return new Dock(x,y,owner);
+                return new Dock();
             case "City":
-                return new City(x,y,owner);
+                return new City();
             case "Wheat":
-                return new Wheat(x, y, owner);
+                return new Wheat();
             case "Road":
-                return new Road(x, y, owner, null);
+                return new Road();
         }
         return null;
     }
 
-    Tile buildResourceTile(String type, int x, int y) {
+    Resource buildResourceTile(String type) {
         switch (type){
             case "Forest":
-                return new Forest(x, y, null);
+                return new Forest();
             case "Mountain":
-                return new Mountain(x, y, null);
+                return new Mountain();
             case "Water":
-                return new Water(x, y, null);
+                return new Water();
             case "Grass":
-                return new Grass(x, y, null);
+                return new Grass();
             case "Iron":
-                return new Iron(x, y, null);
+                return new Iron();
             case "Gold":
-                return new Gold(x, y, null);
+                return new Gold();
             case "Copper":
-                return new Copper(x, y, null);
+                return new Copper();
             case "Coal":
-                return new Coal(x, y, null);
+                return new Coal();
         }
         return null;
     }

@@ -21,14 +21,14 @@ class RoadManager {
             calculateRoadConnections(city);
         }
         for (Tile road : Roads) {
-            road.setVisited(false);
+            road.getCurrentBuilding().setVisited(false);
         }
     }
 
     private void calculateRoadConnections(Tile origin) {
         int x = origin.Xcoord;
         int y = origin.Ycoord;
-        origin.setVisited(true);
+        origin.getCurrentBuilding().setVisited(true);
 
         for (Tile road : Roads) {
             checkConnection(road,x,y-1); //north
@@ -40,8 +40,8 @@ class RoadManager {
 
     private void checkConnection(Tile road, int x, int y){
         if (road.Xcoord == x && road.Ycoord == y) {
-            road.setHasCityConnection(true);
-            if (!road.isVisited()) {
+            road.getCurrentBuilding().setHasCityConnection(true);
+            if (!road.getCurrentBuilding().isVisited()) {
                 calculateRoadConnections(road);
             }
         }
