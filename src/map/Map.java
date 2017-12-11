@@ -90,13 +90,11 @@ public class Map {
     }
 
     public boolean checkCost (String type, Player owner){
-
-        TileFactory tileFactory = new TileFactory();
-        Building buildingType = tileFactory.buildBuildingTile(type);
+        Building buildingType = TileFactory.buildBuildingTile(type);
         if(buildingType == null){
-            UnitFactory factory = new UnitFactory();
-            Unit unitType = factory.BuildUnit(type, null);
+            Unit unitType = UnitFactory.BuildUnit(type, null);
             for (int i = 0; i < 8; i++) {
+                assert unitType != null;
                 if (unitType.getCost(i) > owner.getResource(i)) {
                     return false;
                 }
@@ -166,8 +164,7 @@ public class Map {
     }
 
     public Unit constructUnit(String type, Player owner) {
-        UnitFactory factory = new UnitFactory();
-        return factory.BuildUnit(type,owner);
+        return UnitFactory.BuildUnit(type,owner);
     }
 
     private void killUnit(int x, int y) {
@@ -227,9 +224,9 @@ public class Map {
         if(!isConstructionPossible(type, x, y, owner))
             return false;
 
-        TileFactory factory = new TileFactory();
-        Building newBuilding = factory.buildBuildingTile(type);
+        Building newBuilding = TileFactory.buildBuildingTile(type);
 
+        assert newBuilding != null;
         int borderSize = newBuilding.getBorderSize();
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
 
