@@ -11,7 +11,8 @@ public class Archer extends Unit {
         this.type = "Archer";
         this.moves = 3;
         this.movesAvaliable = 3;
-        this.cost[1] = 2; //costs 2 iron
+        this.cost[0] = 1; //costs 1 wood
+        this.cost[1] = 1; //costs 1 iron
         this.cost[6] = 2; //costs 2 food
     }
 }
