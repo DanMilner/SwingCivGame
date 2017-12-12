@@ -166,7 +166,6 @@ public class Map {
 
     public void setUnit(int x, int y, Unit newUnit) {
         this.currentMap[x][y].setUnit(newUnit);
-        newUnit.getOwner().addUnit(newUnit);
     }
 
     public Unit constructUnit(String type, Player owner) {
