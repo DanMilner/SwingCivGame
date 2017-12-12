@@ -68,9 +68,9 @@ public class Game {
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        if (newX == oldX && newY == oldY) {
+        if(gameMap.getTile(newX,newY).getResource().getType().equals("Water")
+                || gameMap.getTile(newX,newY).getResource().getType().equals("Mountain"))
             return false;
-        }
 
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); //distance moved on x axis
@@ -134,6 +134,8 @@ public class Game {
             System.out.println("nowhere to spawn a " + buttonText);
             return;
         }
+        newUnit.getOwner().addUnit(newUnit);
+
         subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
     }
 
