@@ -169,7 +169,6 @@ public class GuiManager extends JFrame implements ActionListener {
         final int BUTTON_SIZE = 50;
         final int START_POSITION = 0;
 
-
         int xPosition = START_POSITION;
         int yPosition;
 
@@ -243,50 +242,48 @@ public class GuiManager extends JFrame implements ActionListener {
         BoardButton button = (BoardButton) arg0.getSource();
         int buttonXCoord = button.getXCoord();
         int buttonYCoord = button.getYCoord();
-
-        resetUIColours();
         Tile tileClicked = game.gameMap.getTile(buttonXCoord,buttonYCoord);
 
-        if (unitSelected) {
-            if (game.isValidMove(currentX, currentY, buttonXCoord, buttonYCoord)) { // unit moved
-                game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord);
-                boardButtons[currentX][currentY].setIcon(tileClicked.getImage());
-            }
-            unitSelected = false;
-            updateGUI();
-            actionPerformed(arg0);
-        }
+        resetUIColours();
+        uiTextManager.updateInformationText(tileClicked);
 
+        if (unitSelected) {
+            performUnitMovement(arg0, buttonXCoord, buttonYCoord, tileClicked);
+        }else{
+            performTileAction(buttonXCoord, buttonYCoord, tileClicked);
+        }
+    }
+
+    private void performTileAction(int buttonXCoord, int buttonYCoord, Tile tileClicked){
         currentX = buttonXCoord;
         currentY = buttonYCoord;
-        String tileType;
-        if (tileClicked.hasBuilding()) {
-            tileType = tileClicked.getBuilding().getType();
-        } else {
-            tileType = tileClicked.getResource().getType();
-        }
-        Player tileOwner = tileClicked.getOwner();
 
         hideUIButtons();
 
-        uiTextManager.updateOwnershipText(tileOwner);
-
-        if (tileClicked.hasUnit()) {
+        if (tileClicked.hasUnit() && tileClicked.getUnit().getOwner() == game.getCurrentPlayer()) {
             Unit unitClicked = tileClicked.getUnit();
-
-            uiTextManager.setComponentText(2, unitClicked.getType());
-            if (unitClicked.getOwner() != game.getCurrentPlayer()) {
-                return;
-            }
             setButtonText(unitClicked.getButtonList());
             highlightTiles(currentX, currentY);
-        } else {
-            uiTextManager.setComponentText(2, tileType);
-            if (tileOwner == game.getCurrentPlayer() || tileOwner == null) {
-                if (tileClicked.hasBuilding())
-                    setButtonText(tileClicked.getBuilding().getButtonList());
-            }
+            unitSelected = true;
+        } else if (tileClicked.hasBuilding() && tileClicked.getOwner() == game.getCurrentPlayer()) {
+            setButtonText(tileClicked.getBuilding().getButtonList());
         }
+    }
+
+    private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord, Tile tileClicked){
+        if(currentX == buttonXCoord && currentY == buttonYCoord) {
+            unitSelected = false;
+            updateGUI();
+            hideUIButtons();
+            return;
+        }
+        if (game.isValidMove(currentX, currentY, buttonXCoord, buttonYCoord)) { // unit moved
+            game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord);
+            boardButtons[currentX][currentY].setIcon(game.gameMap.getTile(currentX,currentY).getImage());
+        }
+        unitSelected = false;
+        updateGUI();
+        actionPerformed(arg0);
     }
 
     private void setButtonText(ArrayList<String> buttonsToBuild) {
@@ -308,7 +305,6 @@ public class GuiManager extends JFrame implements ActionListener {
             for (int endY = 0; endY < MAPSIZE; endY++) {
                 if (game.isValidMove(startX, startY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
-                    unitSelected = true;
                 }
             }
         }

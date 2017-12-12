@@ -1,5 +1,7 @@
 package main;
 
+import map.Tile;
+
 import javax.swing.*;
 
 class UiTextManager {
@@ -71,12 +73,32 @@ class UiTextManager {
         UIComponents[index].setText(text);
     }
 
-    void updateOwnershipText(Player owner){
-        if(owner == null){
+    void updateInformationText(Tile tileClicked){
+
+        String tileType;
+        if (tileClicked.hasUnit()) {
+            tileType = tileClicked.getUnit().getType();
+        } else if(tileClicked.hasBuilding()) {
+            tileType = tileClicked.getBuilding().getType();
+        } else{
+            tileType = tileClicked.getResource().getType();
+        }
+        updateTileType(tileType);
+
+        updateTerritoryOwnership(tileClicked.getOwner());
+    }
+
+    private void updateTerritoryOwnership(Player tileOwner){
+        if(tileOwner == null){
             UIComponents[1].setText("This tile is in Natures Territory");
         }else{
-            UIComponents[1].setText("This tile is in " + owner.getName() + "'s Territory");
+            UIComponents[1].setText("This tile is in " + tileOwner.getName() + "'s Territory");
         }
+    }
+
+    private void updateTileType(String tileType){
+        final int TILE_TYPE_INDEX = 2;
+        UIComponents[TILE_TYPE_INDEX].setText(tileType);
     }
 
 }
