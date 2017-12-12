@@ -4,128 +4,187 @@ import map.resources.Resource;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+class randomDirectionResult{
+    private final int xCoord;
+    private final int yCoord;
+
+    randomDirectionResult(int xCoord, int yCoord){
+        this.xCoord = xCoord;
+        this.yCoord = yCoord;
+    }
+
+    public int getxCoord() {
+        return xCoord;
+    }
+
+    public int getyCoord() {
+        return yCoord;
+    }
+}
+
 class MapBuilder {
-    private Tile[][] Map;
-    private int MAPSIZE;
+    private Tile[][] map;
+    private final int MAPSIZE;
     MapBuilder(Tile[][] currentMap, int size){
-        Map = currentMap;
+        map = currentMap;
         MAPSIZE = size;
     }
 
     public void setUpMap(){
         for (int x = 0; x <= MAPSIZE; x++) {
             for (int y = 0; y <= MAPSIZE; y++) {
-                Map[x][y] = new Tile(x,y,null);
+                map[x][y] = new Tile(x,y,null);
                 constructResourceTile("Grass", x, y);
-                Map[x][y].setUnit(null);
+                map[x][y].setUnit(null);
             }
         }
     }
 
     public void setUpTerrain(){
         //add trees
-        addTerrain(ThreadLocalRandom.current().nextInt(MAPSIZE * 12, MAPSIZE * 15), 0, "Forest");
+        addTrees(ThreadLocalRandom.current().nextInt(MAPSIZE * 12, MAPSIZE * 15));
+
+        addSnow();
 
         //add Water
-        addWater(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 5), ThreadLocalRandom.current().nextInt(MAPSIZE / 2, MAPSIZE * 2));
+        addWater(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 5),
+                 ThreadLocalRandom.current().nextInt(MAPSIZE / 2, MAPSIZE * 2));
 
         //add Mountains
-        addTerrain(ThreadLocalRandom.current().nextInt(MAPSIZE / 11, MAPSIZE / 7), ThreadLocalRandom.current().nextInt(MAPSIZE / 4, MAPSIZE), "Mountain");
+        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 11, MAPSIZE / 7),
+                    ThreadLocalRandom.current().nextInt(MAPSIZE / 4, MAPSIZE),
+                    "Mountain");
 
         //add Iron
-        addTerrain(ThreadLocalRandom.current().nextInt(MAPSIZE / 4, MAPSIZE / 3), ThreadLocalRandom.current().nextInt(3, MAPSIZE / 10), "Iron");
+        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 4, MAPSIZE / 3),
+                    ThreadLocalRandom.current().nextInt(3, MAPSIZE / 10),
+                    "Iron");
 
         //add Gold
-        addTerrain(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 7), ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10), "Gold");
+        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 7),
+                    ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
+                    "Gold");
 
         //add Copper
-        addTerrain(ThreadLocalRandom.current().nextInt(MAPSIZE / 7, MAPSIZE / 6), ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10), "Copper");
+        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 7, MAPSIZE / 6),
+                    ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
+                    "Copper");
 
         //add Coal
-        addTerrain(ThreadLocalRandom.current().nextInt(MAPSIZE / 5, MAPSIZE / 4), ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10), "Coal");
+        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 5, MAPSIZE / 4),
+                    ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
+                    "Coal");
     }
 
-    private void addTerrain(int amount, int intensity, String type) {
+    private void addSnow(){
+        int rowsOfSnow = MAPSIZE/10;
 
-        int Xcoords;
-        int Ycoords;
+        for (int y = 0; y < rowsOfSnow; y++){
+            for (int x = 0; x < MAPSIZE; x++){
+                constructResourceTile("Snow", x,y);
+            }
+        }
+
+        for (int y = MAPSIZE; y >= MAPSIZE - rowsOfSnow; y--){
+            for (int x = 0; x < MAPSIZE; x++){
+                constructResourceTile("Snow", x,y);
+            }
+        }
+    }
+
+    private void addTrees(int amount){
+        int xCoord;
+        int yCoord;
+        do{
+            xCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
+            yCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
+
+            constructResourceTile("Forest", xCoord, yCoord);
+            amount--;
+        }while (amount > 0);
+    }
+
+    private void addResource(int amount, int intensity, String type) {
+        int xCoord;
+        int yCoord;
 
         for (int y = 0; y < amount; y++) {
             do {
-                Xcoords = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-                Ycoords = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-            } while (Map[Xcoords][Ycoords].getResource().getType().equals("Water"));
+                xCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
+                yCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
+            } while (map[xCoord][yCoord].getResource().getType().equals("Water"));
 
-            if (type.equals("Forest")) {
-                constructResourceTile("Forest", Xcoords, Ycoords);
-            } else {
-                for (int i = 0; i < intensity; i++) {
-                    int direction = ThreadLocalRandom.current().nextInt(1, 5);
+            for (int i = 0; i < intensity; i++) {
+                randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
+                xCoord = directionResult.getxCoord();
+                yCoord = directionResult.getyCoord();
+                if (yCoord <= MAPSIZE && xCoord <= MAPSIZE && yCoord >= 0 && xCoord >= 0) {
+                    String currentResource = map[xCoord][yCoord].getResource().getType();
 
-                    if (direction == 1) { //North
-                        Ycoords = Ycoords + 1;
-                    } else if (direction == 2) { //South
-                        Ycoords = Ycoords - 1;
-                    } else if (direction == 3) { //East
-                        Xcoords = Xcoords + 1;
-                    } else if (direction == 4) { //West
-                        Xcoords = Xcoords - 1;
-                    }
-                    if (Ycoords <= MAPSIZE && Xcoords <= MAPSIZE && Ycoords >= 0 && Xcoords >= 0) {
-                        String currentResource = Map[Xcoords][Ycoords].getResource().getType();
-
-                        if (currentResource.equals("Mountain") || currentResource.equals("Iron") || currentResource.equals("Gold") || currentResource.equals("Copper") || currentResource.equals("Coal")) {
-                            i--;
-                        } else {
-                            constructResourceTile(type, Xcoords, Ycoords);
-                        }
+                    if (currentResource.equals("Mountain") || currentResource.equals("Iron")
+                            || currentResource.equals("Gold") || currentResource.equals("Copper")
+                            || currentResource.equals("Coal")) {
+                        i--;
+                    } else {
+                        constructResourceTile(type, xCoord, yCoord);
                     }
                 }
             }
         }
     }
 
-    private void addWater(int amount, int intensity) {
+    private void addWater(int numberOfWaterBodies, int intensity) {
 
-        int Xcoords;
-        int Ycoords;
+        int xCoord;
+        int yCoord;
 
-        for (int y = 0; y < amount; y++) {
-            Xcoords = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
-            Ycoords = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
-            int originalX = Xcoords;
-            int originalY = Ycoords;
-            int direction;
-            int i = 0;
+        for (int i = 0; i < numberOfWaterBodies; i++) {
+            xCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
+            yCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
+            int originX = xCoord;
+            int originY = yCoord;
+            int numWaterTiles = 0;
             do {
-                direction = ThreadLocalRandom.current().nextInt(1, 5);
-                if (direction == 1) { //North
-                    Ycoords = Ycoords + 1;
-                } else if (direction == 2) { //South
-                    Ycoords = Ycoords - 1;
-                } else if (direction == 3) { //East
-                    Xcoords = Xcoords + 1;
-                } else if (direction == 4) { //West
-                    Xcoords = Xcoords - 1;
-                }
-                if (Ycoords <= MAPSIZE && Xcoords <= MAPSIZE && Ycoords >= 0 && Xcoords >= 0) {
-                    if (!Map[Xcoords][Ycoords].getResource().getType().equals("Water")) {
-                        constructResourceTile("Water", Xcoords, Ycoords);
-                        Xcoords = originalX;
-                        Ycoords = originalY;
-                        i++;
+                randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
+                xCoord = directionResult.getxCoord();
+                yCoord = directionResult.getyCoord();
+                if(coordinatesOnMap(xCoord, yCoord)){
+                    if (!map[xCoord][yCoord].getResource().getType().equals("Water")) {
+                        constructResourceTile("Water", xCoord, yCoord);
+                        xCoord = originX;
+                        yCoord = originY;
+                        numWaterTiles++;
                     }
-                } else {
-                    Xcoords = originalX;
-                    Ycoords = originalY;
+                }else{
+                    xCoord = originX;
+                    yCoord = originY;
                 }
-            } while (i < intensity);
+            } while (numWaterTiles < intensity);
         }
+    }
+
+    private randomDirectionResult randomDirection(int xCoord, int yCoord){
+        int direction = ThreadLocalRandom.current().nextInt(1, 5);
+
+        if (direction == 1) { //North
+            yCoord++;
+        } else if (direction == 2) { //South
+            yCoord--;
+        } else if (direction == 3) { //East
+            xCoord++;
+        } else if (direction == 4) { //West
+            xCoord--;
+        }
+        return new randomDirectionResult(xCoord,yCoord);
+    }
+
+    private boolean coordinatesOnMap(int x, int y){
+        return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 
     private void constructResourceTile(String type, int x, int y){
         Resource newResource = TileFactory.buildResourceTile(type);
-        Map[x][y].setResource(newResource);
+        map[x][y].setResource(newResource);
         System.out.println(type + " spawned at " + x + " " + y);
     }
 }
