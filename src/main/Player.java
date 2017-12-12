@@ -3,18 +3,17 @@ package main;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import map.Tile;
 import map.buildings.Building;
 import units.Unit;
 
 
 public class Player {
 	private String name;
-	private Color Colour;
+	private Color colour;
     private ArrayList<Building> buildings;
-	private ArrayList<Unit> Units;
+	private ArrayList<Unit> units;
 
-	private int[] Resources = new int[8];
+	private int[] resources = new int[8];
 	//resources are
 	//wood = 0
 	//iron = 1
@@ -25,31 +24,31 @@ public class Player {
 	//food = 6
 	//water = 7
 	
-	public Player(String name, Color Colour){
+	public Player(String name, Color colour){
 		this.name = name;
-		this.Colour = Colour;
+		this.colour = colour;
         buildings = new ArrayList<>();
-        Units = new ArrayList<>();
+        units = new ArrayList<>();
 	}
 
 	ArrayList<Building> getBuildings(){
 	    return buildings;
     }
 
-    public void addBuilding(Building structure){
-	    buildings.add(structure);
+    public void addBuilding(Building building){
+	    buildings.add(building);
     }
 
 	public void addUnit(Unit unit){
-	    Units.add(unit);
+	    units.add(unit);
 	}
 
     ArrayList<Unit> getUnits(){
-        return Units;
+        return units;
     }
 	
 	Color getColour(){
-		return Colour;
+		return colour;
 	}
 	
 	String getName(){
@@ -57,19 +56,19 @@ public class Player {
 	}
 	
 	void setResource(int type, int amount){
-		Resources[type] = amount;
+		resources[type] = amount;
 	}
 	
 	void increaseResource(int type, int amount){
-		Resources[type] = Resources[type]+amount;
+		resources[type] = resources[type]+amount;
 	}
 
 	public int getResource(int type){
-		return Resources[type];
+		return resources[type];
 	}
 	
 	void resetUnitMoves(){
-        for (Unit currentUnit: Units) {
+        for (Unit currentUnit: units) {
             currentUnit.resetMoves();
         }
 	}
@@ -81,9 +80,10 @@ public class Player {
     }
 
     public void refundUnitCost(Unit deadUnit) {
+		int[] resourceCost = deadUnit.getResourceCost();
 	    for (int type= 0; type<7;type++){
-	        increaseResource(type, deadUnit.getCost(type));
+	        increaseResource(type, resourceCost[type]);
         }
-        Units.remove(deadUnit);
+        units.remove(deadUnit);
     }
 }

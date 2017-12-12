@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 public class Unit {
 
-	int moves;
-	int movesAvaliable;
-	ImageIcon Img;
+	int maxMoves;
+	int remainingMoves;
+	ImageIcon imageIcon;
 	String type;
 	private Player owner;
-	int[] cost = new int[8];
+	int[] resourceCost = new int[8];
 	ArrayList<String> buttonList;
 
 	Unit(Player owner)
@@ -27,19 +27,19 @@ public class Unit {
 
 	public ImageIcon getImage()
 	{
-		return Img;
+		return imageIcon;
 	}
 
-	public void setAvaliableMoves(int movesAvaliable){
-		this.movesAvaliable = movesAvaliable;
+	public void setRemainingMoves(int remainingMoves){
+		this.remainingMoves = remainingMoves;
 	}
 	
-	public int getAvaliableMoves(){
-		return this.movesAvaliable;
+	public int getRemainingMoves(){
+		return remainingMoves;
 	}
 	
 	public void resetMoves(){
-		this.movesAvaliable = this.moves;
+		remainingMoves = maxMoves;
 	}
 	
 	public Player getOwner()
@@ -52,7 +52,7 @@ public class Unit {
 		return type;
 	}
 	
-	public int getCost(int type){
-		return cost[type];
+	public int[] getResourceCost(){
+		return resourceCost;
 	}
 }

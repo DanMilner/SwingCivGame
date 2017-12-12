@@ -12,7 +12,7 @@ class MapBuilder {
         MAPSIZE = size;
     }
 
-    public void SetUpMap(){
+    public void setUpMap(){
         for (int x = 0; x <= MAPSIZE; x++) {
             for (int y = 0; y <= MAPSIZE; y++) {
                 Map[x][y] = new Tile(x,y,null);
@@ -54,7 +54,7 @@ class MapBuilder {
             do {
                 Xcoords = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
                 Ycoords = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-            } while (Map[Xcoords][Ycoords].getCurrentResource().getType().equals("Water"));
+            } while (Map[Xcoords][Ycoords].getResource().getType().equals("Water"));
 
             if (type.equals("Forest")) {
                 constructResourceTile("Forest", Xcoords, Ycoords);
@@ -72,7 +72,7 @@ class MapBuilder {
                         Xcoords = Xcoords - 1;
                     }
                     if (Ycoords <= MAPSIZE && Xcoords <= MAPSIZE && Ycoords >= 0 && Xcoords >= 0) {
-                        String currentResource = Map[Xcoords][Ycoords].getCurrentResource().getType();
+                        String currentResource = Map[Xcoords][Ycoords].getResource().getType();
 
                         if (currentResource.equals("Mountain") || currentResource.equals("Iron") || currentResource.equals("Gold") || currentResource.equals("Copper") || currentResource.equals("Coal")) {
                             i--;
@@ -109,7 +109,7 @@ class MapBuilder {
                     Xcoords = Xcoords - 1;
                 }
                 if (Ycoords <= MAPSIZE && Xcoords <= MAPSIZE && Ycoords >= 0 && Xcoords >= 0) {
-                    if (!Map[Xcoords][Ycoords].getCurrentResource().getType().equals("Water")) {
+                    if (!Map[Xcoords][Ycoords].getResource().getType().equals("Water")) {
                         constructResourceTile("Water", Xcoords, Ycoords);
                         Xcoords = originalX;
                         Ycoords = originalY;
@@ -124,9 +124,8 @@ class MapBuilder {
     }
 
     private void constructResourceTile(String type, int x, int y){
-        TileFactory factory = new TileFactory();
-        Resource newResource = factory.buildResourceTile(type);
-        Map[x][y].setCurrentResource(newResource);
+        Resource newResource = TileFactory.buildResourceTile(type);
+        Map[x][y].setResource(newResource);
         System.out.println(type + " spawned at " + x + " " + y);
     }
 }

@@ -6,40 +6,39 @@ import map.resources.Resource;
 import units.Unit;
 
 import javax.swing.*;
-import java.util.ArrayList;
 
 public class Tile {
     // Instance variables.
-    int Xcoord;
-    int Ycoord;
+    int xCoord;
+    int yCoord;
     private Player owner;
-    private Unit currentUnit;
-    private Resource currentResource;
-    private Building currentBuilding;
+    private Unit unit;
+    private Resource resource;
+    private Building building;
 
-    public Tile(int Xcoord, int Ycoord, Player owner) {
-        this.Xcoord = Xcoord;
-        this.Ycoord = Ycoord;
+    Tile(int xCoord, int yCoord, Player owner) {
+        this.xCoord = xCoord;
+        this.yCoord = yCoord;
         this.owner = owner;
-        currentResource = null;
-        currentBuilding = null;
+        resource = null;
+        building = null;
     }
 
 
-    public Resource getCurrentResource() {
-        return currentResource;
+    public Resource getResource() {
+        return resource;
     }
 
-    public Building getCurrentBuilding() {
-        return currentBuilding;
+    public Building getBuilding() {
+        return building;
     }
 
     public boolean hasUnit() {
-        return currentUnit != null;
+        return unit != null;
     }
 
     public boolean hasBuilding() {
-        return currentBuilding != null;
+        return building != null;
     }
 
     public Player getOwner() {
@@ -50,27 +49,27 @@ public class Tile {
         owner = newOwner;
     }
 
-    public void setCurrentBuilding(Building currentBuilding) {
-        this.currentBuilding = currentBuilding;
+    public void setBuilding(Building building) {
+        this.building = building;
     }
 
-    public void setCurrentResource(Resource currentResource) {
-        this.currentResource = currentResource;
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
-    Unit getCurrentUnit() {
-        return currentUnit;
+    public Unit getUnit() {
+        return unit;
     }
 
     void setUnit(Unit newUnit) {
-        currentUnit = newUnit;
+        unit = newUnit;
     }
 
     public ImageIcon getImage() {
         if(hasUnit())
-            return currentUnit.getImage();
+            return unit.getImage();
         if(hasBuilding())
-            return currentBuilding.getImage();
-        return currentResource.getImage();
+            return building.getImage();
+        return resource.getImage();
     }
 }

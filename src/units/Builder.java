@@ -10,11 +10,11 @@ public class Builder extends Unit {
 
 	public Builder(Player owner) {
 		super(owner);
-		this.Img = new ImageIcon("textures\\unit\\Builder.png");
+		this.imageIcon = new ImageIcon("textures\\unit\\Builder.png");
 		this.type = "Builder";
-		this.moves = 4;
-		this.movesAvaliable = 4;
-		this.cost[6] = 2; //costs 2 food
+		this.maxMoves = 4;
+		this.remainingMoves = 4;
+		this.resourceCost[6] = 2; //costs 2 food
 
 		this.buttonList = new ArrayList<>();
 		buttonList.add("Farm");

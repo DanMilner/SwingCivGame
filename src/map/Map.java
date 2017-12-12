@@ -1,6 +1,6 @@
 package map;
 
-import main.CivGUI;
+import main.Game;
 import main.Player;
 import map.buildings.Building;
 import map.resources.Resource;
@@ -9,13 +9,13 @@ import units.Unit;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Map {
-    private static final int MAPSIZE = CivGUI.MAPSIZE;
+    private static final int MAPSIZE = Game.MAPSIZE;
     private Tile[][] currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
     private RoadManager roadManager;
 
     public Map() {
         MapBuilder mapBuilder = new MapBuilder(currentMap, MAPSIZE);
-        mapBuilder.SetUpMap();
+        mapBuilder.setUpMap();
         mapBuilder.setUpTerrain();
 
         roadManager = new RoadManager();
@@ -34,17 +34,17 @@ public class Map {
     }
 
     public void spawnCity(Player owner) {
-        int amount = 0;
+        final int CITY_BORDER_SIZE = 3;
         do {
-            int Xcoords = ThreadLocalRandom.current().nextInt(3, MAPSIZE - 3);
-            int Ycoords = ThreadLocalRandom.current().nextInt(3, MAPSIZE - 3);
-            String currentResource = getTile(Xcoords, Ycoords).getCurrentResource().getType();
+            int xCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
+            int yCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
+            String currentResource = getTile(xCoord, yCoord).getResource().getType();
             if(!currentResource.equals("Water") && !currentResource.equals("Mountain")) {
-                boolean placeCity = true;
+                Boolean placeCity = true;
                 //check the surrounding tiles to not collide with existing cities
-                for (int x = Xcoords - 3; x < (Xcoords + 4); x++) {
-                    for (int y = Ycoords - 3; y < (Ycoords + 4); y++) {
-                        if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
+                for (int x = xCoord - CITY_BORDER_SIZE; x <= xCoord + CITY_BORDER_SIZE; x++) {
+                    for (int y = yCoord - CITY_BORDER_SIZE; y <= yCoord + CITY_BORDER_SIZE; y++) {
+                        if(coordinatesOnMap(x,y)){
                             if (currentMap[x][y].getOwner() != null) {
                                 placeCity = false; //if a tile is owned by another player then the cities are too close together
                             }
@@ -52,28 +52,33 @@ public class Map {
                     }
                 }
                 if (placeCity) {
-                    constructBuildingTile("City", Xcoords, Ycoords, owner);
-                    amount++;
+                    constructBuildingTile("City", xCoord, yCoord, owner);
+                    return;
                 }
             }
-        } while (amount < 1);
+        } while (true);
     }
 
-    public int BorderRequired(int x, int y, int nx, int ny){
-        if (nx < 0 || nx > MAPSIZE || ny < 0 || ny > MAPSIZE) {
-            return 2; //these values are not on the board
+    private boolean coordinatesOnMap(int x, int y){
+        return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
+    }
+
+    public int borderRequired(int currentX, int currentY, int adjacentX, int adjacentY){
+        final int BORDER_REQUIRED = 2;
+        final int BORDER_NOT_REQUIRED = 0;
+
+        if (!coordinatesOnMap(adjacentX,adjacentY)) {
+            return BORDER_REQUIRED;
         }
-        if (currentMap[x][y].getOwner() != currentMap[nx][ny].getOwner()) {
-            return 2;
+        if (currentMap[currentX][currentY].getOwner() != currentMap[adjacentX][adjacentY].getOwner()) {
+            return BORDER_REQUIRED;
         } else {
-            return 0;
+            return BORDER_NOT_REQUIRED;
         }
     }
 
-    public boolean RoadAdjacent(int x, int y){
-        if (x < 0 || x > MAPSIZE || y < 0 || y > MAPSIZE)
-            return false; //these values are not on the board
-        return roadManager.roadAdjacent(x,y);
+    public boolean roadAdjacent(int x, int y) {
+        return coordinatesOnMap(x, y) && roadManager.roadAdjacent(x, y);
     }
 
     public Tile getTile(int x, int y) {
@@ -81,38 +86,39 @@ public class Map {
     }
 
     public Unit getUnit(int x, int y) {
-        return currentMap[x][y].getCurrentUnit();
+        return currentMap[x][y].getUnit();
     }
 
     public void moveUnit(int oldX, int oldY, int newX, int newY) {
-        currentMap[newX][newY].setUnit(currentMap[oldX][oldY].getCurrentUnit());
+        currentMap[newX][newY].setUnit(currentMap[oldX][oldY].getUnit());
         currentMap[oldX][oldY].setUnit(null);
     }
 
     public boolean checkCost (String type, Player owner){
+        final int RESOURCE_TYPES = 8;
+        int[] resourceCost;
         Building buildingType = TileFactory.buildBuildingTile(type);
         if(buildingType == null){
-            Unit unitType = UnitFactory.BuildUnit(type, null);
-            for (int i = 0; i < 8; i++) {
-                assert unitType != null;
-                if (unitType.getCost(i) > owner.getResource(i)) {
-                    return false;
-                }
-            }
+            Unit unitType = UnitFactory.buildUnit(type, null);
+            assert unitType != null;
+            resourceCost = unitType.getResourceCost();
         }else{
-            for (int i = 0; i < 8; i++) {
-                if (buildingType.getCost(i) > owner.getResource(i)) {
-                    return false;
-                }
+            resourceCost = buildingType.getResourceCost();
+        }
+
+        for (int i = 0; i < RESOURCE_TYPES; i++) {
+            if (resourceCost[i] > owner.getResource(i)) {
+                return false;
             }
         }
         return true;
     }
 
     private void calculateResourceYields(int x, int y, Building building, Player currentPlayer) {
-        for (int i = (x - 1); i < (x + 2); i++) {
-            for (int j = (y - 1); j < (y + 2); j++) {
-                Resource resourceBeingChecked = currentMap[i][j].getCurrentResource();
+        int borderSize = building.getBorderSize();
+        for (int i = x - borderSize; i <= x + borderSize; i++) {
+            for (int j = y - borderSize; j <= y + borderSize; j++) {
+                Resource resourceBeingChecked = currentMap[i][j].getResource();
                 if (currentMap[i][j].getOwner() != currentPlayer)
                     return;
                 if (resourceBeingChecked.isInUse())
@@ -164,38 +170,41 @@ public class Map {
     }
 
     public Unit constructUnit(String type, Player owner) {
-        return UnitFactory.BuildUnit(type,owner);
+        return UnitFactory.buildUnit(type,owner);
     }
 
     private void killUnit(int x, int y) {
-        if(this.currentMap[x][y].getCurrentUnit() != null){
-            this.currentMap[x][y].getCurrentUnit().getOwner().refundUnitCost(this.currentMap[x][y].getCurrentUnit());
+        if(this.currentMap[x][y].hasUnit()){
+            this.currentMap[x][y].getUnit().getOwner().refundUnitCost(this.currentMap[x][y].getUnit());
             this.currentMap[x][y].setUnit(null);
         }
     }
 
-    private void placeWheat(int Xcoords, int Ycoords, Player owner) {
-        for (int x = Xcoords; x < (Xcoords + 3); x++) {
-            for (int y = Ycoords - 2; y < (Ycoords + 1); y++) {
-                if (x <= MAPSIZE && y <= MAPSIZE && y >= 0) {
-                    if (currentMap[x][y].getCurrentResource().getType().equals("Grass")) {
-                        Unit tempUnit = currentMap[x][y].getCurrentUnit();
+    private void placeWheat(int xCoord, int yCoord, Player owner) {
+        final int FARM_SIZE = 2;
+        for (int x = xCoord; x <= xCoord + FARM_SIZE; x++) {
+            for (int y = yCoord - FARM_SIZE; y <= yCoord; y++) {
+                if(coordinatesOnMap(x,y)){
+                    if (currentMap[x][y].getResource().getType().equals("Grass")) {
+                        Unit unitOnTile = currentMap[x][y].getUnit();
                         constructBuildingTile("Wheat", x, y, owner);
-                        if(tempUnit != null)
-                            setUnit(x, y, tempUnit);
-                        currentMap[Xcoords][Ycoords].getCurrentBuilding().increaseResourceHarvestAmount(6);
-                        currentMap[x][y].getCurrentResource().setInUse();
+                        if(unitOnTile != null)
+                            setUnit(x, y, unitOnTile);
+                        currentMap[xCoord][yCoord].getBuilding().increaseResourceHarvestAmount(6);
+                        currentMap[x][y].getResource().setInUse();
                     }
                 }
             }
         }
     }
 
-    private boolean checkForNearbyWater(int Xcoords, int Ycoords){
-        for (int x = Xcoords-1; x <= Xcoords+1; x++) {
-            for (int y = Ycoords-1; y <= Ycoords+1; y++) {
+    private boolean checkForNearbyWater(int xCoord, int yCoord){
+        final int DOCK_SIZE = 1;
+
+        for (int x = xCoord-DOCK_SIZE; x <= xCoord+DOCK_SIZE; x++) {
+            for (int y = yCoord-DOCK_SIZE; y <= yCoord+DOCK_SIZE; y++) {
                 if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
-                    if (currentMap[x][y].getCurrentResource().getType().equals("Water")) {
+                    if (currentMap[x][y].getResource().getType().equals("Water")) {
                         return true;
                     }
                 }
@@ -204,20 +213,20 @@ public class Map {
         return false;
     }
 
-    private boolean isConstructionPossible(String type, int Xcoords, int Ycoords, Player owner){
+    private boolean isConstructionPossible(String type, int xCoord, int yCoord, Player owner){
         if(type.equals("Dock")){
-            if(!checkForNearbyWater(Xcoords, Ycoords))
+            if(!checkForNearbyWater(xCoord, yCoord))
                 return false;
         }
-        Tile candidateTile = currentMap[Xcoords][Ycoords];
+        Tile candidateTile = currentMap[xCoord][yCoord];
         //tile must be in nature or the current players territory.
         if(candidateTile.getOwner() == null && candidateTile.getOwner() == owner)
             return false;
         //cannot build onto of another building unless it is a road.
-        if(candidateTile.hasBuilding() && !candidateTile.getCurrentBuilding().getType().equals("Road"))
+        if(candidateTile.hasBuilding() && !candidateTile.getBuilding().getType().equals("Road"))
             return false;
         //cannot build on top of resources currently being harvested.
-        return !candidateTile.getCurrentResource().isInUse();
+        return !candidateTile.getResource().isInUse();
     }
 
     public boolean constructBuildingTile(String type, int x, int y, Player owner){
@@ -225,15 +234,15 @@ public class Map {
             return false;
 
         Building newBuilding = TileFactory.buildBuildingTile(type);
-
         assert newBuilding != null;
+
         int borderSize = newBuilding.getBorderSize();
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
 
         if(!type.equals("Wheat"))
             killUnit(x,y);
 
-        this.currentMap[x][y].setCurrentBuilding(newBuilding);
+        this.currentMap[x][y].setBuilding(newBuilding);
 
         if(type.equals("City")) {
             roadManager.addCity(this.currentMap[x][y]);
@@ -251,5 +260,4 @@ public class Map {
         System.out.println(type + " spawned at " + x + " " + y);
         return true;
     }
-
 }

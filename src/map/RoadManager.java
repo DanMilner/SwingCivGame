@@ -21,14 +21,14 @@ class RoadManager {
             calculateRoadConnections(city);
         }
         for (Tile road : Roads) {
-            road.getCurrentBuilding().setVisited(false);
+            road.getBuilding().setVisited(false);
         }
     }
 
     private void calculateRoadConnections(Tile origin) {
-        int x = origin.Xcoord;
-        int y = origin.Ycoord;
-        origin.getCurrentBuilding().setVisited(true);
+        int x = origin.xCoord;
+        int y = origin.yCoord;
+        origin.getBuilding().setVisited(true);
 
         for (Tile road : Roads) {
             checkConnection(road,x,y-1); //north
@@ -39,9 +39,9 @@ class RoadManager {
     }
 
     private void checkConnection(Tile road, int x, int y){
-        if (road.Xcoord == x && road.Ycoord == y) {
-            road.getCurrentBuilding().setHasCityConnection(true);
-            if (!road.getCurrentBuilding().isVisited()) {
+        if (road.xCoord == x && road.yCoord == y) {
+            road.getBuilding().setHasCityConnection(true);
+            if (!road.getBuilding().isVisited()) {
                 calculateRoadConnections(road);
             }
         }
@@ -49,11 +49,11 @@ class RoadManager {
 
     boolean roadAdjacent(int x, int y) {
         for (Tile road: Roads) {
-            if(road.Xcoord == x && road.Ycoord == y)
+            if(road.xCoord == x && road.yCoord == y)
                 return true;
         }
         for (Tile city : Cities) {
-            if(city.Xcoord == x && city.Ycoord == y)
+            if(city.xCoord == x && city.yCoord == y)
                 return true;
         }
         return false;

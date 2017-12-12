@@ -33,8 +33,8 @@ public class Building{
         return type;
     }
 
-    public int getCost(int type) {
-        return resourceCost[type];
+    public int[] getResourceCost() {
+        return resourceCost;
     }
 
     public void setVisited(boolean visitedStatus) {

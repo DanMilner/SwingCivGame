@@ -3,19 +3,19 @@ package main;
 import javax.swing.*;
 
 public class BoardButton extends JButton{
-    private int Xcoord;
-    private int Ycoord;
+    private int xCoord;
+    private int yCoord;
 
-    BoardButton(int x, int y){
-        this.Xcoord = x;
-        this.Ycoord = y;
+    BoardButton(int xCoord, int yCoord){
+        this.xCoord = xCoord;
+        this.yCoord = yCoord;
     }
 
-    public int getYcoord() {
-        return Ycoord;
+    public int getYCoord() {
+        return yCoord;
     }
 
-    public int getXcoord() {
-        return Xcoord;
+    public int getXCoord() {
+        return xCoord;
     }
 }

@@ -8,11 +8,11 @@ public class Knight extends Unit {
 
     public Knight(Player owner){
         super(owner);
-        this.Img = new ImageIcon("textures\\unit\\Knight.png");
+        this.imageIcon = new ImageIcon("textures\\unit\\Knight.png");
         this.type = "Knight";
-        this.moves = 6;
-        this.movesAvaliable = 6;
-        this.cost[2] = 2; //costs 2 gold
-        this.cost[6] = 5; //costs 5 food
+        this.maxMoves = 6;
+        this.remainingMoves = 6;
+        this.resourceCost[2] = 2; //costs 2 gold
+        this.resourceCost[6] = 5; //costs 5 food
     }
 }

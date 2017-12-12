@@ -7,12 +7,12 @@ import javax.swing.*;
 public class Archer extends Unit {
     public Archer(Player owner){
         super(owner);
-        this.Img = new ImageIcon("textures\\unit\\Archer.png");
+        this.imageIcon = new ImageIcon("textures\\unit\\Archer.png");
         this.type = "Archer";
-        this.moves = 3;
-        this.movesAvaliable = 3;
-        this.cost[0] = 1; //costs 1 wood
-        this.cost[1] = 1; //costs 1 iron
-        this.cost[6] = 2; //costs 2 food
+        this.maxMoves = 3;
+        this.remainingMoves = 3;
+        this.resourceCost[0] = 1; //costs 1 wood
+        this.resourceCost[1] = 1; //costs 1 iron
+        this.resourceCost[6] = 2; //costs 2 food
     }
 }

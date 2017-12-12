@@ -2,10 +2,10 @@ package main;
 
 import javax.swing.*;
 
-class UITextManager {
+class UiTextManager {
     private JLabel[] UIComponents = new JLabel[20];
 
-    UITextManager(JPanel panelUIContent){
+    UiTextManager(JPanel panelUIContent){
         panelUIContent.setLayout(null);
 
         for(int i = 0; i < 17; i++){

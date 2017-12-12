@@ -10,11 +10,11 @@ public class Settler extends Unit {
 
 	public Settler(Player owner) {
 		super(owner);
-		this.Img = new ImageIcon("textures\\unit\\settler.png");
+		this.imageIcon = new ImageIcon("textures\\unit\\settler.png");
 		this.type = "Settler";
-		this.moves = 2;
-		this.movesAvaliable = 2;
-		this.cost[6] = 20; //20 food
+		this.maxMoves = 2;
+		this.remainingMoves = 2;
+		this.resourceCost[6] = 20; //20 food
 
 		this.buttonList = new ArrayList<>();
 		buttonList.add("City");

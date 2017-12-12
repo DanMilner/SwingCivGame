@@ -5,7 +5,7 @@ import units.*;
 
 class UnitFactory {
 
-    static Unit BuildUnit(String type, Player owner){
+    static Unit buildUnit(String type, Player owner){
         switch (type){
             case "Settler":
                 return new Settler(owner);
