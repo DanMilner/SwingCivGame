@@ -1,6 +1,7 @@
 package main;
 
 import map.Map;
+import map.Tile;
 import map.buildings.Building;
 import units.Unit;
 
@@ -9,12 +10,13 @@ import java.util.ArrayList;
 
 
 public class Game {
-    Map gameMap;
+    private Map gameMap;
     private Player currentPlayer;
     private Player otherPlayer;
     public static final int MAPSIZE = 40;
 
     Game() {
+        gameMap = new Map();
 
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player("Daniel", Color.yellow));
@@ -23,14 +25,10 @@ public class Game {
         currentPlayer = players.get(0);
         otherPlayer = players.get(1);
 
-        gameMap = new Map();
-
         for (Player player : players) {
             gameMap.spawnCity(player);
             calculateResources(player);
         }
-
-        System.out.println("Game Made");
     }
 
     private void giveStartingResources(Player player) {
@@ -42,7 +40,7 @@ public class Game {
         player.increaseResource(ResourceTypes.STONE, 10);
     }
 
-    void swapPlayer() {
+    void swapPlayers() {
         currentPlayer.resetUnitMoves();
 
         Player tempPlayer = currentPlayer;
@@ -64,20 +62,21 @@ public class Game {
         return currentPlayer;
     }
 
-    private boolean availableTile(int x, int y) {
-        return !gameMap.getTile(x, y).hasUnit() && gameMap.getTile(x, y).getOwner() == currentPlayer;
+    private boolean isTileAvailable(int x, int y) {
+        Tile tile = gameMap.getTile(x,y);
+        return !tile.hasUnit() && tile.getOwner() == currentPlayer;
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        if(gameMap.getTile(newX,newY).getResource().getType().equals("Water")
-                || gameMap.getTile(newX,newY).getResource().getType().equals("Mountain"))
+        Tile destinationTile = gameMap.getTile(newX, newY);
+
+        if (destinationTile.isUnwalkable())
             return false;
 
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); //distance moved on x axis
-        if ((gameMap.getUnit(oldX, oldY).getRemainingMoves() - yDistance - xDistance) < 0)
-            return false;    //not enough moves available
-        return !gameMap.getTile(newX, newY).hasUnit();
+        return (gameMap.getUnit(oldX, oldY).getRemainingMoves() - yDistance - xDistance) >= 0
+                && !destinationTile.hasUnit();
     }
 
     boolean checkAvailableResources(String type) {
@@ -85,10 +84,11 @@ public class Game {
     }
 
     void moveUnit(int oldX, int oldY, int newX, int newY) {
+        Unit unitBeingMoved = gameMap.getUnit(oldX, oldY);
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); // distance moved on x axis
-        int remainingMoves = gameMap.getUnit(oldX, oldY).getRemainingMoves() - yDistance - xDistance;
-        gameMap.getUnit(oldX, oldY).setRemainingMoves(remainingMoves);
+        int remainingMoves = unitBeingMoved.getRemainingMoves() - yDistance - xDistance;
+        unitBeingMoved.setRemainingMoves(remainingMoves);
         gameMap.moveUnit(oldX, oldY, newX, newY);
     }
 
@@ -98,7 +98,7 @@ public class Game {
         giveStartingResources(player);
 
         for (Building currentBuilding : player.getBuildings()) {
-            for (int type = 0; type < 7; type++) {
+            for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
                 player.increaseResource(type, currentBuilding.getResourceAmount(type));
             }
             subtractUsedResources(currentBuilding.getResourceCost(), player);
@@ -111,43 +111,43 @@ public class Game {
 
     void buttonClicked(ButtonData data) {
         if(data.getType().equals("City")){
-            cityButtons(data);
+            createUnit(data);
         }else{
-            builderButtons(data);
+            createBuilding(data);
         }
     }
 
-    private void cityButtons(ButtonData data) {
+    private void createUnit(ButtonData data) {
         String buttonText = data.getText();
         int x = data.getCurrentX();
         int y = data.getCurrentY();
         Unit newUnit = gameMap.constructUnit(buttonText, currentPlayer);
 
-        if (availableTile(x + 1, y)) {
+        if (isTileAvailable(x + 1, y)) {
             gameMap.setUnit(x + 1, y, newUnit);
-        } else if (availableTile(x - 1, y)) {
+        } else if (isTileAvailable(x - 1, y)) {
             gameMap.setUnit(x - 1, y, newUnit);
-        } else if (availableTile(x, y + 1)) {
+        } else if (isTileAvailable(x, y + 1)) {
             gameMap.setUnit(x, y + 1, newUnit);
-        } else if (availableTile(x, y - 1)) {
+        } else if (isTileAvailable(x, y - 1)) {
             gameMap.setUnit(x, y - 1, newUnit);
         } else {
             System.out.println("nowhere to spawn a " + buttonText);
             return;
         }
-        newUnit.getOwner().addUnit(newUnit);
+        currentPlayer.addUnit(newUnit);
 
         subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
     }
 
-    private void builderButtons(ButtonData data) {
+    private void createBuilding(ButtonData data) {
         String buttonText = data.getText();
         int x = data.getCurrentX();
         int y = data.getCurrentY();
 
         Unit tempUnit = gameMap.getUnit(x, y);
 
-        if (!gameMap.constructBuildingTile(buttonText, x, y, currentPlayer))
+        if (!gameMap.constructAndSetBuildingTile(buttonText, x, y, currentPlayer))
             System.out.println(buttonText + " not built");
 
         if(buttonText.equals("Road")){

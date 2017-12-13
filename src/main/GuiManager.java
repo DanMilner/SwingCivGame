@@ -64,7 +64,7 @@ public class GuiManager extends JFrame implements ActionListener {
         JButton endTurn = new JButton("End Turn");
         endTurn.setBounds(1050, 25, 150, 80);
         endTurn.addActionListener(arg0 -> {
-            game.swapPlayer();
+            game.swapPlayers();
             unitSelected = false;
             updateBoardButtonIconsAndBorders();
             hideUIButtons();
@@ -122,11 +122,11 @@ public class GuiManager extends JFrame implements ActionListener {
         String type;
         ArrayList<String> typesToCheck;
         if (unitSelected) {
-            type = game.gameMap.getUnit(currentX, currentY).getType();
-            typesToCheck = game.gameMap.getUnit(currentX, currentY).getButtonList();
+            type = game.getMap().getUnit(currentX, currentY).getType();
+            typesToCheck = game.getMap().getUnit(currentX, currentY).getButtonList();
         } else {
-            type = game.gameMap.getTile(currentX, currentY).getBuilding().getType();
-            typesToCheck = game.gameMap.getTile(currentX, currentY).getBuilding().getButtonList();
+            type = game.getMap().getTile(currentX, currentY).getBuilding().getType();
+            typesToCheck = game.getMap().getTile(currentX, currentY).getBuilding().getButtonList();
         }
         String buttonText = uiButtons.get(ButtonNum).getText();
 
@@ -180,7 +180,7 @@ public class GuiManager extends JFrame implements ActionListener {
             for (int y = 0; y <= MAPSIZE; y++) {
                 BoardButton newBoardButton = new BoardButton(x, y);
                 boardButtons[x][y] = newBoardButton;
-                Tile currentTile = game.gameMap.getTile(x, y);
+                Tile currentTile = game.getMap().getTile(x, y);
 
                 newBoardButton.addMouseListener(new MouseListener() {
                     @Override
@@ -222,12 +222,10 @@ public class GuiManager extends JFrame implements ActionListener {
                             }
                         }
                     }
-
                     @Override
-                    public void mouseMoved(MouseEvent arg0) {
+                    public void mouseMoved(MouseEvent e) {
 
                     }
-
                 });
                 newBoardButton.setBounds(xPosition, yPosition, BUTTON_SIZE, BUTTON_SIZE);
                 newBoardButton.setIcon(currentTile.getImage());
@@ -249,7 +247,7 @@ public class GuiManager extends JFrame implements ActionListener {
         BoardButton button = (BoardButton) arg0.getSource();
         int buttonXCoord = button.getXCoord();
         int buttonYCoord = button.getYCoord();
-        Tile tileClicked = game.gameMap.getTile(buttonXCoord,buttonYCoord);
+        Tile tileClicked = game.getMap().getTile(buttonXCoord,buttonYCoord);
 
         resetUIColours();
         uiTextManager.updateInformationText(tileClicked);
@@ -290,7 +288,7 @@ public class GuiManager extends JFrame implements ActionListener {
     private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord){
         if (game.isValidMove(currentX, currentY, buttonXCoord, buttonYCoord)) {
             game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord);
-            boardButtons[currentX][currentY].setIcon(game.gameMap.getTile(currentX,currentY).getImage());
+            boardButtons[currentX][currentY].setIcon(game.getMap().getTile(currentX,currentY).getImage());
         }
         unitSelected = false;
         updateBoardButtonIconsAndBorders();
@@ -332,7 +330,7 @@ public class GuiManager extends JFrame implements ActionListener {
             for (int y = yLow; y < yHigh; y++) {
                 BoardButton buttonBeingUpdated = boardButtons[x][y];
 
-                Tile currentTile = game.gameMap.getTile(x, y);
+                Tile currentTile = game.getMap().getTile(x, y);
 
                 if (currentTile.hasUnit()) {
                     Unit currentUnit = currentTile.getUnit();
@@ -363,10 +361,10 @@ public class GuiManager extends JFrame implements ActionListener {
         int x = buttonBeingUpdated.getXCoord();
         int y = buttonBeingUpdated.getYCoord();
         buttonBeingUpdated.setBorder(BorderFactory.createMatteBorder(
-                game.gameMap.borderRequired(x, y, x, y - 1),
-                game.gameMap.borderRequired(x, y, x - 1, y),
-                game.gameMap.borderRequired(x, y, x, y + 1),
-                game.gameMap.borderRequired(x, y, x + 1, y),
+                game.getMap().borderRequired(x, y, x, y - 1),
+                game.getMap().borderRequired(x, y, x - 1, y),
+                game.getMap().borderRequired(x, y, x, y + 1),
+                game.getMap().borderRequired(x, y, x + 1, y),
                 tileOwnersColour));
     }
 
@@ -374,10 +372,10 @@ public class GuiManager extends JFrame implements ActionListener {
         int x = buttonBeingUpdated.getXCoord();
         int y = buttonBeingUpdated.getYCoord();
 
-        boolean North = game.gameMap.roadAdjacent(x, y - 1); //north
-        boolean South = game.gameMap.roadAdjacent(x, y + 1); //south
-        boolean East = game.gameMap.roadAdjacent(x + 1, y); //east
-        boolean West = game.gameMap.roadAdjacent(x - 1, y); //west
+        boolean North = game.getMap().roadAdjacent(x, y - 1); //north
+        boolean South = game.getMap().roadAdjacent(x, y + 1); //south
+        boolean East = game.getMap().roadAdjacent(x + 1, y); //east
+        boolean West = game.getMap().roadAdjacent(x - 1, y); //west
 
         ImageIcon icon = game.getMap().getTile(x, y).getBuilding().getImage(North, South, East, West);
 

@@ -158,7 +158,6 @@ class MapBuilder {
     }
 
     private void addWater(int numberOfWaterBodies, int intensity) {
-
         int xCoord;
         int yCoord;
 

@@ -52,7 +52,7 @@ public class Map {
                     }
                 }
                 if (placeCity) {
-                    constructBuildingTile("City", xCoord, yCoord, owner);
+                    constructAndSetBuildingTile("City", xCoord, yCoord, owner);
                     return;
                 }
             }
@@ -172,10 +172,10 @@ public class Map {
         return UnitFactory.buildUnit(type,owner);
     }
 
-    private void killUnit(int x, int y) {
-        if(this.currentMap[x][y].hasUnit()){
-            this.currentMap[x][y].getUnit().getOwner().refundUnitCost(this.currentMap[x][y].getUnit());
-            this.currentMap[x][y].setUnit(null);
+    private void killUnitAndRefundCost(int x, int y) {
+        if(currentMap[x][y].hasUnit()){
+            currentMap[x][y].getUnit().getOwner().refundUnitCost(currentMap[x][y].getUnit());
+            currentMap[x][y].setUnit(null);
         }
     }
 
@@ -186,7 +186,7 @@ public class Map {
                 if(coordinatesOnMap(x,y)){
                     if (currentMap[x][y].getResource().getType().equals("Grass")) {
                         Unit unitOnTile = currentMap[x][y].getUnit();
-                        constructBuildingTile("Wheat", x, y, owner);
+                        constructAndSetBuildingTile("Wheat", x, y, owner);
                         if(unitOnTile != null)
                             setUnit(x, y, unitOnTile);
                         currentMap[xCoord][yCoord].getBuilding().increaseResourceHarvestAmount(6);
@@ -228,7 +228,7 @@ public class Map {
         return !candidateTile.getResource().isInUse();
     }
 
-    public boolean constructBuildingTile(String type, int x, int y, Player owner){
+    public boolean constructAndSetBuildingTile(String type, int x, int y, Player owner){
         if(!isConstructionPossible(type, x, y, owner))
             return false;
 
@@ -239,18 +239,15 @@ public class Map {
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
 
         if(!type.equals("Wheat"))
-            killUnit(x,y);
+            killUnitAndRefundCost(x,y);
 
-        this.currentMap[x][y].setBuilding(newBuilding);
+        currentMap[x][y].setBuilding(newBuilding);
 
-        if(type.equals("City")) {
-            roadManager.addCity(this.currentMap[x][y]);
-        }else{
-            roadManager.addRoad(this.currentMap[x][y]);
-        }
+        roadManager.addConnectableTile(currentMap[x][y]);
+
         owner.addBuilding(newBuilding);
 
-        if(type.equals("Lumber Mill") || type.equals("Mine")){
+        if(newBuilding.isResourceHarvester()){
             calculateResourceYields(x, y, newBuilding, owner);
         }else if(type.equals("Farm")){
             placeWheat(x,y,owner);

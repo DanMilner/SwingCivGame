@@ -6,12 +6,12 @@ class RoadManager {
     private ArrayList<Tile> Roads = new ArrayList<>();
     private ArrayList<Tile> Cities = new ArrayList<>();
 
-    void addRoad(Tile road) {
+    private void addRoad(Tile road) {
         Roads.add(road);
         updateRoadConnections();
     }
 
-    void addCity(Tile city) {
+    private void addCity(Tile city) {
         Cities.add(city);
         updateRoadConnections();
     }
@@ -57,5 +57,13 @@ class RoadManager {
                 return true;
         }
         return false;
+    }
+
+    public void addConnectableTile(Tile newBuilding) {
+        if(newBuilding.getBuilding().getType().equals("City")) {
+            addCity(newBuilding);
+        }else{
+            addRoad(newBuilding);
+        }
     }
 }
