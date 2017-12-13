@@ -3,6 +3,7 @@ package units;
 import javax.swing.ImageIcon;
 
 import main.Player;
+import main.ResourceTypes;
 
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ public class Builder extends Unit {
 		this.type = "Builder";
 		this.maxMoves = 4;
 		this.remainingMoves = 4;
-		this.resourceCost[6] = 2; //costs 2 food
+		this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
 
 		this.buttonList = new ArrayList<>();
 		buttonList.add("Farm");

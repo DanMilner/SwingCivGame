@@ -7,6 +7,7 @@ import units.Unit;
 import java.awt.*;
 import java.util.ArrayList;
 
+
 public class Game {
     Map gameMap;
     private Player currentPlayer;
@@ -33,12 +34,12 @@ public class Game {
     }
 
     private void giveStartingResources(Player player) {
-        for (int i = 0; i < 7; i++) {
-            player.increaseResource(i, 20);
+        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
+            player.increaseResource(type, 20);
         }
         //resources needed for starting city
-        player.increaseResource(0, 20);
-        player.increaseResource(5, 10);
+        player.increaseResource(ResourceTypes.WOOD, 20);
+        player.increaseResource(ResourceTypes.STONE, 10);
     }
 
     void swapPlayer() {

@@ -1,6 +1,7 @@
 package units;
 
 import main.Player;
+import main.ResourceTypes;
 
 import javax.swing.*;
 
@@ -11,7 +12,7 @@ public class Swordsman extends Unit {
         this.type = "Swordsman";
         this.maxMoves = 3;
         this.remainingMoves = 3;
-        this.resourceCost[1] = 2; //costs 2 iron
-        this.resourceCost[6] = 2; //costs 2 food
+        this.resourceCost[ResourceTypes.IRON] = 2; //costs 2 iron
+        this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
     }
 }

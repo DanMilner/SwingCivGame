@@ -46,8 +46,9 @@ public class Building{
     }
 
     public int getResourceAmount(int type) {
+        final int RESOURCE_BONUS = 2;
         if(hasCityConnection)
-            return resourceHarvestAmount[type]*2;
+            return resourceHarvestAmount[type]*RESOURCE_BONUS;
         return resourceHarvestAmount[type];
     }
 

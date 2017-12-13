@@ -13,16 +13,7 @@ public class Player {
     private ArrayList<Building> buildings;
 	private ArrayList<Unit> units;
 
-	private int[] resources = new int[8];
-	//resources are
-	//wood = 0
-	//iron = 1
-	//gold = 2
-	//coal = 3
-	//copper = 4
-	//stone = 5
-	//food = 6
-	//water = 7
+	private int[] resources = new int[ResourceTypes.getNumberOfResourceTypes()];
 	
 	public Player(String name, Color colour){
 		this.name = name;

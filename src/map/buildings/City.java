@@ -1,5 +1,7 @@
 package map.buildings;
 
+import main.ResourceTypes;
+
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -7,8 +9,8 @@ public class City extends Building {
     public City() {
         this.buildingImage = new ImageIcon("textures\\buildings\\village.png");
         this.type = "City";
-        this.resourceCost[0] = 20; //20 wood
-        this.resourceCost[5] = 10; //10 stone
+        this.resourceCost[ResourceTypes.WOOD] = 20; //20 wood
+        this.resourceCost[ResourceTypes.STONE] = 10; //10 stone
         this.hasCityConnection = true;
         this.borderSize = 3;
 

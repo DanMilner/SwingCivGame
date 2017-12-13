@@ -1,6 +1,7 @@
 package units;
 
 import main.Player;
+import main.ResourceTypes;
 
 import javax.swing.*;
 
@@ -12,7 +13,7 @@ public class Knight extends Unit {
         this.type = "Knight";
         this.maxMoves = 6;
         this.remainingMoves = 6;
-        this.resourceCost[2] = 2; //costs 2 gold
-        this.resourceCost[6] = 5; //costs 5 food
+        this.resourceCost[ResourceTypes.GOLD] = 2; //costs 2 gold
+        this.resourceCost[ResourceTypes.FOOD] = 5; //costs 5 food
     }
 }
