@@ -11,6 +11,7 @@ public class LumberMill extends Building {
         this.type = "Lumber Mill";
         this.resourceCost[ResourceTypes.STONE] = 1; //1 stone
         this.borderSize = 1;
+        this.resourceHarvester = true;
     }
 }
 

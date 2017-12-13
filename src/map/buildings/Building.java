@@ -8,6 +8,7 @@ public class Building{
     int[] resourceCost = new int[8];
     int borderSize;
     boolean hasCityConnection = false;
+    boolean resourceHarvester = false;
     ArrayList<String> buttonList;
     private int[] resourceHarvestAmount = new int[7];
     private boolean visited;
@@ -62,5 +63,9 @@ public class Building{
 
     public ImageIcon getImage(boolean north, boolean south, boolean east, boolean west) {
         return null;
+    }
+
+    public boolean isResourceHarvester() {
+        return resourceHarvester;
     }
 }
