@@ -250,7 +250,7 @@ public class GuiManager extends JFrame implements ActionListener {
         uiTextManager.updateInformationText(tileClicked);
 
         if (unitSelected) {
-            performUnitMovement(arg0, buttonXCoord, buttonYCoord, tileClicked);
+            performUnitMovement(arg0, buttonXCoord, buttonYCoord);
         }else{
             performTileAction(buttonXCoord, buttonYCoord, tileClicked);
         }
@@ -272,7 +272,7 @@ public class GuiManager extends JFrame implements ActionListener {
         }
     }
 
-    private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord, Tile tileClicked){
+    private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord){
         if(currentX == buttonXCoord && currentY == buttonYCoord) {
             unitSelected = false;
             updateGUI();
