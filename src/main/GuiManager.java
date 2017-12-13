@@ -121,14 +121,10 @@ public class GuiManager extends JFrame implements ActionListener {
     private void UIButtonAction(int ButtonNum) {
         String type;
         ArrayList<String> typesToCheck;
-        if (game.getMap().getTile(currentX,currentY).hasUnit()) {
+        if (unitSelected) {
             type = game.gameMap.getUnit(currentX, currentY).getType();
             typesToCheck = game.gameMap.getUnit(currentX, currentY).getButtonList();
-
-            unitSelected = false;
-            hideUIButtons();
         } else {
-            //no unit on this tile
             type = game.gameMap.getTile(currentX, currentY).getBuilding().getType();
             typesToCheck = game.gameMap.getTile(currentX, currentY).getBuilding().getButtonList();
         }
@@ -139,7 +135,13 @@ public class GuiManager extends JFrame implements ActionListener {
         game.buttonClicked(buttonData);
         updateGUI();
         uiTextManager.updateUI(game.getCurrentPlayer());
-        setButtonText(typesToCheck);
+
+        if(unitSelected){
+            unitSelected = false;
+            hideUIButtons();
+        }else{
+            setButtonText(typesToCheck);
+        }
     }
 
     private void hideUIButtons() {
