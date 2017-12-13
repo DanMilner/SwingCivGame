@@ -35,7 +35,6 @@ class MapBuilder {
             for (int y = 0; y <= MAPSIZE; y++) {
                 map[x][y] = new Tile(x,y,null);
                 constructResourceTile("Grass", x, y);
-                map[x][y].setUnit(null);
             }
         }
     }
