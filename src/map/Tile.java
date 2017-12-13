@@ -22,6 +22,7 @@ public class Tile {
         this.owner = owner;
         resource = null;
         building = null;
+        unit = null;
     }
 
 
@@ -31,6 +32,10 @@ public class Tile {
 
     public Building getBuilding() {
         return building;
+    }
+
+    public boolean hasOwner(){
+        return owner != null;
     }
 
     public boolean hasUnit() {
