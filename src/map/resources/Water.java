@@ -6,5 +6,6 @@ public class Water extends Resource {
     public Water() {
         this.resourceImage = new ImageIcon("textures\\terrain\\Water.jpg");
         this.type = "Water";
+        this.isTraversable = false;
     }
 }

@@ -46,6 +46,10 @@ public class Tile {
         return building != null;
     }
 
+    public boolean isTraversable(){
+        return resource.isTraversable();
+    }
+
     public Player getOwner() {
         return owner;
     }

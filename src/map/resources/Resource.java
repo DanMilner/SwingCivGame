@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Resource {
     ImageIcon resourceImage;
-    protected int resourceType;
+    boolean isTraversable = true;
     private boolean inUse = false;
     public String type;
 
@@ -22,5 +22,9 @@ public class Resource {
 
     public ImageIcon getImage() {
         return resourceImage;
+    }
+
+    public boolean isTraversable (){
+        return isTraversable;
     }
 }

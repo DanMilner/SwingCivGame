@@ -1,5 +1,7 @@
 package map.buildings;
 
+import main.ResourceTypes;
+
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -10,7 +12,7 @@ public class Building{
     boolean hasCityConnection = false;
     boolean resourceHarvester = false;
     ArrayList<String> buttonList;
-    private int[] resourceHarvestAmount = new int[7];
+    private int[] resourceHarvestAmount = new int[ResourceTypes.getNumberOfResourceTypes()];
     private boolean visited;
     public String type;
 

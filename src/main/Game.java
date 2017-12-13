@@ -70,7 +70,7 @@ public class Game {
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
         Tile destinationTile = gameMap.getTile(newX, newY);
 
-        if (destinationTile.isUnwalkable())
+        if (!destinationTile.isTraversable())
             return false;
 
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
