@@ -46,6 +46,8 @@ class MapBuilder {
 
         addSnow();
 
+        addSand();
+
         //add Water
         addWater(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 5),
                  ThreadLocalRandom.current().nextInt(MAPSIZE / 2, MAPSIZE * 2));
@@ -74,6 +76,38 @@ class MapBuilder {
         addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 5, MAPSIZE / 4),
                     ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
                     "Coal");
+    }
+
+    private void generateTilesInBodies(int xCoord, int yCoord, int intensity, String tileType){
+        int originX = xCoord;
+        int originY = yCoord;
+        int numberOfTilesGenerated = 0;
+        do {
+            randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
+            xCoord = directionResult.getxCoord();
+            yCoord = directionResult.getyCoord();
+            if(coordinatesOnMap(xCoord, yCoord)){
+                if (!map[xCoord][yCoord].getResource().getType().equals(tileType)) {
+                    constructResourceTile(tileType, xCoord, yCoord);
+                    xCoord = originX;
+                    yCoord = originY;
+                    numberOfTilesGenerated++;
+                }
+            }else{
+                xCoord = originX;
+                yCoord = originY;
+            }
+        } while (numberOfTilesGenerated < intensity);
+    }
+
+    private void addSand(){
+        int quarterMapSize = MAPSIZE/4;
+
+        int intensity = ThreadLocalRandom.current().nextInt(MAPSIZE*2, MAPSIZE * 4);
+
+        int xCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
+        int yCoord = ThreadLocalRandom.current().nextInt(quarterMapSize, MAPSIZE-quarterMapSize);
+        generateTilesInBodies(xCoord, yCoord, intensity, "Sand");
     }
 
     private void addSnow(){
@@ -118,17 +152,8 @@ class MapBuilder {
                 randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
                 xCoord = directionResult.getxCoord();
                 yCoord = directionResult.getyCoord();
-                if (yCoord <= MAPSIZE && xCoord <= MAPSIZE && yCoord >= 0 && xCoord >= 0) {
-                    String currentResource = map[xCoord][yCoord].getResource().getType();
-
-                    if (currentResource.equals("Mountain") || currentResource.equals("Iron")
-                            || currentResource.equals("Gold") || currentResource.equals("Copper")
-                            || currentResource.equals("Coal")) {
-                        i--;
-                    } else {
-                        constructResourceTile(type, xCoord, yCoord);
-                    }
-                }
+                if(coordinatesOnMap(xCoord,yCoord))
+                    constructResourceTile(type, xCoord, yCoord);
             }
         }
     }
@@ -141,25 +166,8 @@ class MapBuilder {
         for (int i = 0; i < numberOfWaterBodies; i++) {
             xCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
             yCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
-            int originX = xCoord;
-            int originY = yCoord;
-            int numWaterTiles = 0;
-            do {
-                randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
-                xCoord = directionResult.getxCoord();
-                yCoord = directionResult.getyCoord();
-                if(coordinatesOnMap(xCoord, yCoord)){
-                    if (!map[xCoord][yCoord].getResource().getType().equals("Water")) {
-                        constructResourceTile("Water", xCoord, yCoord);
-                        xCoord = originX;
-                        yCoord = originY;
-                        numWaterTiles++;
-                    }
-                }else{
-                    xCoord = originX;
-                    yCoord = originY;
-                }
-            } while (numWaterTiles < intensity);
+
+            generateTilesInBodies(xCoord, yCoord, intensity, "Water");
         }
     }
 

@@ -41,6 +41,8 @@ class TileFactory {
                 return new Grass();
             case "Snow":
                 return new Snow();
+            case "Sand":
+                return new Sand();
             case "Iron":
                 return new Iron();
             case "Gold":
