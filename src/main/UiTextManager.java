@@ -69,12 +69,7 @@ class UiTextManager {
         UIComponents[0].setText(currentPlayer.getName() + "'s Turn");
     }
 
-    void setComponentText(int index, String text){
-        UIComponents[index].setText(text);
-    }
-
     void updateInformationText(Tile tileClicked){
-
         String tileType;
         if (tileClicked.hasUnit()) {
             tileType = tileClicked.getUnit().getType();

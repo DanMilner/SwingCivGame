@@ -66,13 +66,13 @@ public class GuiManager extends JFrame implements ActionListener {
         endTurn.addActionListener(arg0 -> {
             game.swapPlayer();
             unitSelected = false;
-            updateGUI();
+            updateBoardButtonIconsAndBorders();
             hideUIButtons();
             uiTextManager.updateUI(game.getCurrentPlayer());
         });
         uiPanel.add(endTurn, BorderLayout.LINE_END);
 
-        drawBoard();
+        createBoardButtons();
 
         JScrollPane scrollPane = new JScrollPane(boardPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -133,7 +133,7 @@ public class GuiManager extends JFrame implements ActionListener {
         ButtonData buttonData = new ButtonData(type, currentX, currentY, buttonText);
 
         game.buttonClicked(buttonData);
-        updateGUI();
+        updateBoardButtonIconsAndBorders();
         uiTextManager.updateUI(game.getCurrentPlayer());
 
         if(unitSelected){
@@ -167,7 +167,7 @@ public class GuiManager extends JFrame implements ActionListener {
         }
     }
 
-    private void drawBoard() {
+    private void createBoardButtons() {
         final int BUTTON_SIZE = 50;
         final int START_POSITION = 0;
 
@@ -178,8 +178,11 @@ public class GuiManager extends JFrame implements ActionListener {
         for (int x = 0; x <= MAPSIZE; x++) {
             yPosition = START_POSITION;
             for (int y = 0; y <= MAPSIZE; y++) {
-                boardButtons[x][y] = new BoardButton(x, y);
-                boardButtons[x][y].addMouseListener(new MouseListener() {
+                BoardButton newBoardButton = new BoardButton(x, y);
+                boardButtons[x][y] = newBoardButton;
+                Tile currentTile = game.gameMap.getTile(x, y);
+
+                newBoardButton.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                     }
@@ -202,7 +205,7 @@ public class GuiManager extends JFrame implements ActionListener {
                     public void mouseExited(MouseEvent e) {
                     }
                 });
-                boardButtons[x][y].addMouseMotionListener(new MouseMotionListener() {
+                newBoardButton.addMouseMotionListener(new MouseMotionListener() {
                     @Override
                     public void mouseDragged(MouseEvent e) {
                         if (origin != null) {
@@ -226,15 +229,17 @@ public class GuiManager extends JFrame implements ActionListener {
                     }
 
                 });
-                boardButtons[x][y].setBounds(xPosition, yPosition, BUTTON_SIZE, BUTTON_SIZE);
-                boardButtons[x][y].setIcon(game.gameMap.getTile(x, y).getImage());
-                boardButtons[x][y].addActionListener(this);
+                newBoardButton.setBounds(xPosition, yPosition, BUTTON_SIZE, BUTTON_SIZE);
+                newBoardButton.setIcon(currentTile.getImage());
+                newBoardButton.addActionListener(this);
+                newBoardButton.setBorder(null);
+
                 //set any borders
-                if (game.gameMap.getTile(x, y).getOwner() != null) {
-                    drawBorder(x, y);
+                if (currentTile.hasOwner()) {
+                    createBorder(currentTile.getOwner().getColour(), newBoardButton);
                 }
                 yPosition = yPosition + BUTTON_SIZE; //increment y for next tile
-                boardPanel.add(boardButtons[x][y], BorderLayout.CENTER);
+                boardPanel.add(newBoardButton, BorderLayout.CENTER);
             }
             xPosition = xPosition + BUTTON_SIZE; //increment x for next tile
         }
@@ -250,7 +255,11 @@ public class GuiManager extends JFrame implements ActionListener {
         uiTextManager.updateInformationText(tileClicked);
 
         if (unitSelected) {
-            performUnitMovement(arg0, buttonXCoord, buttonYCoord);
+            if(currentX == buttonXCoord && currentY == buttonYCoord) {
+                deselectUnit();
+            }else {
+                performUnitMovement(arg0, buttonXCoord, buttonYCoord);
+            }
         }else{
             performTileAction(buttonXCoord, buttonYCoord, tileClicked);
         }
@@ -272,19 +281,19 @@ public class GuiManager extends JFrame implements ActionListener {
         }
     }
 
+    private void deselectUnit(){
+        unitSelected = false;
+        updateBoardButtonIconsAndBorders();
+        hideUIButtons();
+    }
+
     private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord){
-        if(currentX == buttonXCoord && currentY == buttonYCoord) {
-            unitSelected = false;
-            updateGUI();
-            hideUIButtons();
-            return;
-        }
-        if (game.isValidMove(currentX, currentY, buttonXCoord, buttonYCoord)) { // unit moved
+        if (game.isValidMove(currentX, currentY, buttonXCoord, buttonYCoord)) {
             game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord);
             boardButtons[currentX][currentY].setIcon(game.gameMap.getTile(currentX,currentY).getImage());
         }
         unitSelected = false;
-        updateGUI();
+        updateBoardButtonIconsAndBorders();
         actionPerformed(arg0);
     }
 
@@ -312,19 +321,7 @@ public class GuiManager extends JFrame implements ActionListener {
         }
     }
 
-    private void drawRoad(int x, int y) {
-        boolean North = game.gameMap.roadAdjacent(x, y - 1); //north
-        boolean South = game.gameMap.roadAdjacent(x, y + 1); //south
-        boolean East = game.gameMap.roadAdjacent(x + 1, y); //east
-        boolean West = game.gameMap.roadAdjacent(x - 1, y); //west
-
-        ImageIcon icon = game.getMap().getTile(x, y).getBuilding().getImage(North, South, East, West);
-
-        boardButtons[x][y].setIcon(icon);
-    }
-
-    private void updateGUI() {
-        final int BORDER_THICKNESS = 1;
+    private void updateBoardButtonIconsAndBorders() {
         final int UPDATE_AREA = 10;
         int xHigh = Math.min(currentX + UPDATE_AREA, MAPSIZE);
         int yHigh = Math.min(currentY + UPDATE_AREA, MAPSIZE);
@@ -333,45 +330,73 @@ public class GuiManager extends JFrame implements ActionListener {
 
         for (int x = xLow; x < xHigh; x++) {
             for (int y = yLow; y < yHigh; y++) {
-                //reset borders
-                boardButtons[x][y].setBorder(UIManager.getBorder("Button.border"));
+                BoardButton buttonBeingUpdated = boardButtons[x][y];
 
                 Tile currentTile = game.gameMap.getTile(x, y);
 
-                //set any borders
                 if (currentTile.hasUnit()) {
                     Unit currentUnit = currentTile.getUnit();
-
-                    boardButtons[x][y].setIcon(currentUnit.getImage());
-                    boardButtons[x][y].setBorder(BorderFactory.createLineBorder(
-                                    currentUnit.getOwner().getColour(), BORDER_THICKNESS));
-                } else if (currentTile.getOwner() != null) {    //tile belongs to a player
-                    if (currentTile.hasBuilding() && currentTile.getBuilding().getType().equals("Road")) {
-                        drawRoad(x, y);
-                    } else {
-                        boardButtons[x][y].setIcon(currentTile.getImage());
-                    }
-                    drawBorder(x, y);
-
-                    if (currentTile.getResource().isInUse()) {
-                        boardButtons[x][y].setBorder(BorderFactory.createLineBorder(
-                                            currentTile.getOwner().getColour(), BORDER_THICKNESS));
-                    }
-                    if (currentTile.hasBuilding() && currentTile.getBuilding().getHasCityConnection()) { //TEMPORARY
-                        boardButtons[x][y].setBorder(BorderFactory.createLineBorder(Color.green, BORDER_THICKNESS));
-                    }
-                    boardButtons[x][y].setBorderPainted(true);
+                    setButtonIconAndBorderUnit(currentUnit, buttonBeingUpdated);
+                } else if (currentTile.hasOwner()) {
+                    setButtonIconAndBorderBuilding(currentTile, buttonBeingUpdated);
+                } else{
+                    buttonBeingUpdated.setBorder(null);
                 }
             }
         }
-        uiTextManager.setComponentText(0, game.getCurrentPlayer().getName() + "'s Turn");
     }
 
-    private void drawBorder(int x, int y) {
-        boardButtons[x][y].setBorder(BorderFactory.createMatteBorder(game.gameMap.borderRequired(x, y, x, y - 1),
+    private void setButtonBorders(Tile currentTile, BoardButton buttonBeingUpdated){
+        final int BORDER_THICKNESS = 1;
+        Color tileOwnersColour = currentTile.getOwner().getColour();
+
+        createBorder(tileOwnersColour, buttonBeingUpdated);
+
+        if (currentTile.getResource().isInUse())
+            buttonBeingUpdated.setBorder(BorderFactory.createLineBorder(tileOwnersColour, BORDER_THICKNESS));
+
+        if (currentTile.hasBuilding() && currentTile.getBuilding().getHasCityConnection())
+            buttonBeingUpdated.setBorder(BorderFactory.createLineBorder(Color.green, BORDER_THICKNESS));
+    }
+
+    private void createBorder(Color tileOwnersColour, BoardButton buttonBeingUpdated) {
+        int x = buttonBeingUpdated.getXCoord();
+        int y = buttonBeingUpdated.getYCoord();
+        buttonBeingUpdated.setBorder(BorderFactory.createMatteBorder(
+                game.gameMap.borderRequired(x, y, x, y - 1),
                 game.gameMap.borderRequired(x, y, x - 1, y),
                 game.gameMap.borderRequired(x, y, x, y + 1),
                 game.gameMap.borderRequired(x, y, x + 1, y),
-                game.getMap().getTile(x, y).getOwner().getColour()));
+                tileOwnersColour));
+    }
+
+    private void drawRoad(BoardButton buttonBeingUpdated) {
+        int x = buttonBeingUpdated.getXCoord();
+        int y = buttonBeingUpdated.getYCoord();
+
+        boolean North = game.gameMap.roadAdjacent(x, y - 1); //north
+        boolean South = game.gameMap.roadAdjacent(x, y + 1); //south
+        boolean East = game.gameMap.roadAdjacent(x + 1, y); //east
+        boolean West = game.gameMap.roadAdjacent(x - 1, y); //west
+
+        ImageIcon icon = game.getMap().getTile(x, y).getBuilding().getImage(North, South, East, West);
+
+        buttonBeingUpdated.setIcon(icon);
+    }
+
+    private void setButtonIconAndBorderBuilding(Tile currentTile, BoardButton buttonBeingUpdated){
+        if (currentTile.hasBuilding() && currentTile.getBuilding().getType().equals("Road")) {
+            drawRoad(buttonBeingUpdated);
+        } else {
+            buttonBeingUpdated.setIcon(currentTile.getImage());
+        }
+
+        setButtonBorders(currentTile, buttonBeingUpdated);
+    }
+
+    private void setButtonIconAndBorderUnit(Unit currentUnit, BoardButton button){
+        final int BORDER_THICKNESS = 1;
+        button.setIcon(currentUnit.getImage());
+        button.setBorder(BorderFactory.createLineBorder(currentUnit.getOwner().getColour(), BORDER_THICKNESS));
     }
 }
