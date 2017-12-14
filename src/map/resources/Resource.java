@@ -5,6 +5,7 @@ import javax.swing.*;
 public class Resource {
     ImageIcon resourceImage;
     boolean isTraversable = true;
+    boolean isHarvestable = false;
     private boolean inUse = false;
     public String type;
 
@@ -26,5 +27,9 @@ public class Resource {
 
     public boolean isTraversable (){
         return isTraversable;
+    }
+
+    public boolean isHarvestable() {
+        return isHarvestable;
     }
 }

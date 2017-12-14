@@ -15,4 +15,29 @@ public class ResourceTypes {
     public static int getNumberOfResourceTypes(){
         return 9;
     }
+
+    public static int getResourceTypeIndex(String type){
+        switch (type){
+            case "Wood":
+                return WOOD;
+            case "Iron":
+                return IRON;
+            case "Gold":
+                return GOLD;
+            case "Coal":
+                return COAL;
+            case "Copper":
+                return COPPER;
+            case "Mountain":
+                return STONE;
+            case "Food":
+                return FOOD;
+            case "Water":
+                return WATER;
+            case "Diamonds":
+                return DIAMONDS;
+            default:
+                return 0;
+        }
+    }
 }

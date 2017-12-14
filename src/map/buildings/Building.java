@@ -10,11 +10,15 @@ public class Building{
     int[] resourceCost = new int[8];
     int borderSize;
     boolean hasCityConnection = false;
-    boolean resourceHarvester = false;
+    boolean harvestableResourceTypes[];
     ArrayList<String> buttonList;
     private int[] resourceHarvestAmount = new int[ResourceTypes.getNumberOfResourceTypes()];
     private boolean visited;
     public String type;
+
+    public boolean canHarvestResourceType(int index){
+        return harvestableResourceTypes[index];
+    }
 
     public int getBorderSize() {
         return borderSize;
@@ -68,6 +72,6 @@ public class Building{
     }
 
     public boolean isResourceHarvester() {
-        return resourceHarvester;
+        return harvestableResourceTypes != null;
     }
 }

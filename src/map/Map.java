@@ -2,6 +2,7 @@ package map;
 
 import main.Game;
 import main.Player;
+import main.ResourceTypes;
 import map.buildings.Building;
 import map.resources.Resource;
 import units.Unit;
@@ -123,43 +124,17 @@ public class Map {
                     return;
                 if (resourceBeingChecked.isInUse())
                     return;
-                calculateAdjacentResources(resourceBeingChecked, building);
+                if (resourceBeingChecked.isHarvestable())
+                    findAdjacentResourceType(resourceBeingChecked, building);
             }
         }
     }
 
-    private void calculateAdjacentResources(Resource resourceTile, Building building) {
-        String type = building.getType();
-        switch(type){
-            case "Lumber Mill":
-                if (resourceTile.getType().equals("Forest")) {
-                    incrementTileResource(0, building, resourceTile);
-                }
-                break;
-            case "Mine":
-                String tempType = resourceTile.getType();
-                switch (tempType) {
-                    case "Iron":
-                        incrementTileResource(1, building, resourceTile);
-                        break;
-                    case "Gold":
-                        incrementTileResource(2, building, resourceTile);
-                        break;
-                    case "Coal":
-                        incrementTileResource(3, building, resourceTile);
-                        break;
-                    case "Copper":
-                        incrementTileResource(4, building, resourceTile);
-                        break;
-                    case "Mountain":
-                        incrementTileResource(5, building, resourceTile);
-                        break;
-                    case "Diamonds":
-                        incrementTileResource(8, building, resourceTile);
-                        break;
-                }
-                break;
-        }
+    private void findAdjacentResourceType(Resource resourceTile, Building building) {
+        String type = resourceTile.getType();
+        int index = ResourceTypes.getResourceTypeIndex(type);
+        if(building.canHarvestResourceType(index))
+            incrementTileResource(index, building, resourceTile);
     }
 
     private void incrementTileResource(int type, Building building, Resource resourceTile){

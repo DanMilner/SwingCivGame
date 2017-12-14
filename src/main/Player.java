@@ -65,7 +65,7 @@ public class Player {
 	}
 
     void resetResources() {
-        for (int type = 0; type < 7; type++) {
+        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
             setResource(type, 0);
         }
     }

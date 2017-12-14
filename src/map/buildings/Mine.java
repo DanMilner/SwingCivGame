@@ -10,7 +10,14 @@ public class Mine extends Building {
         this.type = "Mine";
         this.resourceCost[ResourceTypes.WOOD] = 2; //2 wood
         this.borderSize = 1;
-        this.resourceHarvester = true;
+        this.harvestableResourceTypes = new boolean[ResourceTypes.getNumberOfResourceTypes()];
+
+        this.harvestableResourceTypes[ResourceTypes.STONE] = true;
+        this.harvestableResourceTypes[ResourceTypes.IRON] = true;
+        this.harvestableResourceTypes[ResourceTypes.COPPER] = true;
+        this.harvestableResourceTypes[ResourceTypes.GOLD] = true;
+        this.harvestableResourceTypes[ResourceTypes.COAL] = true;
+        this.harvestableResourceTypes[ResourceTypes.DIAMONDS] = true;
     }
 }
 
