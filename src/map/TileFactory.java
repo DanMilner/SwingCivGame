@@ -51,6 +51,8 @@ class TileFactory {
                 return new Copper();
             case "Coal":
                 return new Coal();
+            case "Diamonds":
+                return new Diamonds();
         }
         return null;
     }

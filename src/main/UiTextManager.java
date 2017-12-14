@@ -10,7 +10,7 @@ class UiTextManager {
     UiTextManager(JPanel panelUIContent){
         panelUIContent.setLayout(null);
 
-        for(int i = 0; i < 17; i++){
+        for(int i = 0; i < UIComponents.length; i++){
             UIComponents[i] = new JLabel();
             panelUIContent.add(UIComponents[i]);
             UIComponents[i].setVisible(true);
@@ -56,6 +56,11 @@ class UiTextManager {
         UIComponents[16].setBounds(1210, 10, 50, 50);
         icon = new ImageIcon("textures\\terrain\\farmFood.jpg");
         UIComponents[16].setIcon(icon);
+
+        UIComponents[17].setBounds(1270, 80, 250, 20);
+        UIComponents[18].setBounds(1210, 65, 50, 50);
+        icon = new ImageIcon("textures\\terrain\\diamonds.png");
+        UIComponents[18].setIcon(icon);
     }
 
     void updateUI(Player currentPlayer){
@@ -66,6 +71,7 @@ class UiTextManager {
         UIComponents[11].setText("Copper x " + currentPlayer.getResource(4));
         UIComponents[13].setText("Stone x " + currentPlayer.getResource(5));
         UIComponents[15].setText("Food x " + currentPlayer.getResource(6));
+        UIComponents[17].setText("Diamonds x " + currentPlayer.getResource(8));
         UIComponents[0].setText(currentPlayer.getName() + "'s Turn");
     }
 

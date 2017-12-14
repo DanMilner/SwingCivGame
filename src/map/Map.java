@@ -154,6 +154,9 @@ public class Map {
                     case "Mountain":
                         incrementTileResource(5, building, resourceTile);
                         break;
+                    case "Diamonds":
+                        incrementTileResource(8, building, resourceTile);
+                        break;
                 }
                 break;
         }

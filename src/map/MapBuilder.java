@@ -105,6 +105,11 @@ class MapBuilder {
         randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
         randomValues.setIntensity(5, MAPSIZE / 6);
         addResource(randomValues,"Coal");
+
+        //add Diamonds
+        randomValues.setAmount(MAPSIZE / 6, MAPSIZE / 4);
+        randomValues.setIntensity(2, 6);
+        addResource(randomValues,"Diamonds");
     }
 
     private void generateTilesInBodies(int xCoord, int yCoord, int intensity, String tileType){

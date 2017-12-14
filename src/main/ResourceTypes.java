@@ -9,8 +9,10 @@ public class ResourceTypes {
     public static final int STONE = 5;
     public static final int FOOD = 6;
     public static final int WATER = 7;
+    public static final int DIAMONDS = 8;
+
 
     public static int getNumberOfResourceTypes(){
-        return 8;
+        return 9;
     }
 }
