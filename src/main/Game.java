@@ -147,8 +147,7 @@ public class Game {
 
         Unit tempUnit = gameMap.getUnit(x, y);
 
-        if (!gameMap.constructAndSetBuildingTile(buttonText, x, y, currentPlayer))
-            System.out.println(buttonText + " not built");
+        gameMap.constructAndSetBuildingTile(buttonText, x, y, currentPlayer);
 
         if(buttonText.equals("Road")){
             gameMap.setUnit(x,y,tempUnit);

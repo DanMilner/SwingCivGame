@@ -209,6 +209,7 @@ public class Map {
                 }
             }
         }
+        System.out.println("Cannot build dock. There is no water nearby");
         return false;
     }
 
@@ -218,19 +219,24 @@ public class Map {
                 return false;
         }
         Tile candidateTile = currentMap[xCoord][yCoord];
-        //tile must be in nature or the current players territory.
-        if(candidateTile.getOwner() == null && candidateTile.getOwner() == owner)
+        if(candidateTile.getOwner() == null && candidateTile.getOwner() == owner) {
+            System.out.println("Cannot build " + type + ". Cannot build in another players territory");
             return false;
-        //cannot build onto of another building unless it is a road.
-        if(candidateTile.hasBuilding() && !candidateTile.getBuilding().getType().equals("Road"))
+        }
+        if(candidateTile.hasBuilding() && !candidateTile.getBuilding().getType().equals("Road")) {
+            System.out.println("Cannot build " + type + ". Cannot build on top of another building");
             return false;
-        //cannot build on top of resources currently being harvested.
-        return !candidateTile.getResource().isInUse();
+        }
+        if(candidateTile.getResource().isInUse()){
+            System.out.println("Cannot build " + type + ". Cannot build on top of a resource being harvested");
+            return false;
+        }
+        return true;
     }
 
-    public boolean constructAndSetBuildingTile(String type, int x, int y, Player owner){
+    public void constructAndSetBuildingTile(String type, int x, int y, Player owner){
         if(!isConstructionPossible(type, x, y, owner))
-            return false;
+            return;
 
         Building newBuilding = TileFactory.buildBuildingTile(type);
         assert newBuilding != null;
@@ -238,8 +244,9 @@ public class Map {
         int borderSize = newBuilding.getBorderSize();
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
 
-        if(!type.equals("Wheat"))
-            killUnitAndRefundCost(x,y);
+        if(!type.equals("Wheat") && !type.equals("Road")) {
+            killUnitAndRefundCost(x, y);
+        }
 
         currentMap[x][y].setBuilding(newBuilding);
 
@@ -254,6 +261,5 @@ public class Map {
         }
 
         System.out.println(type + " spawned at " + x + " " + y);
-        return true;
     }
 }
