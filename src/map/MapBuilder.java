@@ -4,11 +4,11 @@ import map.resources.Resource;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-class randomDirectionResult{
+class RandomDirectionResult {
     private final int xCoord;
     private final int yCoord;
 
-    randomDirectionResult(int xCoord, int yCoord){
+    RandomDirectionResult(int xCoord, int yCoord){
         this.xCoord = xCoord;
         this.yCoord = yCoord;
     }
@@ -19,6 +19,32 @@ class randomDirectionResult{
 
     public int getyCoord() {
         return yCoord;
+    }
+}
+
+class RandomValues {
+    private int amount;
+    private int intensity;
+
+
+    public void setAmount(int min, int max) {
+        this.amount = ThreadLocalRandom.current().nextInt(min, max);
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setIntensity(int min, int max) {
+        this.intensity = ThreadLocalRandom.current().nextInt(min, max);
+    }
+
+    public int getIntensity() {
+        return intensity;
+    }
+
+    public int getRandomCoordinate(int mapsize){
+        return ThreadLocalRandom.current().nextInt(0, mapsize);
     }
 }
 
@@ -40,41 +66,45 @@ class MapBuilder {
     }
 
     public void setUpTerrain(){
+        RandomValues randomValues = new RandomValues();
         //add trees
-        addTrees(ThreadLocalRandom.current().nextInt(MAPSIZE * 12, MAPSIZE * 15));
+        randomValues.setAmount(MAPSIZE * 2, MAPSIZE * 3);
+        randomValues.setIntensity(3, 10);
+        addResource(randomValues, "Forest");
 
         addSnow();
 
         addSand();
 
         //add Water
-        addWater(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 5),
-                 ThreadLocalRandom.current().nextInt(MAPSIZE / 2, MAPSIZE * 2));
+        randomValues.setAmount(MAPSIZE / 10, MAPSIZE / 5);
+        randomValues.setIntensity(MAPSIZE / 2, MAPSIZE * 2);
+        addWater(randomValues);
 
         //add Mountains
-        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 11, MAPSIZE / 7),
-                    ThreadLocalRandom.current().nextInt(MAPSIZE / 4, MAPSIZE),
-                    "Mountain");
+        randomValues.setAmount(MAPSIZE / 10, MAPSIZE / 6);
+        randomValues.setIntensity(MAPSIZE, MAPSIZE * 2);
+        addResource(randomValues,"Mountain");
 
         //add Iron
-        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 4, MAPSIZE / 3),
-                    ThreadLocalRandom.current().nextInt(3, MAPSIZE / 10),
-                    "Iron");
+        randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
+        randomValues.setIntensity(5, MAPSIZE / 6);
+        addResource(randomValues,"Iron");
 
         //add Gold
-        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 10, MAPSIZE / 7),
-                    ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
-                    "Gold");
+        randomValues.setAmount(MAPSIZE / 8, MAPSIZE / 5);
+        randomValues.setIntensity(5, MAPSIZE / 6);
+        addResource(randomValues,"Gold");
 
         //add Copper
-        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 7, MAPSIZE / 6),
-                    ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
-                    "Copper");
+        randomValues.setAmount(MAPSIZE / 7, MAPSIZE / 5);
+        randomValues.setIntensity(5, MAPSIZE / 6);
+        addResource(randomValues,"Copper");
 
         //add Coal
-        addResource(ThreadLocalRandom.current().nextInt(MAPSIZE / 5, MAPSIZE / 4),
-                    ThreadLocalRandom.current().nextInt(2, MAPSIZE / 10),
-                    "Coal");
+        randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
+        randomValues.setIntensity(5, MAPSIZE / 6);
+        addResource(randomValues,"Coal");
     }
 
     private void generateTilesInBodies(int xCoord, int yCoord, int intensity, String tileType){
@@ -82,7 +112,7 @@ class MapBuilder {
         int originY = yCoord;
         int numberOfTilesGenerated = 0;
         do {
-            randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
+            RandomDirectionResult directionResult = randomDirection(xCoord,yCoord);
             xCoord = directionResult.getxCoord();
             yCoord = directionResult.getyCoord();
             if(coordinatesOnMap(xCoord, yCoord)){
@@ -125,30 +155,20 @@ class MapBuilder {
         }
     }
 
-    private void addTrees(int amount){
-        int xCoord;
-        int yCoord;
-        do{
-            xCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-            yCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-
-            constructResourceTile("Forest", xCoord, yCoord);
-            amount--;
-        }while (amount > 0);
-    }
-
-    private void addResource(int amount, int intensity, String type) {
+    private void addResource(RandomValues randomValues, String type) {
+        int amount = randomValues.getAmount();
+        int intensity = randomValues.getIntensity();
         int xCoord;
         int yCoord;
 
         for (int y = 0; y < amount; y++) {
             do {
-                xCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
-                yCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
+                xCoord = randomValues.getRandomCoordinate(MAPSIZE);
+                yCoord = randomValues.getRandomCoordinate(MAPSIZE);
             } while (map[xCoord][yCoord].getResource().getType().equals("Water"));
 
             for (int i = 0; i < intensity; i++) {
-                randomDirectionResult directionResult = randomDirection(xCoord,yCoord);
+                RandomDirectionResult directionResult = randomDirection(xCoord,yCoord);
                 xCoord = directionResult.getxCoord();
                 yCoord = directionResult.getyCoord();
                 if(coordinatesOnMap(xCoord,yCoord))
@@ -157,19 +177,21 @@ class MapBuilder {
         }
     }
 
-    private void addWater(int numberOfWaterBodies, int intensity) {
+    private void addWater(RandomValues amountAndIntensity) {
+        int numberOfWaterBodies = amountAndIntensity.getAmount();
+        int intensity = amountAndIntensity.getIntensity();
         int xCoord;
         int yCoord;
 
         for (int i = 0; i < numberOfWaterBodies; i++) {
-            xCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
-            yCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
+            xCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
+            yCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
 
             generateTilesInBodies(xCoord, yCoord, intensity, "Water");
         }
     }
 
-    private randomDirectionResult randomDirection(int xCoord, int yCoord){
+    private RandomDirectionResult randomDirection(int xCoord, int yCoord){
         int direction = ThreadLocalRandom.current().nextInt(1, 5);
 
         if (direction == 1) { //North
@@ -181,7 +203,7 @@ class MapBuilder {
         } else if (direction == 4) { //West
             xCoord--;
         }
-        return new randomDirectionResult(xCoord,yCoord);
+        return new RandomDirectionResult(xCoord,yCoord);
     }
 
     private boolean coordinatesOnMap(int x, int y){
