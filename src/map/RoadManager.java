@@ -1,5 +1,6 @@
 package map;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 class RoadManager {
@@ -47,7 +48,7 @@ class RoadManager {
         }
     }
 
-    boolean roadAdjacent(int x, int y) {
+    private boolean roadAdjacent(int x, int y) {
         for (Tile road: Roads) {
             if(road.xCoord == x && road.yCoord == y)
                 return true;
@@ -65,5 +66,16 @@ class RoadManager {
         }else{
             addRoad(newBuilding);
         }
+    }
+
+    public ImageIcon getRoadImage(Tile roadTile) {
+        int x = roadTile.xCoord;
+        int y = roadTile.yCoord;
+        boolean North = roadAdjacent(x, y - 1); //north
+        boolean South = roadAdjacent(x, y + 1); //south
+        boolean East = roadAdjacent(x + 1, y); //east
+        boolean West = roadAdjacent(x - 1, y); //west
+
+        return roadTile.getBuilding().getImage(North,South,East,West);
     }
 }

@@ -34,6 +34,10 @@ public class Tile {
         return building;
     }
 
+    public boolean hasRoad(){
+        return hasBuilding() && building.type.equals("Road");
+    }
+
     public boolean hasOwner(){
         return owner != null;
     }
@@ -80,5 +84,9 @@ public class Tile {
         if(hasBuilding())
             return building.getImage();
         return resource.getImage();
+    }
+
+    public boolean hasBuildingWithCityConnection(){
+        return building != null && building.getHasCityConnection();
     }
 }

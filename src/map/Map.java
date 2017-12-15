@@ -7,6 +7,7 @@ import map.buildings.Building;
 import map.resources.Resource;
 import units.Unit;
 
+import javax.swing.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Map {
@@ -65,7 +66,7 @@ public class Map {
     }
 
     public int borderRequired(int currentX, int currentY, int adjacentX, int adjacentY){
-        final int BORDER_REQUIRED = 2;
+        final int BORDER_REQUIRED = 3;
         final int BORDER_NOT_REQUIRED = 0;
 
         if (!coordinatesOnMap(adjacentX,adjacentY)) {
@@ -76,10 +77,6 @@ public class Map {
         } else {
             return BORDER_NOT_REQUIRED;
         }
-    }
-
-    public boolean roadAdjacent(int x, int y) {
-        return coordinatesOnMap(x, y) && roadManager.roadAdjacent(x, y);
     }
 
     public Tile getTile(int x, int y) {
@@ -239,5 +236,12 @@ public class Map {
         }
 
         System.out.println(type + " spawned at " + x + " " + y);
+    }
+
+    public ImageIcon getTileImage(int x, int y) {
+        Tile currentTile = currentMap[x][y];
+        if(currentTile.hasRoad())
+            return roadManager.getRoadImage(currentTile);
+        return currentTile.getImage();
     }
 }

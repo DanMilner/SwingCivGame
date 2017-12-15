@@ -5,6 +5,7 @@ import map.Tile;
 import map.buildings.Building;
 import units.Unit;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -110,7 +111,13 @@ public class Game {
     }
 
     void buttonClicked(ButtonData data) {
-        if(data.getType().equals("City")){
+        String type;
+        if(data.isUnitSelected()) {
+            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getUnit().getType();
+        }else{
+            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getBuilding().getType();
+        }
+        if(type.equals("City")){
             createUnit(data);
         }else{
             createBuilding(data);
@@ -153,5 +160,9 @@ public class Game {
             gameMap.setUnit(x,y,tempUnit);
         }
         calculateResources(currentPlayer);
+    }
+
+    public ImageIcon getTileImage(int xCoord, int yCoord) {
+        return gameMap.getTileImage(xCoord, yCoord);
     }
 }
