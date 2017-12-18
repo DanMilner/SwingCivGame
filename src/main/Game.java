@@ -172,4 +172,8 @@ public class Game {
     public ImageIcon getTileImage(int xCoord, int yCoord) {
         return gameMap.getTileImage(xCoord, yCoord);
     }
+
+    public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
+        return gameMap.getTileButtonList(unitSelected, currentX, currentY);
+    }
 }

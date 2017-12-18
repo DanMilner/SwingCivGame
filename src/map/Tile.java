@@ -6,6 +6,7 @@ import map.resources.Resource;
 import units.Unit;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class Tile {
     // Instance variables.
@@ -88,5 +89,11 @@ public class Tile {
 
     public boolean hasBuildingWithCityConnection(){
         return building != null && building.getHasCityConnection();
+    }
+
+    public ArrayList<String> getButtonList(boolean unitSelected) {
+        if(unitSelected)
+            return unit.getButtonList();
+        return building.getButtonList();
     }
 }

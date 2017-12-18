@@ -160,14 +160,8 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void setButtonText() {
-        ArrayList<String> buttonsToBuild;
-        if (unitSelected) {
-            buttonsToBuild = game.getMap().getUnit(currentX, currentY).getButtonList();
-        } else {
-            buttonsToBuild = game.getMap().getTile(currentX, currentY).getBuilding().getButtonList();
-        }
-        if (buttonsToBuild == null)
-            return;
+        ArrayList<String> buttonsToBuild = game.getTileButtonList(unitSelected, currentX, currentY);
+
         int index = 0;
         for (String button : buttonsToBuild) {
             uiButtons.get(index).setText(button);

@@ -9,6 +9,7 @@ import map.resources.Resource;
 import units.Unit;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Map {
@@ -260,5 +261,9 @@ public class Map {
         if(currentTile.hasRoad())
             return roadManager.getRoadImage(currentTile);
         return currentTile.getImage();
+    }
+
+    public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
+        return currentMap[currentX][currentY].getButtonList(unitSelected);
     }
 }
