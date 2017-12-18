@@ -151,8 +151,7 @@ public class Map {
     }
 
     public Unit constructUnit(String type, Player owner) throws TypeNotFound {
-            return UnitFactory.buildUnit(type,owner);
-
+        return UnitFactory.buildUnit(type,owner);
     }
 
     private void killUnitAndRefundCost(int x, int y) {
@@ -169,9 +168,12 @@ public class Map {
                 if(coordinatesOnMap(x,y)){
                     if (currentMap[x][y].getResource().getType().equals("Grass")) {
                         Unit unitOnTile = currentMap[x][y].getUnit();
+
                         constructAndSetBuildingTile("Wheat", x, y, owner);
+
                         if(unitOnTile != null)
                             setUnit(x, y, unitOnTile);
+
                         currentMap[xCoord][yCoord].getBuilding().increaseResourceHarvestAmount(6);
                         currentMap[x][y].getResource().setInUse();
                     }
@@ -218,10 +220,17 @@ public class Map {
     }
 
     public void constructAndSetBuildingTile(String type, int x, int y, Player owner){
+
         if(!isConstructionPossible(type, x, y, owner))
             return;
 
-        Building newBuilding = createBuildingTile(type);
+        Building newBuilding;
+        try {
+            newBuilding = createBuildingTile(type);
+        }catch (TypeNotFound typeNotFound){
+            typeNotFound.printStackTrace();
+            return;
+        }
 
         int borderSize = newBuilding.getBorderSize();
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
@@ -245,13 +254,8 @@ public class Map {
         System.out.println(type + " spawned at " + x + " " + y);
     }
 
-    private Building createBuildingTile(String type){
-        try {
-            return TileFactory.buildBuildingTile(type);
-        } catch (TypeNotFound buildingTypeNotFound) {
-            buildingTypeNotFound.printStackTrace();
-        }
-        return null;
+    private Building createBuildingTile(String type) throws TypeNotFound {
+        return TileFactory.buildBuildingTile(type);
     }
 
     public ImageIcon getTileImage(int x, int y) {
