@@ -240,6 +240,8 @@ public class Map {
 
     public ImageIcon getTileImage(int x, int y) {
         Tile currentTile = currentMap[x][y];
+        if(currentTile.hasUnit())
+            return currentTile.getImage();
         if(currentTile.hasRoad())
             return roadManager.getRoadImage(currentTile);
         return currentTile.getImage();
