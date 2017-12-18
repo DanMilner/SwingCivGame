@@ -1,5 +1,6 @@
 package main;
 
+import exceptions.TypeNotFound;
 import map.Map;
 import map.Tile;
 import map.buildings.Building;
@@ -34,7 +35,7 @@ public class Game {
 
     private void giveStartingResources(Player player) {
         for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            player.increaseResource(type, 20);
+            player.increaseResource(type, 200);
         }
         //resources needed for starting city
         player.increaseResource(ResourceTypes.WOOD, 20);
@@ -65,7 +66,7 @@ public class Game {
 
     private boolean isTileAvailable(int x, int y) {
         Tile tile = gameMap.getTile(x,y);
-        return !tile.hasUnit() && tile.getOwner() == currentPlayer;
+        return !tile.hasUnit() && tile.isTraversable() && tile.getOwner() == currentPlayer;
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
@@ -80,8 +81,8 @@ public class Game {
                 && !destinationTile.hasUnit();
     }
 
-    boolean checkAvailableResources(String type) {
-        return gameMap.checkCost(type, currentPlayer);
+    boolean checkAvailableResources(String type, Boolean unitCheck) {
+        return gameMap.checkCost(type, currentPlayer, unitCheck);
     }
 
     void moveUnit(int oldX, int oldY, int newX, int newY) {
@@ -128,7 +129,13 @@ public class Game {
         String buttonText = data.getText();
         int x = data.getCurrentX();
         int y = data.getCurrentY();
-        Unit newUnit = gameMap.constructUnit(buttonText, currentPlayer);
+        Unit newUnit;
+        try{
+            newUnit = gameMap.constructUnit(buttonText, currentPlayer);
+        } catch (TypeNotFound typeNotFound) {
+            typeNotFound.printStackTrace();
+            return;
+        }
 
         if (isTileAvailable(x + 1, y)) {
             gameMap.setUnit(x + 1, y, newUnit);

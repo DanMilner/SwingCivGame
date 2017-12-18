@@ -1,11 +1,12 @@
 package map;
 
+import exceptions.TypeNotFound;
 import map.buildings.*;
 import map.resources.*;
 
 class TileFactory {
 
-    static Building buildBuildingTile(String type) {
+    static Building buildBuildingTile(String type) throws TypeNotFound {
         switch (type){
             case "Tower":
                 return new Tower();
@@ -26,10 +27,10 @@ class TileFactory {
             case "Road":
                 return new Road();
         }
-        return null;
+        throw new TypeNotFound("There is no building of type: " + type);
     }
 
-    static Resource buildResourceTile(String type) {
+    static Resource buildResourceTile(String type) throws TypeNotFound {
         switch (type){
             case "Forest":
                 return new Forest();
@@ -54,6 +55,6 @@ class TileFactory {
             case "Diamonds":
                 return new Diamonds();
         }
-        return null;
+        throw new TypeNotFound("There is no resource of type: " + type);
     }
 }

@@ -1,5 +1,6 @@
 package map;
 
+import exceptions.TypeNotFound;
 import main.Game;
 import main.Player;
 import main.ResourceTypes;
@@ -27,7 +28,7 @@ public class Map {
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
-                    if (currentMap[x][y].getOwner() == null) {
+                    if (!currentMap[x][y].hasOwner()) {
                         currentMap[x][y].setOwner(owner);
                     }
                 }
@@ -47,7 +48,7 @@ public class Map {
                 for (int x = xCoord - CITY_BORDER_SIZE; x <= xCoord + CITY_BORDER_SIZE; x++) {
                     for (int y = yCoord - CITY_BORDER_SIZE; y <= yCoord + CITY_BORDER_SIZE; y++) {
                         if(coordinatesOnMap(x,y)){
-                            if (currentMap[x][y].getOwner() != null) {
+                            if (currentMap[x][y].hasOwner()) {
                                 placeCity = false; //if a tile is owned by another player then the cities are too close together
                             }
                         }
@@ -92,16 +93,21 @@ public class Map {
         currentMap[oldX][oldY].setUnit(null);
     }
 
-    public boolean checkCost (String type, Player owner){
+    public boolean checkCost (String type, Player owner, Boolean unitCheck){
         final int RESOURCE_TYPES = 8;
         int[] resourceCost;
-        Building buildingType = TileFactory.buildBuildingTile(type);
-        if(buildingType == null){
-            Unit unitType = UnitFactory.buildUnit(type, null);
-            assert unitType != null;
-            resourceCost = unitType.getResourceCost();
-        }else{
-            resourceCost = buildingType.getResourceCost();
+
+        try{
+            if(!unitCheck){
+                Unit unitType = UnitFactory.buildUnit(type, null);
+                resourceCost = unitType.getResourceCost();
+            }else {
+                Building buildingType = TileFactory.buildBuildingTile(type);
+                resourceCost = buildingType.getResourceCost();
+            }
+        } catch (TypeNotFound typeNotFound) {
+            typeNotFound.printStackTrace();
+            return false;
         }
 
         for (int i = 0; i < RESOURCE_TYPES; i++) {
@@ -143,8 +149,9 @@ public class Map {
         this.currentMap[x][y].setUnit(newUnit);
     }
 
-    public Unit constructUnit(String type, Player owner) {
-        return UnitFactory.buildUnit(type,owner);
+    public Unit constructUnit(String type, Player owner) throws TypeNotFound {
+            return UnitFactory.buildUnit(type,owner);
+
     }
 
     private void killUnitAndRefundCost(int x, int y) {
@@ -194,7 +201,7 @@ public class Map {
                 return false;
         }
         Tile candidateTile = currentMap[xCoord][yCoord];
-        if(candidateTile.getOwner() == null && candidateTile.getOwner() == owner) {
+        if(!candidateTile.hasOwner() && candidateTile.getOwner() == owner) {
             System.out.println("Cannot build " + type + ". Cannot build in another players territory");
             return false;
         }
@@ -213,8 +220,7 @@ public class Map {
         if(!isConstructionPossible(type, x, y, owner))
             return;
 
-        Building newBuilding = TileFactory.buildBuildingTile(type);
-        assert newBuilding != null;
+        Building newBuilding = createBuildingTile(type);
 
         int borderSize = newBuilding.getBorderSize();
         setTileOwner(x-borderSize, x+borderSize, y-borderSize, y+borderSize, owner);
@@ -236,6 +242,15 @@ public class Map {
         }
 
         System.out.println(type + " spawned at " + x + " " + y);
+    }
+
+    private Building createBuildingTile(String type){
+        try {
+            return TileFactory.buildBuildingTile(type);
+        } catch (TypeNotFound buildingTypeNotFound) {
+            buildingTypeNotFound.printStackTrace();
+        }
+        return null;
     }
 
     public ImageIcon getTileImage(int x, int y) {

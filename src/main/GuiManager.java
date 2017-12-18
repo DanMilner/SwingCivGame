@@ -179,7 +179,7 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void colourUIButtons(int index, String type) {
-        if (game.checkAvailableResources(type)) {
+        if (game.checkAvailableResources(type, unitSelected)) {
             uiButtons.get(index).setBackground(Color.white);
             uiButtons.get(index).setEnabled(true);
         } else {

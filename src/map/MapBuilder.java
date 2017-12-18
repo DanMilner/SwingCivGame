@@ -1,5 +1,6 @@
 package map;
 
+import exceptions.TypeNotFound;
 import map.resources.Resource;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -216,8 +217,12 @@ class MapBuilder {
     }
 
     private void constructResourceTile(String type, int x, int y){
-        Resource newResource = TileFactory.buildResourceTile(type);
-        map[x][y].setResource(newResource);
-        System.out.println(type + " spawned at " + x + " " + y);
+        try{
+            Resource newResource = TileFactory.buildResourceTile(type);
+            map[x][y].setResource(newResource);
+            System.out.println(type + " spawned at " + x + " " + y);
+        } catch (TypeNotFound typeNotFound) {
+            typeNotFound.printStackTrace();
+        }
     }
 }
