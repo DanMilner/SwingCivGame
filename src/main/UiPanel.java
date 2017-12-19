@@ -1,4 +1,5 @@
 package main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -6,22 +7,22 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class BoardPanel extends JPanel {
+public class UiPanel extends JPanel {
 
-    BoardPanel(int MAPSIZE) {
+    UiPanel(){
         this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(MAPSIZE*50, MAPSIZE*50));
+        this.setPreferredSize(new Dimension(1950, 125));
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        BufferedImage imageTop = null;
+        BufferedImage backgroundImage = null;
         try {
-            imageTop = ImageIO.read(new File("textures\\backgrounds\\OldMap4.jpg"));
+            backgroundImage = ImageIO.read(new File("textures\\backgrounds\\UI_texture.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         super.paintComponent(g);
-        g.drawImage(imageTop, 0, 0, null);
+        g.drawImage(backgroundImage, 0, 0, null);
     }
 }

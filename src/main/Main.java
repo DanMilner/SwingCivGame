@@ -10,11 +10,7 @@ public class Main {
 //		GuiManager GUI = new GuiManager(game);
 
 		SwingUtilities.invokeLater(() -> {
-            try {
-                new GuiManager(game);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            new GuiManager(game);
         });
 	}
 }

@@ -2,19 +2,10 @@ package main;
 
 import map.Tile;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.*;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;    // Using Swing components and containers
 
 
 @SuppressWarnings("serial")
@@ -29,49 +20,19 @@ public class GuiManager extends JFrame implements ActionListener {
     private UiTextManager uiTextManager;
     private boolean unitSelected = false;
 
-    GuiManager(Game game) throws IOException {
+    GuiManager(Game game) {
         this.game = game;
         BoardPanel boardPanel = new BoardPanel(MAPSIZE);
-        JPanel uiPanel = createAndSetUpUI();
-
-        createBoardButtons(boardPanel);
-
-        createAndSetupFrameAndScrollPane(uiPanel, boardPanel);
-
-        uiTextManager.updateUI(game.getCurrentPlayer());
-    }
-
-    private JPanel createAndSetUpUI() throws IOException {
-        BufferedImage backgroundImage = ImageIO.read(new File("textures\\backgrounds\\UI_texture.png"));
-        JPanel uiPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(backgroundImage, 0, 0, null);
-            }
-        };
+        UiPanel uiPanel = new UiPanel();
         uiTextManager = new UiTextManager(uiPanel);
-
-        uiPanel.setLayout(new BorderLayout());
-        uiPanel.setPreferredSize(new Dimension(1950, 125));
 
         createUIButtons(uiPanel);
 
-        return uiPanel;
-    }
+        createBoardButtons(boardPanel);
 
-    private void createAndSetupFrameAndScrollPane(JPanel uiPanel, BoardPanel boardPanel) {
-        JScrollPane scrollPane = new JScrollPane(boardPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        FrameHandler.createAndSetupFrameAndScrollPane(uiPanel, boardPanel);
 
-        JFrame frame = new JFrame("Civ like game");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-        frame.add(scrollPane, BorderLayout.CENTER);
-        frame.add(uiPanel, BorderLayout.SOUTH);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
+        uiTextManager.updateUI(game.getCurrentPlayer());
     }
 
     private void createUIButtons(JPanel uiPanel) {
@@ -85,7 +46,7 @@ public class GuiManager extends JFrame implements ActionListener {
         int yPosition = FIRST_ROW;
 
         JButton endTurn = new JButton("End Turn");
-        endTurn.setBounds(1050, 25, 150, 80);
+        endTurn.setBounds(1830, 0, 90, 125);
         endTurn.addActionListener(arg0 -> {
             game.swapPlayers();
             unitSelected = false;
@@ -95,12 +56,13 @@ public class GuiManager extends JFrame implements ActionListener {
         });
         uiPanel.add(endTurn, BorderLayout.LINE_END);
 
+
         for (int i = 0; i < 8; i++) {
             uiButtons.add(new JButton());
             uiButtons.get(i).setBounds(xPosition, yPosition, 110, 50);
             uiButtons.get(i).setVisible(false);
             uiButtons.get(i).setBackground(Color.white);
-            uiPanel.add(uiButtons.get(i));
+            uiPanel.add(uiButtons.get(i), BorderLayout.CENTER);
             xPosition = xPosition + COLUMN_OFFSET;
             if (xPosition > LAST_COLUMN) {
                 yPosition = LAST_ROW;
@@ -329,13 +291,12 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord) {
-        if (game.isValidMove(currentX, currentY, buttonXCoord, buttonYCoord)) {
-            game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord);
+        if (game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord)) {
             boardButtons[currentX][currentY].setIcon(game.getTileImage(buttonXCoord, buttonYCoord));
+            unitSelected = false;
+            updateBoardButtonIconsAndBorders();
+            actionPerformed(arg0);
         }
-        unitSelected = false;
-        updateBoardButtonIconsAndBorders();
-        actionPerformed(arg0);
     }
 
     private void performTileAction(int buttonXCoord, int buttonYCoord, Tile tileClicked) {
@@ -362,5 +323,21 @@ public class GuiManager extends JFrame implements ActionListener {
                 }
             }
         }
+    }
+}
+
+class FrameHandler{
+    public static void createAndSetupFrameAndScrollPane(JPanel uiPanel, BoardPanel boardPanel) {
+        JScrollPane scrollPane = new JScrollPane(boardPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JFrame frame = new JFrame("Civ like game");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(uiPanel, BorderLayout.SOUTH);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
     }
 }
