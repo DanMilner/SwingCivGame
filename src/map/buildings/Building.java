@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Building{
     ImageIcon buildingImage;
-    int[] resourceCost = new int[8];
+    int[] resourceCost = new int[ResourceTypes.getNumberOfResourceTypes()];
     int borderSize;
     boolean hasCityConnection = false;
     boolean harvestableResourceTypes[];

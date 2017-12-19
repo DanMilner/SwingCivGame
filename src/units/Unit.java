@@ -1,9 +1,9 @@
 package units;
 
-import javax.swing.ImageIcon;
-
 import main.Player;
+import main.ResourceTypes;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Unit {
@@ -13,7 +13,7 @@ public class Unit {
 	ImageIcon imageIcon;
 	String type;
 	private Player owner;
-	int[] resourceCost = new int[8];
+	int[] resourceCost = new int[ResourceTypes.getNumberOfResourceTypes()];
 	ArrayList<String> buttonList;
 
 	Unit(Player owner)

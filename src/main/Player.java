@@ -1,10 +1,10 @@
 package main;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
 import map.buildings.Building;
 import units.Unit;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 
 public class Player {
@@ -12,14 +12,14 @@ public class Player {
 	private Color colour;
     private ArrayList<Building> buildings;
 	private ArrayList<Unit> units;
-
-	private int[] resources = new int[ResourceTypes.getNumberOfResourceTypes()];
+	private int[] resources;
 	
 	public Player(String name, Color colour){
 		this.name = name;
 		this.colour = colour;
         buildings = new ArrayList<>();
         units = new ArrayList<>();
+		resources = new int[ResourceTypes.getNumberOfResourceTypes()];
 	}
 
 	ArrayList<Building> getBuildings(){
@@ -72,7 +72,7 @@ public class Player {
 
     public void refundUnitCost(Unit deadUnit) {
 		int[] resourceCost = deadUnit.getResourceCost();
-	    for (int type= 0; type<7;type++){
+	    for (int type= 0; type < ResourceTypes.getNumberOfResourceTypes();type++){
 	        increaseResource(type, resourceCost[type]);
         }
         units.remove(deadUnit);

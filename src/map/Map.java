@@ -95,7 +95,6 @@ public class Map {
     }
 
     public boolean checkCost (String type, Player owner, Boolean unitCheck){
-        final int RESOURCE_TYPES = 8;
         int[] resourceCost;
 
         try{
@@ -111,7 +110,7 @@ public class Map {
             return false;
         }
 
-        for (int i = 0; i < RESOURCE_TYPES; i++) {
+        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
             if (resourceCost[i] > owner.getResource(i)) {
                 return false;
             }
