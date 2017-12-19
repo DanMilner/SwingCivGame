@@ -85,13 +85,17 @@ public class Game {
         return gameMap.checkCost(type, currentPlayer, unitCheck);
     }
 
-    void moveUnit(int oldX, int oldY, int newX, int newY) {
+    boolean moveUnit(int oldX, int oldY, int newX, int newY) {
+        if(!isValidMove(oldX, oldY, newX, newY))
+            return false;
+
         Unit unitBeingMoved = gameMap.getUnit(oldX, oldY);
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); // distance moved on x axis
         int remainingMoves = unitBeingMoved.getRemainingMoves() - yDistance - xDistance;
         unitBeingMoved.setRemainingMoves(remainingMoves);
         gameMap.moveUnit(oldX, oldY, newX, newY);
+        return true;
     }
 
     private void calculateResources(Player player) {
