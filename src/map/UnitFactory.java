@@ -4,9 +4,8 @@ import exceptions.TypeNotFound;
 import main.Player;
 import units.*;
 
-class UnitFactory {
-
-    static Unit buildUnit(String type, Player owner) throws TypeNotFound {
+public class UnitFactory {
+    public static Unit buildUnit(String type, Player owner) throws TypeNotFound {
         switch (type){
             case "Settler":
                 return new Settler(owner);
