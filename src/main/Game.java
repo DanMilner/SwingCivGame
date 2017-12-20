@@ -9,64 +9,37 @@ import units.Unit;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Game {
     private Map gameMap;
-    private Player currentPlayer;
-    private Player otherPlayer;
+    private BuildingAndUnitCreator buildingAndUnitCreator;
+    private PlayerHandler playerHandler;
+
     public static final int MAPSIZE = 40;
 
     Game() {
         gameMap = new Map();
+        buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
+        playerHandler = new PlayerHandler();
 
-        ArrayList<Player> players = new ArrayList<>();
-        players.add(new Player("Daniel", Color.yellow));
-        players.add(new Player("Alastair", Color.red));
+        playerHandler.addPlayer("Daniel");
+        playerHandler.addPlayer("Alastair");
 
-        currentPlayer = players.get(0);
-        otherPlayer = players.get(1);
-
-        for (Player player : players) {
-            gameMap.spawnCity(player);
-            calculateResources(player);
-        }
+        playerHandler.setUpPlayers(gameMap);
     }
 
-    private void giveStartingResources(Player player) {
-        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            player.increaseResource(type, 200);
-        }
-        //resources needed for starting city
-        player.increaseResource(ResourceTypes.WOOD, 20);
-        player.increaseResource(ResourceTypes.STONE, 10);
-    }
-
-    void swapPlayers() {
-        currentPlayer.resetUnitMoves();
-
-        Player tempPlayer = currentPlayer;
-        currentPlayer = otherPlayer;
-        otherPlayer = tempPlayer;
+    void nextPlayer() {
+        playerHandler.incrementCurrentPlayer();
     }
 
     public Map getMap() {
         return gameMap;
     }
 
-    private void subtractUsedResources(int[] resourceCosts, Player player) {
-        for (int i = 0; i < 8; i++) {
-            player.setResource(i, player.getResource(i) - resourceCosts[i]);
-        }
-    }
-
     Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    private boolean isTileAvailable(int x, int y) {
-        Tile tile = gameMap.getTile(x,y);
-        return !tile.hasUnit() && tile.isTraversable() && tile.getOwner() == currentPlayer;
+        return playerHandler.getCurrentPlayer();
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
@@ -82,7 +55,7 @@ public class Game {
     }
 
     boolean checkAvailableResources(String type, Boolean unitCheck) {
-        return gameMap.checkCost(type, currentPlayer, unitCheck);
+        return gameMap.checkCost(type, playerHandler.getCurrentPlayer(), unitCheck);
     }
 
     boolean moveUnit(int oldX, int oldY, int newX, int newY) {
@@ -98,7 +71,88 @@ public class Game {
         return true;
     }
 
-    private void calculateResources(Player player) {
+    void buttonClicked(ButtonData data) {
+        String type;
+        Player currentPlayer = playerHandler.getCurrentPlayer();
+
+        if(data.isUnitSelected()) {
+            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getUnit().getType();
+        }else{
+            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getBuilding().getType();
+        }
+        if(type.equals("City")){
+            buildingAndUnitCreator.createUnit(data,currentPlayer);
+        }else{
+            buildingAndUnitCreator.createBuilding(data, currentPlayer);
+            ResourceHandler.calculateResources(currentPlayer);
+        }
+    }
+
+    public ImageIcon getTileImage(int xCoord, int yCoord) {
+        return gameMap.getTileImage(xCoord, yCoord);
+    }
+
+    public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
+        return gameMap.getTileButtonList(unitSelected, currentX, currentY);
+    }
+}
+
+class PlayerHandler{
+    private ArrayList<Player> players;
+    private Player currentPlayer;
+
+    PlayerHandler(){
+        players = new ArrayList<>();
+    }
+
+    public void addPlayer(String playerName){
+        Color playerColour = createNewPlayerColour();
+        Player newPlayer = new Player(playerName, playerColour);
+
+        players.add(newPlayer);
+    }
+
+    private Color createNewPlayerColour() {
+        Random rand = new Random();
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();
+
+        return new Color(r, g, b);
+    }
+
+    public void setUpPlayers(Map gameMap) {
+        currentPlayer = players.get(0);
+
+        for (Player player : players) {
+            gameMap.spawnCity(player);
+            ResourceHandler.calculateResources(player);
+        }
+    }
+
+    public void incrementCurrentPlayer(){
+        int currentPlayerIndex = players.indexOf(currentPlayer);
+        if(currentPlayerIndex == players.size()) {
+            currentPlayer = players.get(0);
+        }else{
+            currentPlayerIndex++;
+            currentPlayer = players.get(currentPlayerIndex);
+        }
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+}
+
+class ResourceHandler{
+    static void subtractUsedResources(int[] resourceCosts, Player player) {
+        for (int i = 0; i < 8; i++) {
+            player.setResource(i, player.getResource(i) - resourceCosts[i]);
+        }
+    }
+
+    static void calculateResources(Player player) {
         player.resetResources();
 
         giveStartingResources(player);
@@ -115,21 +169,26 @@ public class Game {
         }
     }
 
-    void buttonClicked(ButtonData data) {
-        String type;
-        if(data.isUnitSelected()) {
-            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getUnit().getType();
-        }else{
-            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getBuilding().getType();
+    private static void giveStartingResources(Player player) {
+        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
+            player.increaseResource(type, 200);
         }
-        if(type.equals("City")){
-            createUnit(data);
-        }else{
-            createBuilding(data);
-        }
+        //resources needed for starting city
+        player.increaseResource(ResourceTypes.WOOD, 20);
+        player.increaseResource(ResourceTypes.STONE, 10);
+    }
+}
+
+class BuildingAndUnitCreator{
+    private Map gameMap;
+    private Player currentPlayer;
+
+    BuildingAndUnitCreator(Map gameMap){
+        this.gameMap = gameMap;
     }
 
-    private void createUnit(ButtonData data) {
+    void createUnit(ButtonData data, Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
         String buttonText = data.getText();
         int x = data.getCurrentX();
         int y = data.getCurrentY();
@@ -154,11 +213,15 @@ public class Game {
             return;
         }
         currentPlayer.addUnit(newUnit);
-
-        subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
+        ResourceHandler.subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
     }
 
-    private void createBuilding(ButtonData data) {
+    private boolean isTileAvailable(int x, int y) {
+        Tile tile = gameMap.getTile(x,y);
+        return !tile.hasUnit() && tile.isTraversable() && tile.getOwner() == currentPlayer;
+    }
+
+    void createBuilding(ButtonData data, Player currentPlayer) {
         String buttonText = data.getText();
         int x = data.getCurrentX();
         int y = data.getCurrentY();
@@ -170,14 +233,5 @@ public class Game {
         if(buttonText.equals("Road")){
             gameMap.setUnit(x,y,tempUnit);
         }
-        calculateResources(currentPlayer);
-    }
-
-    public ImageIcon getTileImage(int xCoord, int yCoord) {
-        return gameMap.getTileImage(xCoord, yCoord);
-    }
-
-    public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
-        return gameMap.getTileButtonList(unitSelected, currentX, currentY);
     }
 }
