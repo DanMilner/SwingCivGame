@@ -48,7 +48,7 @@ public class GuiManager extends JFrame implements ActionListener {
         JButton endTurn = new JButton("End Turn");
         endTurn.setBounds(1830, 0, 90, 125);
         endTurn.addActionListener(arg0 -> {
-            game.swapPlayers();
+            game.nextPlayer();
             unitSelected = false;
             updateBoardButtonIconsAndBorders();
             hideUIButtons();
@@ -123,6 +123,8 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void setButtonText() {
         ArrayList<String> buttonsToBuild = game.getTileButtonList(unitSelected, currentX, currentY);
+        if(buttonsToBuild == null)
+            return;
 
         int index = 0;
         for (String button : buttonsToBuild) {
