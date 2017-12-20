@@ -10,18 +10,18 @@ import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class GuiManager extends JFrame implements ActionListener {
-    private static final int MAPSIZE = Game.MAPSIZE;
+    private static final int MAPSIZE = GameController.MAPSIZE;
     private BoardButton[][] boardButtons = new BoardButton[MAPSIZE + 1][MAPSIZE + 1];
     private ArrayList<JButton> uiButtons = new ArrayList<>();
-    private Game game;
+    private GameController gameController;
     private int currentX;
     private int currentY;
     private Point origin;
     private UiTextManager uiTextManager;
     private boolean unitSelected = false;
 
-    GuiManager(Game game) {
-        this.game = game;
+    GuiManager(GameController gameController) {
+        this.gameController = gameController;
         BoardPanel boardPanel = new BoardPanel(MAPSIZE);
         UiPanel uiPanel = new UiPanel();
         uiTextManager = new UiTextManager(uiPanel);
@@ -32,7 +32,7 @@ public class GuiManager extends JFrame implements ActionListener {
 
         FrameHandler.createAndSetupFrameAndScrollPane(uiPanel, boardPanel);
 
-        uiTextManager.updateUI(game.getCurrentPlayer());
+        uiTextManager.updateUI(gameController.getCurrentPlayer());
     }
 
     private void createUIButtons(JPanel uiPanel) {
@@ -48,11 +48,11 @@ public class GuiManager extends JFrame implements ActionListener {
         JButton endTurn = new JButton("End Turn");
         endTurn.setBounds(1830, 0, 90, 125);
         endTurn.addActionListener(arg0 -> {
-            game.nextPlayer();
+            gameController.nextPlayer();
             unitSelected = false;
             updateBoardButtonIconsAndBorders();
             hideUIButtons();
-            uiTextManager.updateUI(game.getCurrentPlayer());
+            uiTextManager.updateUI(gameController.getCurrentPlayer());
         });
         uiPanel.add(endTurn, BorderLayout.LINE_END);
 
@@ -72,18 +72,18 @@ public class GuiManager extends JFrame implements ActionListener {
 
         for (int i = 0; i < uiButtons.size(); i++) {
             int buttonNum = i;
-            uiButtons.get(i).addActionListener(arg0 -> UIButtonAction(buttonNum));
+            uiButtons.get(i).addActionListener(arg0 -> uiButtonAction(buttonNum));
         }
     }
 
-    private void UIButtonAction(int ButtonNum) {
+    private void uiButtonAction(int ButtonNum) {
         String buttonText = uiButtons.get(ButtonNum).getText();
 
         ButtonData buttonData = new ButtonData(unitSelected, currentX, currentY, buttonText);
 
-        game.buttonClicked(buttonData);
+        gameController.buttonClicked(buttonData);
         updateBoardButtonIconsAndBorders();
-        uiTextManager.updateUI(game.getCurrentPlayer());
+        uiTextManager.updateUI(gameController.getCurrentPlayer());
 
         if (unitSelected) {
             unitSelected = false;
@@ -105,9 +105,9 @@ public class GuiManager extends JFrame implements ActionListener {
                 BoardButton buttonBeingUpdated = boardButtons[x][y];
                 buttonBeingUpdated.setBorder(null);
 
-                Tile currentTile = game.getMap().getTile(x, y);
+                Tile currentTile = gameController.getMap().getTile(x, y);
 
-                ImageIcon icon = game.getTileImage(x,y);
+                ImageIcon icon = gameController.getTileImage(x,y);
                 buttonBeingUpdated.setIcon(icon);
 
                 setButtonBorders(currentTile, buttonBeingUpdated);
@@ -122,7 +122,7 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void setButtonText() {
-        ArrayList<String> buttonsToBuild = game.getTileButtonList(unitSelected, currentX, currentY);
+        ArrayList<String> buttonsToBuild = gameController.getTileButtonList(unitSelected, currentX, currentY);
         if(buttonsToBuild == null)
             return;
 
@@ -137,7 +137,7 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void colourUIButtons(int index, String type) {
-        if (game.checkAvailableResources(type, unitSelected)) {
+        if (gameController.checkAvailableResources(type, unitSelected)) {
             uiButtons.get(index).setBackground(Color.white);
             uiButtons.get(index).setEnabled(true);
         } else {
@@ -175,10 +175,10 @@ public class GuiManager extends JFrame implements ActionListener {
         int y = buttonBeingUpdated.getYCoord();
 
         buttonBeingUpdated.setBorder(BorderFactory.createMatteBorder(
-                game.getMap().borderRequired(x, y, x, y - 1),
-                game.getMap().borderRequired(x, y, x - 1, y),
-                game.getMap().borderRequired(x, y, x, y + 1),
-                game.getMap().borderRequired(x, y, x + 1, y),
+                gameController.getMap().borderRequired(x, y, x, y - 1),
+                gameController.getMap().borderRequired(x, y, x - 1, y),
+                gameController.getMap().borderRequired(x, y, x, y + 1),
+                gameController.getMap().borderRequired(x, y, x + 1, y),
                 borderColour));
     }
 
@@ -195,7 +195,7 @@ public class GuiManager extends JFrame implements ActionListener {
             for (int y = 0; y <= MAPSIZE; y++) {
                 BoardButton newBoardButton = new BoardButton(x, y);
                 boardButtons[x][y] = newBoardButton;
-                Tile currentTile = game.getMap().getTile(x, y);
+                Tile currentTile = gameController.getMap().getTile(x, y);
 
                 newBoardButton.addMouseListener(new MouseListener() {
                     @Override
@@ -263,7 +263,7 @@ public class GuiManager extends JFrame implements ActionListener {
         BoardButton button = (BoardButton) arg0.getSource();
         int buttonXCoord = button.getXCoord();
         int buttonYCoord = button.getYCoord();
-        Tile tileClicked = game.getMap().getTile(buttonXCoord, buttonYCoord);
+        Tile tileClicked = gameController.getMap().getTile(buttonXCoord, buttonYCoord);
 
         resetUIColours();
         uiTextManager.updateInformationText(tileClicked);
@@ -293,8 +293,8 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord) {
-        if (game.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord)) {
-            boardButtons[currentX][currentY].setIcon(game.getTileImage(buttonXCoord, buttonYCoord));
+        if (gameController.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord)) {
+            boardButtons[currentX][currentY].setIcon(gameController.getTileImage(buttonXCoord, buttonYCoord));
             unitSelected = false;
             updateBoardButtonIconsAndBorders();
             actionPerformed(arg0);
@@ -307,11 +307,11 @@ public class GuiManager extends JFrame implements ActionListener {
 
         hideUIButtons();
 
-        if (tileClicked.hasUnit() && tileClicked.getUnit().getOwner() == game.getCurrentPlayer()) {
+        if (tileClicked.hasUnit() && tileClicked.getUnit().getOwner() == gameController.getCurrentPlayer()) {
             unitSelected = true;
             highlightTiles(currentX, currentY);
             setButtonText();
-        } else if (tileClicked.hasBuilding() && tileClicked.getOwner() == game.getCurrentPlayer()) {
+        } else if (tileClicked.hasBuilding() && tileClicked.getOwner() == gameController.getCurrentPlayer()) {
             setButtonText();
         }
     }
@@ -320,7 +320,7 @@ public class GuiManager extends JFrame implements ActionListener {
         final int BORDER_THICKNESS = 2;
         for (int endX = 0; endX < MAPSIZE; endX++) {
             for (int endY = 0; endY < MAPSIZE; endY++) {
-                if (game.isValidMove(startX, startY, endX, endY)) {
+                if (gameController.isValidMove(startX, startY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
                 }
             }
@@ -334,7 +334,7 @@ class FrameHandler{
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JFrame frame = new JFrame("Civ like game");
+        JFrame frame = new JFrame("Civ like gameController");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.add(scrollPane, BorderLayout.CENTER);

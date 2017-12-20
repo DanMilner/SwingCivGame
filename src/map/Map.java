@@ -1,7 +1,7 @@
 package map;
 
 import exceptions.TypeNotFound;
-import main.Game;
+import main.GameController;
 import main.Player;
 import main.ResourceTypes;
 import map.buildings.Building;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Map {
-    private static final int MAPSIZE = Game.MAPSIZE;
+    private static final int MAPSIZE = GameController.MAPSIZE;
     private Tile[][] currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
     private RoadManager roadManager;
 

@@ -1,16 +1,12 @@
 package main;
 
-import java.io.IOException;
-
 import javax.swing.SwingUtilities;
 
 public class Main {
 	public static void main(String[] args) {
-		Game game = new Game();
-//		GuiManager GUI = new GuiManager(game);
+		GameController gameController = new GameController();
+//		GuiManager GUI = new GuiManager(gameController);
 
-		SwingUtilities.invokeLater(() -> {
-            new GuiManager(game);
-        });
+		SwingUtilities.invokeLater(() -> new GuiManager(gameController));
 	}
 }

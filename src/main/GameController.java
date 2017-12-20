@@ -11,33 +11,32 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-
-public class Game {
+public class GameController {
     private Map gameMap;
     private BuildingAndUnitCreator buildingAndUnitCreator;
     private PlayerHandler playerHandler;
+    private UnitMovementHandler unitMovementHandler;
 
     public static final int MAPSIZE = 40;
 
-    Game() {
+    GameController() {
         gameMap = new Map();
         buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
         playerHandler = new PlayerHandler();
+        unitMovementHandler = new UnitMovementHandler(gameMap);
 
         playerHandler.addPlayer("Daniel");
         playerHandler.addPlayer("Alastair");
         playerHandler.addPlayer("James");
 
-
         playerHandler.setUpPlayers(gameMap);
+    }
+    public Map getMap() {
+        return gameMap;
     }
 
     void nextPlayer() {
         playerHandler.incrementCurrentPlayer();
-    }
-
-    public Map getMap() {
-        return gameMap;
     }
 
     Player getCurrentPlayer() {
@@ -45,32 +44,15 @@ public class Game {
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        Tile destinationTile = gameMap.getTile(newX, newY);
+        return unitMovementHandler.isValidMove(oldX, oldY, newX, newY);
+    }
 
-        if (!destinationTile.isTraversable())
-            return false;
-
-        int yDistance = Math.abs(oldY - newY); //distance moved on y axis
-        int xDistance = Math.abs(oldX - newX); //distance moved on x axis
-        return (gameMap.getUnit(oldX, oldY).getRemainingMoves() - yDistance - xDistance) >= 0
-                && !destinationTile.hasUnit();
+    boolean moveUnit(int oldX, int oldY, int newX, int newY) {
+        return unitMovementHandler.moveUnit(oldX, oldY, newX, newY);
     }
 
     boolean checkAvailableResources(String type, Boolean unitCheck) {
         return gameMap.checkCost(type, playerHandler.getCurrentPlayer(), unitCheck);
-    }
-
-    boolean moveUnit(int oldX, int oldY, int newX, int newY) {
-        if(!isValidMove(oldX, oldY, newX, newY))
-            return false;
-
-        Unit unitBeingMoved = gameMap.getUnit(oldX, oldY);
-        int yDistance = Math.abs(oldY - newY); //distance moved on y axis
-        int xDistance = Math.abs(oldX - newX); // distance moved on x axis
-        int remainingMoves = unitBeingMoved.getRemainingMoves() - yDistance - xDistance;
-        unitBeingMoved.setRemainingMoves(remainingMoves);
-        gameMap.moveUnit(oldX, oldY, newX, newY);
-        return true;
     }
 
     void buttonClicked(ButtonData data) {
@@ -96,6 +78,39 @@ public class Game {
 
     public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
         return gameMap.getTileButtonList(unitSelected, currentX, currentY);
+    }
+}
+
+class UnitMovementHandler{
+    private Map gameMap;
+
+    UnitMovementHandler(Map gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    boolean isValidMove(int oldX, int oldY, int newX, int newY) {
+        Tile destinationTile = gameMap.getTile(newX, newY);
+
+        if (!destinationTile.isTraversable())
+            return false;
+
+        int yDistance = Math.abs(oldY - newY); //distance moved on y axis
+        int xDistance = Math.abs(oldX - newX); //distance moved on x axis
+        return (gameMap.getUnit(oldX, oldY).getRemainingMoves() - yDistance - xDistance) >= 0
+                && !destinationTile.hasUnit();
+    }
+
+    boolean moveUnit(int oldX, int oldY, int newX, int newY) {
+        if(!isValidMove(oldX, oldY, newX, newY))
+            return false;
+
+        Unit unitBeingMoved = gameMap.getUnit(oldX, oldY);
+        int yDistance = Math.abs(oldY - newY); //distance moved on y axis
+        int xDistance = Math.abs(oldX - newX); // distance moved on x axis
+        int remainingMoves = unitBeingMoved.getRemainingMoves() - yDistance - xDistance;
+        unitBeingMoved.setRemainingMoves(remainingMoves);
+        gameMap.moveUnit(oldX, oldY, newX, newY);
+        return true;
     }
 }
 
