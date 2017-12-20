@@ -26,6 +26,8 @@ public class Game {
 
         playerHandler.addPlayer("Daniel");
         playerHandler.addPlayer("Alastair");
+        playerHandler.addPlayer("James");
+
 
         playerHandler.setUpPlayers(gameMap);
     }
@@ -132,7 +134,7 @@ class PlayerHandler{
 
     public void incrementCurrentPlayer(){
         int currentPlayerIndex = players.indexOf(currentPlayer);
-        if(currentPlayerIndex == players.size()) {
+        if(currentPlayerIndex+1 == players.size()) {
             currentPlayer = players.get(0);
         }else{
             currentPlayerIndex++;
