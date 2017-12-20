@@ -68,7 +68,7 @@ public class GameController {
             buildingAndUnitCreator.createUnit(data,currentPlayer);
         }else{
             buildingAndUnitCreator.createBuilding(data, currentPlayer);
-            ResourceHandler.calculateResources(currentPlayer);
+            PlayerResourceHandler.calculateResources(currentPlayer);
         }
     }
 
@@ -143,7 +143,7 @@ class PlayerHandler{
 
         for (Player player : players) {
             gameMap.spawnCity(player);
-            ResourceHandler.calculateResources(player);
+            PlayerResourceHandler.calculateResources(player);
         }
     }
 
@@ -162,7 +162,7 @@ class PlayerHandler{
     }
 }
 
-class ResourceHandler{
+class PlayerResourceHandler {
     static void subtractUsedResources(int[] resourceCosts, Player player) {
         for (int i = 0; i < 8; i++) {
             player.setResource(i, player.getResource(i) - resourceCosts[i]);
@@ -230,7 +230,7 @@ class BuildingAndUnitCreator{
             return;
         }
         currentPlayer.addUnit(newUnit);
-        ResourceHandler.subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
+        PlayerResourceHandler.subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
     }
 
     private boolean isTileAvailable(int x, int y) {

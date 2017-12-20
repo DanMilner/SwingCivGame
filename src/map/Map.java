@@ -16,6 +16,7 @@ public class Map {
     private static final int MAPSIZE = GameController.MAPSIZE;
     private Tile[][] currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
     private RoadManager roadManager;
+    private TileResourceHandler tileResourceHandler;
 
     public Map() {
         MapBuilder mapBuilder = new MapBuilder(currentMap, MAPSIZE);
@@ -23,6 +24,7 @@ public class Map {
         mapBuilder.setUpTerrain();
 
         roadManager = new RoadManager();
+        tileResourceHandler = new TileResourceHandler();
     }
 
     private void setTileOwner(int startX, int endX, int startY, int endY, Player owner){
@@ -95,54 +97,7 @@ public class Map {
     }
 
     public boolean checkCost (String type, Player owner, Boolean unitCheck){
-        int[] resourceCost;
-
-        try{
-            if(!unitCheck){
-                Unit unitType = UnitFactory.buildUnit(type, null);
-                resourceCost = unitType.getResourceCost();
-            }else {
-                Building buildingType = TileFactory.buildBuildingTile(type);
-                resourceCost = buildingType.getResourceCost();
-            }
-        } catch (TypeNotFound typeNotFound) {
-            typeNotFound.printStackTrace();
-            return false;
-        }
-
-        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
-            if (resourceCost[i] > owner.getResource(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void calculateResourceYields(int x, int y, Building building, Player currentPlayer) {
-        int borderSize = building.getBorderSize();
-        for (int i = x - borderSize; i <= x + borderSize; i++) {
-            for (int j = y - borderSize; j <= y + borderSize; j++) {
-                Resource resourceBeingChecked = currentMap[i][j].getResource();
-                if (currentMap[i][j].getOwner() != currentPlayer)
-                    return;
-                if (resourceBeingChecked.isInUse())
-                    return;
-                if (resourceBeingChecked.isHarvestable())
-                    findAdjacentResourceType(resourceBeingChecked, building);
-            }
-        }
-    }
-
-    private void findAdjacentResourceType(Resource resourceTile, Building building) {
-        String type = resourceTile.getType();
-        int index = ResourceTypes.getResourceTypeIndex(type);
-        if(building.canHarvestResourceType(index))
-            incrementTileResource(index, building, resourceTile);
-    }
-
-    private void incrementTileResource(int type, Building building, Resource resourceTile){
-        building.increaseResourceHarvestAmount(type);
-        resourceTile.setInUse();
+        return tileResourceHandler.checkCost(type,owner,unitCheck);
     }
 
     public void setUnit(int x, int y, Unit newUnit) {
@@ -245,7 +200,7 @@ public class Map {
         owner.addBuilding(newBuilding);
 
         if(newBuilding.isResourceHarvester()){
-            calculateResourceYields(x, y, newBuilding, owner);
+            ResourceYieldCalculator.calculateResourceYields(x, y, newBuilding, owner,currentMap);
         }else if(type.equals("Farm")){
             placeWheat(x,y,owner);
         }
@@ -268,5 +223,60 @@ public class Map {
 
     public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
         return currentMap[currentX][currentY].getButtonList(unitSelected);
+    }
+}
+
+class TileResourceHandler {
+    public boolean checkCost (String type, Player owner, Boolean unitCheck){
+        int[] resourceCost;
+
+        try{
+            if(!unitCheck){
+                Unit unitType = UnitFactory.buildUnit(type, null);
+                resourceCost = unitType.getResourceCost();
+            }else {
+                Building buildingType = TileFactory.buildBuildingTile(type);
+                resourceCost = buildingType.getResourceCost();
+            }
+        } catch (TypeNotFound typeNotFound) {
+            typeNotFound.printStackTrace();
+            return false;
+        }
+
+        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
+            if (resourceCost[i] > owner.getResource(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+class ResourceYieldCalculator {
+    static void calculateResourceYields(int x, int y, Building building, Player currentPlayer, Tile[][] currentMap) {
+        int borderSize = building.getBorderSize();
+        for (int i = x - borderSize; i <= x + borderSize; i++) {
+            for (int j = y - borderSize; j <= y + borderSize; j++) {
+                Resource resourceBeingChecked = currentMap[i][j].getResource();
+                if (currentMap[i][j].getOwner() != currentPlayer)
+                    return;
+                if (resourceBeingChecked.isInUse())
+                    return;
+                if (resourceBeingChecked.isHarvestable())
+                    findAdjacentResourceType(resourceBeingChecked, building);
+            }
+        }
+    }
+
+    private static void findAdjacentResourceType(Resource resourceTile, Building building) {
+        String type = resourceTile.getType();
+        int index = ResourceTypes.getResourceTypeIndex(type);
+        if(building.canHarvestResourceType(index))
+            incrementTileResource(index, building, resourceTile);
+    }
+
+    private static void incrementTileResource(int type, Building building, Resource resourceTile){
+        building.increaseResourceHarvestAmount(type);
+        resourceTile.setInUse();
     }
 }
