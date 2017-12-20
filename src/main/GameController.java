@@ -3,6 +3,7 @@ package main;
 import exceptions.TypeNotFound;
 import map.Map;
 import map.Tile;
+import map.UnitFactory;
 import map.buildings.Building;
 import units.Unit;
 
@@ -155,6 +156,7 @@ class PlayerHandler{
             currentPlayerIndex++;
             currentPlayer = players.get(currentPlayerIndex);
         }
+        currentPlayer.resetUnitMoves();
     }
 
     public Player getCurrentPlayer() {
@@ -211,7 +213,7 @@ class BuildingAndUnitCreator{
         int y = data.getCurrentY();
         Unit newUnit;
         try{
-            newUnit = gameMap.constructUnit(buttonText, currentPlayer);
+            newUnit = UnitFactory.buildUnit(buttonText, currentPlayer);
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
             return;
