@@ -59,7 +59,7 @@ public class Map {
         } while (true);
     }
 
-    static boolean coordinatesOnMap(int x, int y, int MAPSIZE){
+    public static boolean coordinatesOnMap(int x, int y, int MAPSIZE){
         return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 
@@ -69,6 +69,10 @@ public class Map {
 
     public Tile getTile(int x, int y) {
         return currentMap[x][y];
+    }
+
+    public void setTileResource(int x, int y, Resource newResource){
+        currentMap[x][y].setResource(newResource);
     }
 
     public Unit getUnit(int x, int y) {

@@ -24,7 +24,7 @@ public class GameController {
         gameMap = new Map(false, MAPSIZE);
         buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
         playerHandler = new PlayerHandler();
-        unitMovementHandler = new UnitMovementHandler(gameMap);
+        unitMovementHandler = new UnitMovementHandler(gameMap, MAPSIZE);
 
         playerHandler.addPlayer("Daniel");
         playerHandler.addPlayer("Alastair");
@@ -84,12 +84,16 @@ public class GameController {
 
 class UnitMovementHandler{
     private Map gameMap;
+    private int MAPSIZE;
 
-    UnitMovementHandler(Map gameMap) {
+    UnitMovementHandler(Map gameMap, int MAPSIZE) {
         this.gameMap = gameMap;
+        this.MAPSIZE = MAPSIZE;
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
+        if(!Map.coordinatesOnMap(newX,newY,MAPSIZE))
+            return false;
         Tile destinationTile = gameMap.getTile(newX, newY);
 
         if (!destinationTile.isTraversable())

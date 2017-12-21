@@ -309,17 +309,17 @@ public class GuiManager extends JFrame implements ActionListener {
 
         if (tileClicked.hasUnit() && tileClicked.getUnit().getOwner() == gameController.getCurrentPlayer()) {
             unitSelected = true;
-            highlightTiles(currentX, currentY);
+            highlightTiles(currentX, currentY, tileClicked.getUnit().getRemainingMoves());
             setButtonText();
         } else if (tileClicked.hasBuilding() && tileClicked.getOwner() == gameController.getCurrentPlayer()) {
             setButtonText();
         }
     }
 
-    private void highlightTiles(int startX, int startY) {
+    private void highlightTiles(int startX, int startY, int maxUnitMoves) {
         final int BORDER_THICKNESS = 2;
-        for (int endX = 0; endX < MAPSIZE; endX++) {
-            for (int endY = 0; endY < MAPSIZE; endY++) {
+        for (int endX = startX-maxUnitMoves; endX <= startX+maxUnitMoves; endX++) {
+            for (int endY = startY-maxUnitMoves; endY <= startY+maxUnitMoves; endY++) {
                 if (gameController.isValidMove(startX, startY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
                 }
