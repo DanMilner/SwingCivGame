@@ -50,7 +50,7 @@ public class Player {
 		resources[type] = amount;
 	}
 	
-	void increaseResource(int type, int amount){
+	public void increaseResource(int type, int amount){
 		resources[type] = resources[type]+amount;
 	}
 
