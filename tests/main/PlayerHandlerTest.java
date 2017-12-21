@@ -1,9 +1,11 @@
 package main;
 
 import map.Map;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PlayerHandlerTest {
     private PlayerHandler playerHandler;
@@ -20,7 +22,7 @@ public class PlayerHandlerTest {
         playerHandler.addPlayer(playerName);
         playerHandler.setUpPlayers(gameMap);
 
-        Assert.assertTrue(playerHandler.getCurrentPlayer().getName().equals(playerName));
+        assertTrue(playerHandler.getCurrentPlayer().getName().equals(playerName));
     }
 
     @Test
@@ -33,9 +35,9 @@ public class PlayerHandlerTest {
         playerHandler.setUpPlayers(gameMap);
 
         for(String ignored : players) {
-            Assert.assertFalse(playerHandler.getCurrentPlayer().getBuildings().isEmpty());
-            Assert.assertTrue(playerHandler.getCurrentPlayer().getUnits().isEmpty());
-            Assert.assertTrue(playerHandler.getCurrentPlayer().getColour() != null);
+            assertFalse(playerHandler.getCurrentPlayer().getBuildings().isEmpty());
+            assertTrue(playerHandler.getCurrentPlayer().getUnits().isEmpty());
+            assertTrue(playerHandler.getCurrentPlayer().getColour() != null);
             playerHandler.incrementCurrentPlayer();
         }
     }
@@ -47,8 +49,8 @@ public class PlayerHandlerTest {
 
         playerHandler.setUpPlayers(gameMap);
 
-        Assert.assertTrue(playerHandler.getCurrentPlayer().getName().equals("Daniel"));
+        assertTrue(playerHandler.getCurrentPlayer().getName().equals("Daniel"));
         playerHandler.incrementCurrentPlayer();
-        Assert.assertTrue(playerHandler.getCurrentPlayer().getName().equals("Alastair"));
+        assertTrue(playerHandler.getCurrentPlayer().getName().equals("Alastair"));
     }
 }

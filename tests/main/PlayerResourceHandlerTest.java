@@ -1,12 +1,13 @@
 package main;
 
 import map.buildings.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import units.*;
 
 import java.awt.*;
+
+import static org.junit.Assert.assertTrue;
 
 public class PlayerResourceHandlerTest {
     private Player player;
@@ -23,7 +24,7 @@ public class PlayerResourceHandlerTest {
 
         PlayerResourceHandler.subtractUsedResources(resourceCostOfBuildings, player);
         for(int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++){
-            Assert.assertTrue(player.getResource(i) == -resourceCostOfBuildings[i]);
+            assertTrue(player.getResource(i) == -resourceCostOfBuildings[i]);
         }
     }
 
@@ -32,7 +33,7 @@ public class PlayerResourceHandlerTest {
         PlayerResourceHandler.calculateResources(player);
 
         for(int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
-            Assert.assertTrue(player.getResource(i) == 200);
+            assertTrue(player.getResource(i) == 200);
         }
     }
 
@@ -49,7 +50,7 @@ public class PlayerResourceHandlerTest {
         PlayerResourceHandler.calculateResources(player);
 
         for(int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++){
-            Assert.assertTrue(player.getResource(i) == 200 - resourceCostOfBuildings[i]);
+            assertTrue(player.getResource(i) == 200 - resourceCostOfBuildings[i]);
         }
     }
 
@@ -67,7 +68,7 @@ public class PlayerResourceHandlerTest {
         PlayerResourceHandler.calculateResources(player);
 
         for(int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++){
-            Assert.assertTrue(player.getResource(i) == 200 - resourceCostOfUnits[i]);
+            assertTrue(player.getResource(i) == 200 - resourceCostOfUnits[i]);
         }
     }
 
@@ -90,7 +91,7 @@ public class PlayerResourceHandlerTest {
         PlayerResourceHandler.calculateResources(player);
 
         for(int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++){
-            Assert.assertTrue(player.getResource(i) == 200 - resourceCost[i]);
+            assertTrue(player.getResource(i) == 200 - resourceCost[i]);
         }
     }
 

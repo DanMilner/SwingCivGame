@@ -7,7 +7,6 @@ import map.buildings.Road;
 import map.resources.Mountain;
 import map.resources.Resource;
 import map.resources.Water;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import units.Builder;
@@ -16,6 +15,7 @@ import units.Unit;
 import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TileTest {
@@ -54,11 +54,11 @@ public class TileTest {
     public void isTraversableTest(){
         Resource mountain = new Mountain();
         tile.setResource(mountain);
-        Assert.assertFalse(tile.isTraversable());
+        assertFalse(tile.isTraversable());
 
         Resource water = new Water();
         tile.setResource(water);
-        Assert.assertFalse(tile.isTraversable());
+        assertFalse(tile.isTraversable());
     }
     @Test
     public void getImageUnitTest(){
@@ -98,10 +98,10 @@ public class TileTest {
         givenTileHasBuilding();
 
         Boolean unitSelected = true;
-        Assert.assertEquals(tile.getButtonList(unitSelected), tile.getUnit().getButtonList());
+        assertEquals(tile.getButtonList(unitSelected), tile.getUnit().getButtonList());
 
         unitSelected = false;
-        Assert.assertEquals(tile.getButtonList(unitSelected), tile.getBuilding().getButtonList());
+        assertEquals(tile.getButtonList(unitSelected), tile.getBuilding().getButtonList());
     }
 
     private void givenTileHasUnit(){

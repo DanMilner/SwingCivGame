@@ -1,6 +1,5 @@
 package main;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import units.Catapult;
@@ -8,6 +7,8 @@ import units.Knight;
 import units.Unit;
 
 import java.awt.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class PlayerTest {
     private Player player;
@@ -20,13 +21,13 @@ public class PlayerTest {
     @Test
     public void setResourceTest(){
         player.setResource(ResourceTypes.WOOD, 100);
-        Assert.assertEquals(100, player.getResource(ResourceTypes.WOOD));
+        assertEquals(100, player.getResource(ResourceTypes.WOOD));
     }
 
     @Test
     public void increaseResourceTest(){
         player.increaseResource(ResourceTypes.WOOD, 10);
-        Assert.assertEquals(10, player.getResource(ResourceTypes.WOOD));
+        assertEquals(10, player.getResource(ResourceTypes.WOOD));
     }
 
     @Test
@@ -38,7 +39,7 @@ public class PlayerTest {
         player.addUnit(unit);
         player.resetUnitMoves();
 
-        Assert.assertEquals(maxMoves, unit.getRemainingMoves());
+        assertEquals(maxMoves, unit.getRemainingMoves());
     }
 
     @Test
@@ -56,7 +57,7 @@ public class PlayerTest {
         player.resetResources();
 
         for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            Assert.assertEquals(0,player.getResource(type));
+            assertEquals(0,player.getResource(type));
         }
     }
 
@@ -69,7 +70,7 @@ public class PlayerTest {
         player.refundUnitCost(unit);
 
         for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            Assert.assertEquals(cost[type],player.getResource(type));
+            assertEquals(cost[type],player.getResource(type));
         }
     }
 }
