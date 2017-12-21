@@ -1,7 +1,6 @@
 package map;
 
 import exceptions.TypeNotFound;
-import main.GameController;
 import main.Player;
 import main.ResourceTypes;
 import map.buildings.Building;
@@ -15,30 +14,37 @@ import java.util.concurrent.ThreadLocalRandom;
 import static main.GameController.MAPSIZE;
 
 public class Map {
-    private static final int MAPSIZE = GameController.MAPSIZE;
-    private Tile[][] currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
+    private final int MAPSIZE;
+    private Tile[][] currentMap;
     private RoadManager roadManager;
 
-    public Map() {
+    public Map(Boolean testMap, int MAPSIZE) {
+        this.MAPSIZE = MAPSIZE;
+        currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
         MapBuilder mapBuilder = new MapBuilder(currentMap, MAPSIZE);
         mapBuilder.setUpMap();
-        mapBuilder.setUpTerrain();
+
+        if(!testMap)
+            mapBuilder.setUpTerrain();
 
         roadManager = new RoadManager();
     }
 
     public void spawnCity(Player owner) {
         final int CITY_BORDER_SIZE = 3;
+        int xCoord;
+        int yCoord;
+        Resource currentTileResource;
         do {
-            int xCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
-            int yCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
-            Resource currentTileResource = getTile(xCoord, yCoord).getResource();
+            xCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
+            yCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
+            currentTileResource = getTile(xCoord, yCoord).getResource();
             if(currentTileResource.isTraversable()){
                 Boolean placeCity = true;
                 //check the surrounding tiles to not collide with existing cities
                 for (int x = xCoord - CITY_BORDER_SIZE; x <= xCoord + CITY_BORDER_SIZE; x++) {
                     for (int y = yCoord - CITY_BORDER_SIZE; y <= yCoord + CITY_BORDER_SIZE; y++) {
-                        if(coordinatesOnMap(x,y)){
+                        if(coordinatesOnMap(x,y, MAPSIZE)){
                             if (currentMap[x][y].hasOwner()) {
                                 placeCity = false; //if a tile is owned by another player then the cities are too close together
                             }
@@ -53,7 +59,7 @@ public class Map {
         } while (true);
     }
 
-    static boolean coordinatesOnMap(int x, int y){
+    static boolean coordinatesOnMap(int x, int y, int MAPSIZE){
         return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 
@@ -97,7 +103,7 @@ public class Map {
         final int FARM_SIZE = 2;
         for (int x = xCoord; x <= xCoord + FARM_SIZE; x++) {
             for (int y = yCoord - FARM_SIZE; y <= yCoord; y++) {
-                if(coordinatesOnMap(x,y)){
+                if(coordinatesOnMap(x,y, MAPSIZE)){
                     if (currentMap[x][y].getResource().getType().equals("Grass")) {
                         Unit unitOnTile = currentMap[x][y].getUnit();
 
@@ -128,13 +134,10 @@ public class Map {
 
         TileOwnerHandler.setTileOwner(currentMap, newBuilding,x, y, owner);
 
-        killUnitAndRefundCost(x, y);
-
         currentMap[x][y].setBuilding(newBuilding);
-
         roadManager.addConnectableTile(currentMap[x][y]);
-
         owner.addBuilding(newBuilding);
+        killUnitAndRefundCost(x, y);
 
         if(newBuilding.isResourceHarvester()){
             ResourceYieldCalculator.calculateResourceYields(x, y, newBuilding, owner,currentMap);
@@ -168,7 +171,7 @@ class TileOwnerHandler{
         int endY = yOrigin + borderSize;
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
+                if (Map.coordinatesOnMap(x,y,currentMap.length)) {
                     if (!currentMap[x][y].hasOwner()) {
                         currentMap[x][y].setOwner(owner);
                     }
@@ -181,7 +184,7 @@ class TileOwnerHandler{
         final int BORDER_REQUIRED = 3;
         final int BORDER_NOT_REQUIRED = 0;
 
-        if (!Map.coordinatesOnMap(adjacentX,adjacentY)) {
+        if (!Map.coordinatesOnMap(adjacentX,adjacentY,currentMap.length)) {
             return BORDER_REQUIRED;
         }
         if (currentMap[currentX][currentY].getOwner() != currentMap[adjacentX][adjacentY].getOwner()) {

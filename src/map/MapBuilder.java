@@ -220,7 +220,7 @@ class MapBuilder {
         try{
             Resource newResource = TileFactory.buildResourceTile(type);
             map[x][y].setResource(newResource);
-            System.out.println(type + " spawned at " + x + " " + y);
+//            System.out.println(type + " spawned at " + x + " " + y);
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
         }

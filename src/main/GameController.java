@@ -21,7 +21,7 @@ public class GameController {
     public static final int MAPSIZE = 40;
 
     GameController() {
-        gameMap = new Map();
+        gameMap = new Map(false, MAPSIZE);
         buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
         playerHandler = new PlayerHandler();
         unitMovementHandler = new UnitMovementHandler(gameMap);
@@ -166,7 +166,7 @@ class PlayerHandler{
 
 class PlayerResourceHandler {
     static void subtractUsedResources(int[] resourceCosts, Player player) {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
             player.setResource(i, player.getResource(i) - resourceCosts[i]);
         }
     }
@@ -192,9 +192,6 @@ class PlayerResourceHandler {
         for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
             player.increaseResource(type, 200);
         }
-        //resources needed for starting city
-        player.increaseResource(ResourceTypes.WOOD, 20);
-        player.increaseResource(ResourceTypes.STONE, 10);
     }
 }
 
