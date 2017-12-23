@@ -1,10 +1,9 @@
 package units;
 
-import javax.swing.ImageIcon;
-
 import main.Player;
 import main.ResourceTypes;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Builder extends Unit {
@@ -25,5 +24,9 @@ public class Builder extends Unit {
 		buttonList.add("Aqueduct");
         buttonList.add("Dock");
         buttonList.add("Road");
+		buttonList.add("Barracks");
+        buttonList.add("Workshop");
+        buttonList.add("ArcheryRange");
+        buttonList.add("Stable");
     }
 }

@@ -39,7 +39,7 @@ public class GuiManager extends JFrame implements ActionListener {
         final int COLUMN_OFFSET = 120;
         final int FIRST_COLUMN = 300;
         final int FIRST_ROW = 10;
-        final int LAST_COLUMN = 680;
+        final int LAST_COLUMN = 900;
         final int LAST_ROW = 70;
 
         int xPosition = FIRST_COLUMN;
@@ -57,7 +57,7 @@ public class GuiManager extends JFrame implements ActionListener {
         uiPanel.add(endTurn, BorderLayout.LINE_END);
 
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 12; i++) {
             uiButtons.add(new JButton());
             uiButtons.get(i).setBounds(xPosition, yPosition, 110, 50);
             uiButtons.get(i).setVisible(false);

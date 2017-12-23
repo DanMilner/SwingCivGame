@@ -3,6 +3,7 @@ package map.buildings;
 import main.ResourceTypes;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Building{
@@ -73,5 +74,14 @@ public class Building{
 
     public boolean isResourceHarvester() {
         return harvestableResourceTypes != null;
+    }
+
+    void setImageIcon(ImageIcon imageIcon) {
+        final int BUTTON_SIZE = 50;
+
+        Image img = imageIcon.getImage() ;
+        Image scaledImage = img.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, java.awt.Image.SCALE_SMOOTH) ;
+
+        this.buildingImage = new ImageIcon( scaledImage );
     }
 }

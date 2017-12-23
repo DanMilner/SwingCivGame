@@ -21,6 +21,5 @@ public class City extends Building {
         buttonList.add("Archer");
         buttonList.add("Knight");
         buttonList.add("Catapult");
-
     }
 }

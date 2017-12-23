@@ -24,6 +24,14 @@ class TileFactory {
                 return new City();
             case "Wheat":
                 return new Wheat();
+            case "Barracks":
+                return new Barracks();
+            case "Workshop":
+                return new Workshop();
+            case "ArcheryRange":
+                return new ArcheryRange();
+            case "Stable":
+                return new Stable();
             case "Road":
                 return new Road();
         }

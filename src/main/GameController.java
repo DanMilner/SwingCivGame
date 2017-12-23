@@ -57,15 +57,9 @@ public class GameController {
     }
 
     void buttonClicked(ButtonData data) {
-        String type;
         Player currentPlayer = playerHandler.getCurrentPlayer();
 
-        if(data.isUnitSelected()) {
-            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getUnit().getType();
-        }else{
-            type = gameMap.getTile(data.getCurrentX(), data.getCurrentY()).getBuilding().getType();
-        }
-        if(type.equals("City")){
+        if(gameMap.getTile(data.getCurrentX(), data.getCurrentY()).hasBuilding()){
             buildingAndUnitCreator.createUnit(data,currentPlayer);
         }else{
             buildingAndUnitCreator.createBuilding(data, currentPlayer);
