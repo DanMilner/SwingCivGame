@@ -2,7 +2,7 @@ package map.resources;
 
 import javax.swing.*;
 
-public class Resource {
+public abstract class Resource {
     ImageIcon resourceImage;
     boolean isTraversable = true;
     boolean isHarvestable = false;

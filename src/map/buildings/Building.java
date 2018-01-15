@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Building{
+public abstract class Building{
     ImageIcon buildingImage;
     int[] resourceCost = new int[ResourceTypes.getNumberOfResourceTypes()];
     int borderSize;
