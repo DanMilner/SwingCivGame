@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-
 @SuppressWarnings("serial")
 public class GuiManager extends JFrame implements ActionListener {
     private static final int MAPSIZE = GameController.MAPSIZE;
@@ -307,21 +306,34 @@ public class GuiManager extends JFrame implements ActionListener {
 
         hideUIButtons();
 
-        if (tileClicked.hasUnit() && tileClicked.getUnit().getOwner() == gameController.getCurrentPlayer()) {
+        if (tileClicked.hasUnit()
+                && tileClicked.getUnit().getOwner() == gameController.getCurrentPlayer()
+                && tileClicked.getUnit().getRemainingMoves() > 0) {
             unitSelected = true;
-            highlightTiles(currentX, currentY, tileClicked.getUnit().getRemainingMoves());
+            highlightTilesForMovement(tileClicked.getUnit().getRemainingMoves());
+            highlightTilesForAttack(tileClicked.getUnit().getAttackRange());
             setButtonText();
         } else if (tileClicked.hasBuilding() && tileClicked.getOwner() == gameController.getCurrentPlayer()) {
             setButtonText();
         }
     }
-
-    private void highlightTiles(int startX, int startY, int maxUnitMoves) {
+    private void highlightTilesForMovement(int maxUnitMoves){
         final int BORDER_THICKNESS = 2;
-        for (int endX = startX-maxUnitMoves; endX <= startX+maxUnitMoves; endX++) {
-            for (int endY = startY-maxUnitMoves; endY <= startY+maxUnitMoves; endY++) {
-                if (gameController.isValidMove(startX, startY, endX, endY)) {
+        for (int endX = currentX-maxUnitMoves; endX <= currentX+maxUnitMoves; endX++) {
+            for (int endY = currentY-maxUnitMoves; endY <= currentY+maxUnitMoves; endY++) {
+                if (gameController.isValidMove(currentX, currentY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
+                }
+            }
+        }
+    }
+
+    private void highlightTilesForAttack(int attackRange){
+        final int BORDER_THICKNESS = 2;
+        for (int endX = currentX-attackRange; endX <= currentX+attackRange; endX++) {
+            for (int endY = currentY-attackRange; endY <= currentY+attackRange; endY++) {
+                if(gameController.attackIsPossible(currentX, currentY, endX, endY)){
+                    boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.red, BORDER_THICKNESS));
                 }
             }
         }

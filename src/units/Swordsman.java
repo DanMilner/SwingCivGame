@@ -12,6 +12,7 @@ public class Swordsman extends Unit {
         this.type = "Swordsman";
         this.maxMoves = 3;
         this.remainingMoves = 3;
+        this.attackRange = 1;
         this.resourceCost[ResourceTypes.IRON] = 2; //costs 2 iron
         this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
     }

@@ -13,6 +13,7 @@ public class Knight extends Unit {
         this.type = "Knight";
         this.maxMoves = 6;
         this.remainingMoves = 6;
+        this.attackRange = 1;
         this.resourceCost[ResourceTypes.GOLD] = 2; //costs 2 gold
         this.resourceCost[ResourceTypes.FOOD] = 5; //costs 5 food
     }

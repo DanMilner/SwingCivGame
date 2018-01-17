@@ -14,6 +14,7 @@ public class Builder extends Unit {
 		this.type = "Builder";
 		this.maxMoves = 4;
 		this.remainingMoves = 4;
+		this.attackRange = 0;
 		this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
 
 		this.buttonList = new ArrayList<>();

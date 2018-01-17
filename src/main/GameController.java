@@ -28,7 +28,7 @@ public class GameController {
 
         playerHandler.addPlayer("Daniel");
         playerHandler.addPlayer("Alastair");
-        playerHandler.addPlayer("James");
+       // playerHandler.addPlayer("James");
 
         playerHandler.setUpPlayers(gameMap);
     }
@@ -74,6 +74,20 @@ public class GameController {
     public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
         return gameMap.getTileButtonList(unitSelected, currentX, currentY);
     }
+
+    public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
+        if(!gameMap.getTile(targetX,targetY).hasUnit()){
+            return false;
+        }
+        Unit currentUnit = gameMap.getUnit(currentX, currentY);
+        Unit targetUnit = gameMap.getUnit(targetX, targetY);
+
+
+        if(unitMovementHandler.tileIsInRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange())){
+            return targetUnit.getOwner() != currentUnit.getOwner();
+        }
+        return false;
+    }
 }
 
 class UnitMovementHandler{
@@ -93,10 +107,16 @@ class UnitMovementHandler{
         if (!destinationTile.isTraversable())
             return false;
 
+        if(!tileIsInRange(oldX, oldY, newX, newY, gameMap.getUnit(oldX, oldY).getRemainingMoves()))
+            return false;
+
+        return !destinationTile.hasUnit();
+    }
+
+    boolean tileIsInRange(int oldX, int oldY, int newX, int newY, int moves){
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); //distance moved on x axis
-        return (gameMap.getUnit(oldX, oldY).getRemainingMoves() - yDistance - xDistance) >= 0
-                && !destinationTile.hasUnit();
+        return moves - yDistance - xDistance >= 0;
     }
 
     boolean moveUnit(int oldX, int oldY, int newX, int newY) {

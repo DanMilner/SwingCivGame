@@ -12,6 +12,7 @@ public class Archer extends Unit {
         this.type = "Archer";
         this.maxMoves = 3;
         this.remainingMoves = 3;
+        this.attackRange = 4;
         this.resourceCost[ResourceTypes.WOOD] = 1; //costs 1 wood
         this.resourceCost[ResourceTypes.IRON] = 1; //costs 1 iron
         this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food

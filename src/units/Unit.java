@@ -10,6 +10,7 @@ public class Unit {
 
 	int maxMoves;
 	int remainingMoves;
+	int attackRange;
 	ImageIcon imageIcon;
 	String type;
 	private Player owner;
@@ -55,4 +56,8 @@ public class Unit {
 	public int[] getResourceCost(){
 		return resourceCost;
 	}
+
+    public int getAttackRange() {
+        return attackRange;
+    }
 }
