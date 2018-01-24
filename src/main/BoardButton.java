@@ -2,11 +2,11 @@ package main;
 
 import javax.swing.*;
 
-public class BoardButton extends JButton{
+public class BoardButton extends JButton {
     private int xCoord;
     private int yCoord;
 
-    BoardButton(int xCoord, int yCoord){
+    BoardButton(int xCoord, int yCoord) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
     }

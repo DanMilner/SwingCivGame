@@ -6,7 +6,7 @@ import main.ResourceTypes;
 import javax.swing.*;
 
 public class Swordsman extends Unit {
-    public Swordsman(Player owner){
+    public Swordsman(Player owner) {
         super(owner);
         this.imageIcon = new ImageIcon("textures\\unit\\Swordsman.png");
         this.type = "Swordsman";

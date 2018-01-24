@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class UiPanel extends JPanel {
 
-    UiPanel(){
+    UiPanel() {
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(1950, 125));
     }

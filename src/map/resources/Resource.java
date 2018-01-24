@@ -25,7 +25,7 @@ public abstract class Resource {
         return resourceImage;
     }
 
-    public boolean isTraversable (){
+    public boolean isTraversable() {
         return isTraversable;
     }
 

@@ -32,14 +32,14 @@ class RoadManager {
         origin.getBuilding().setVisited(true);
 
         for (Tile road : Roads) {
-            checkConnection(road,x,y-1); //north
-            checkConnection(road,x,y+1); //south
-            checkConnection(road,x+1,y); //east
-            checkConnection(road,x-1,y); //west
+            checkConnection(road, x, y - 1); //north
+            checkConnection(road, x, y + 1); //south
+            checkConnection(road, x + 1, y); //east
+            checkConnection(road, x - 1, y); //west
         }
     }
 
-    private void checkConnection(Tile road, int x, int y){
+    private void checkConnection(Tile road, int x, int y) {
         if (road.xCoord == x && road.yCoord == y) {
             road.getBuilding().setHasCityConnection(true);
             if (!road.getBuilding().isVisited()) {
@@ -49,21 +49,21 @@ class RoadManager {
     }
 
     private boolean roadAdjacent(int x, int y) {
-        for (Tile road: Roads) {
-            if(road.xCoord == x && road.yCoord == y)
+        for (Tile road : Roads) {
+            if (road.xCoord == x && road.yCoord == y)
                 return true;
         }
         for (Tile city : Cities) {
-            if(city.xCoord == x && city.yCoord == y)
+            if (city.xCoord == x && city.yCoord == y)
                 return true;
         }
         return false;
     }
 
     public void addConnectableTile(Tile newBuilding) {
-        if(newBuilding.getBuilding().getType().equals("City")) {
+        if (newBuilding.getBuilding().getType().equals("City")) {
             addCity(newBuilding);
-        }else{
+        } else {
             addRoad(newBuilding);
         }
     }
@@ -76,6 +76,6 @@ class RoadManager {
         boolean East = roadAdjacent(x + 1, y); //east
         boolean West = roadAdjacent(x - 1, y); //west
 
-        return roadTile.getBuilding().getImage(North,South,East,West);
+        return roadTile.getBuilding().getImage(North, South, East, West);
     }
 }

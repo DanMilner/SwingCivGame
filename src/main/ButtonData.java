@@ -6,7 +6,7 @@ public class ButtonData {
     private int CurrentY;
     private String text;
 
-    ButtonData(boolean unitSelected, int x, int y, String text){
+    ButtonData(boolean unitSelected, int x, int y, String text) {
         this.unitSelected = unitSelected;
         this.CurrentX = x;
         this.CurrentY = y;

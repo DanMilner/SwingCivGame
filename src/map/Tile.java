@@ -35,11 +35,11 @@ public class Tile {
         return building;
     }
 
-    public boolean hasRoad(){
+    public boolean hasRoad() {
         return hasBuilding() && building.type.equals("Road");
     }
 
-    public boolean hasOwner(){
+    public boolean hasOwner() {
         return owner != null;
     }
 
@@ -51,7 +51,7 @@ public class Tile {
         return building != null;
     }
 
-    public boolean isTraversable(){
+    public boolean isTraversable() {
         return resource.isTraversable();
     }
 
@@ -80,19 +80,19 @@ public class Tile {
     }
 
     public ImageIcon getImage() {
-        if(hasUnit())
+        if (hasUnit())
             return unit.getImage();
-        if(hasBuilding())
+        if (hasBuilding())
             return building.getImage();
         return resource.getImage();
     }
 
-    public boolean hasBuildingWithCityConnection(){
+    public boolean hasBuildingWithCityConnection() {
         return building != null && building.getHasCityConnection();
     }
 
     public ArrayList<String> getButtonList(boolean unitSelected) {
-        if(unitSelected)
+        if (unitSelected)
             return unit.getButtonList();
         return building.getButtonList();
     }

@@ -1,4 +1,5 @@
 package main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,7 @@ public class BoardPanel extends JPanel {
 
     BoardPanel(int MAPSIZE) {
         this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(MAPSIZE*50, MAPSIZE*50));
+        this.setPreferredSize(new Dimension(MAPSIZE * 50, MAPSIZE * 50));
     }
 
     @Override

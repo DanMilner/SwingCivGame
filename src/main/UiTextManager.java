@@ -7,10 +7,10 @@ import javax.swing.*;
 class UiTextManager {
     private JLabel[] UIComponents = new JLabel[20];
 
-    UiTextManager(JPanel panelUIContent){
+    UiTextManager(JPanel panelUIContent) {
         panelUIContent.setLayout(null);
 
-        for(int i = 0; i < UIComponents.length; i++){
+        for (int i = 0; i < UIComponents.length; i++) {
             UIComponents[i] = new JLabel();
             panelUIContent.add(UIComponents[i]);
             UIComponents[i].setVisible(true);
@@ -63,7 +63,7 @@ class UiTextManager {
         UIComponents[18].setIcon(icon);
     }
 
-    void updateUI(Player currentPlayer){
+    void updateUI(Player currentPlayer) {
         UIComponents[3].setText("Wood x " + currentPlayer.getResource(0));
         UIComponents[5].setText("Iron x " + currentPlayer.getResource(1));
         UIComponents[7].setText("Gold x " + currentPlayer.getResource(2));
@@ -75,13 +75,13 @@ class UiTextManager {
         UIComponents[0].setText(currentPlayer.getName() + "'s Turn");
     }
 
-    void updateInformationText(Tile tileClicked){
+    void updateInformationText(Tile tileClicked) {
         String tileType;
         if (tileClicked.hasUnit()) {
             tileType = tileClicked.getUnit().getType();
-        } else if(tileClicked.hasBuilding()) {
+        } else if (tileClicked.hasBuilding()) {
             tileType = tileClicked.getBuilding().getType();
-        } else{
+        } else {
             tileType = tileClicked.getResource().getType();
         }
         updateTileType(tileType);
@@ -89,15 +89,15 @@ class UiTextManager {
         updateTerritoryOwnership(tileClicked.getOwner());
     }
 
-    private void updateTerritoryOwnership(Player tileOwner){
-        if(tileOwner == null){
+    private void updateTerritoryOwnership(Player tileOwner) {
+        if (tileOwner == null) {
             UIComponents[1].setText("This tile is in Natures Territory");
-        }else{
+        } else {
             UIComponents[1].setText("This tile is in " + tileOwner.getName() + "'s Territory");
         }
     }
 
-    private void updateTileType(String tileType){
+    private void updateTileType(String tileType) {
         final int TILE_TYPE_INDEX = 2;
         UIComponents[TILE_TYPE_INDEX].setText(tileType);
     }

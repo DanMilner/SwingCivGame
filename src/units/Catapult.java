@@ -6,7 +6,7 @@ import main.ResourceTypes;
 import javax.swing.*;
 
 public class Catapult extends Unit {
-    public Catapult(Player owner){
+    public Catapult(Player owner) {
         super(owner);
         this.imageIcon = new ImageIcon("textures\\unit\\Catapult.png");
         this.type = "Catapult";

@@ -12,12 +12,12 @@ public class ResourceTypes {
     public static final int DIAMONDS = 8;
 
 
-    public static int getNumberOfResourceTypes(){
+    public static int getNumberOfResourceTypes() {
         return 9;
     }
 
-    public static int getResourceTypeIndex(String type){
-        switch (type){
+    public static int getResourceTypeIndex(String type) {
+        switch (type) {
             case "Wood":
                 return WOOD;
             case "Iron":

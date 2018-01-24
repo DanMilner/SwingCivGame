@@ -324,6 +324,9 @@ public class GuiManager extends JFrame implements ActionListener {
                 if (gameController.isValidMove(currentX, currentY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
                 }
+                if(gameController.attackIsPossible(currentX, currentY, endX, endY)){
+                    boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.red, BORDER_THICKNESS));
+                }
             }
         }
     }

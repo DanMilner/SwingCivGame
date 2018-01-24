@@ -4,7 +4,6 @@ import main.ResourceTypes;
 
 import javax.swing.*;
 
-
 public class LumberMill extends Building {
     public LumberMill() {
         this.buildingImage = new ImageIcon("textures\\buildings\\Lumber_Mill.png");

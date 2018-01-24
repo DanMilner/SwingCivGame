@@ -6,7 +6,7 @@ import units.*;
 
 public class UnitFactory {
     public static Unit buildUnit(String type, Player owner) throws TypeNotFound {
-        switch (type){
+        switch (type) {
             case "Settler":
                 return new Settler(owner);
             case "Builder":

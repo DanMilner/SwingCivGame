@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Building{
+public abstract class Building {
     ImageIcon buildingImage;
     int[] resourceCost = new int[ResourceTypes.getNumberOfResourceTypes()];
     int borderSize;
@@ -17,7 +17,7 @@ public abstract class Building{
     private boolean visited;
     public String type;
 
-    public boolean canHarvestResourceType(int index){
+    public boolean canHarvestResourceType(int index) {
         return harvestableResourceTypes[index];
     }
 
@@ -49,14 +49,14 @@ public abstract class Building{
         visited = visitedStatus;
     }
 
-    public Boolean isVisited(){
+    public Boolean isVisited() {
         return visited;
     }
 
     public int getResourceAmount(int type) {
         final int RESOURCE_BONUS = 2;
-        if(hasCityConnection)
-            return resourceHarvestAmount[type]*RESOURCE_BONUS;
+        if (hasCityConnection)
+            return resourceHarvestAmount[type] * RESOURCE_BONUS;
         return resourceHarvestAmount[type];
     }
 
@@ -79,9 +79,9 @@ public abstract class Building{
     void setImageIcon(ImageIcon imageIcon) {
         final int BUTTON_SIZE = 50;
 
-        Image img = imageIcon.getImage() ;
-        Image scaledImage = img.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, java.awt.Image.SCALE_SMOOTH) ;
+        Image img = imageIcon.getImage();
+        Image scaledImage = img.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, java.awt.Image.SCALE_SMOOTH);
 
-        this.buildingImage = new ImageIcon( scaledImage );
+        this.buildingImage = new ImageIcon(scaledImage);
     }
 }

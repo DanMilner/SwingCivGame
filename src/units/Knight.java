@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class Knight extends Unit {
 
-    public Knight(Player owner){
+    public Knight(Player owner) {
         super(owner);
         this.imageIcon = new ImageIcon("textures\\unit\\Knight.png");
         this.type = "Knight";

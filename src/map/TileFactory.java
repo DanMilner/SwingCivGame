@@ -7,7 +7,7 @@ import map.resources.*;
 class TileFactory {
 
     static Building buildBuildingTile(String type) throws TypeNotFound {
-        switch (type){
+        switch (type) {
             case "Tower":
                 return new Tower();
             case "Mine":
@@ -39,7 +39,7 @@ class TileFactory {
     }
 
     static Resource buildResourceTile(String type) throws TypeNotFound {
-        switch (type){
+        switch (type) {
             case "Forest":
                 return new Forest();
             case "Mountain":

@@ -6,7 +6,7 @@ import main.ResourceTypes;
 import javax.swing.*;
 
 public class Archer extends Unit {
-    public Archer(Player owner){
+    public Archer(Player owner) {
         super(owner);
         this.imageIcon = new ImageIcon("textures\\unit\\Archer.png");
         this.type = "Archer";

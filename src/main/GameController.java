@@ -28,10 +28,11 @@ public class GameController {
 
         playerHandler.addPlayer("Daniel");
         playerHandler.addPlayer("Alastair");
-       // playerHandler.addPlayer("James");
+        // playerHandler.addPlayer("James");
 
         playerHandler.setUpPlayers(gameMap);
     }
+
     public Map getMap() {
         return gameMap;
     }
@@ -59,9 +60,9 @@ public class GameController {
     void buttonClicked(ButtonData data) {
         Player currentPlayer = playerHandler.getCurrentPlayer();
 
-        if(gameMap.getTile(data.getCurrentX(), data.getCurrentY()).hasBuilding()){
-            buildingAndUnitCreator.createUnit(data,currentPlayer);
-        }else{
+        if (gameMap.getTile(data.getCurrentX(), data.getCurrentY()).hasBuilding()) {
+            buildingAndUnitCreator.createUnit(data, currentPlayer);
+        } else {
             buildingAndUnitCreator.createBuilding(data, currentPlayer);
             PlayerResourceHandler.calculateResources(currentPlayer);
         }
@@ -76,21 +77,21 @@ public class GameController {
     }
 
     public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
-        if(!gameMap.getTile(targetX,targetY).hasUnit()){
+        if (!gameMap.getTile(targetX, targetY).hasUnit()) {
             return false;
         }
         Unit currentUnit = gameMap.getUnit(currentX, currentY);
         Unit targetUnit = gameMap.getUnit(targetX, targetY);
 
 
-        if(unitMovementHandler.tileIsInRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange())){
+        if (unitMovementHandler.tileIsInRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange())) {
             return targetUnit.getOwner() != currentUnit.getOwner();
         }
         return false;
     }
 }
 
-class UnitMovementHandler{
+class UnitMovementHandler {
     private Map gameMap;
     private int MAPSIZE;
 
@@ -100,27 +101,27 @@ class UnitMovementHandler{
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        if(!Map.coordinatesOnMap(newX,newY,MAPSIZE))
+        if (!Map.coordinatesOnMap(newX, newY, MAPSIZE))
             return false;
         Tile destinationTile = gameMap.getTile(newX, newY);
 
         if (!destinationTile.isTraversable())
             return false;
 
-        if(!tileIsInRange(oldX, oldY, newX, newY, gameMap.getUnit(oldX, oldY).getRemainingMoves()))
+        if (!tileIsInRange(oldX, oldY, newX, newY, gameMap.getUnit(oldX, oldY).getRemainingMoves()))
             return false;
 
         return !destinationTile.hasUnit();
     }
 
-    boolean tileIsInRange(int oldX, int oldY, int newX, int newY, int moves){
+    boolean tileIsInRange(int oldX, int oldY, int newX, int newY, int moves) {
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); //distance moved on x axis
         return moves - yDistance - xDistance >= 0;
     }
 
     boolean moveUnit(int oldX, int oldY, int newX, int newY) {
-        if(!isValidMove(oldX, oldY, newX, newY))
+        if (!isValidMove(oldX, oldY, newX, newY))
             return false;
 
         Unit unitBeingMoved = gameMap.getUnit(oldX, oldY);
@@ -133,15 +134,15 @@ class UnitMovementHandler{
     }
 }
 
-class PlayerHandler{
+class PlayerHandler {
     private ArrayList<Player> players;
     private Player currentPlayer;
 
-    PlayerHandler(){
+    PlayerHandler() {
         players = new ArrayList<>();
     }
 
-    public void addPlayer(String playerName){
+    public void addPlayer(String playerName) {
         Color playerColour = createNewPlayerColour();
         Player newPlayer = new Player(playerName, playerColour);
 
@@ -166,11 +167,11 @@ class PlayerHandler{
         }
     }
 
-    public void incrementCurrentPlayer(){
+    public void incrementCurrentPlayer() {
         int currentPlayerIndex = players.indexOf(currentPlayer);
-        if(currentPlayerIndex+1 == players.size()) {
+        if (currentPlayerIndex + 1 == players.size()) {
             currentPlayer = players.get(0);
-        }else{
+        } else {
             currentPlayerIndex++;
             currentPlayer = players.get(currentPlayerIndex);
         }
@@ -213,11 +214,11 @@ class PlayerResourceHandler {
     }
 }
 
-class BuildingAndUnitCreator{
+class BuildingAndUnitCreator {
     private Map gameMap;
     private Player currentPlayer;
 
-    BuildingAndUnitCreator(Map gameMap){
+    BuildingAndUnitCreator(Map gameMap) {
         this.gameMap = gameMap;
     }
 
@@ -227,7 +228,7 @@ class BuildingAndUnitCreator{
         int x = data.getCurrentX();
         int y = data.getCurrentY();
         Unit newUnit;
-        try{
+        try {
             newUnit = UnitFactory.buildUnit(buttonText, currentPlayer);
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
@@ -251,7 +252,7 @@ class BuildingAndUnitCreator{
     }
 
     private boolean isTileAvailable(int x, int y) {
-        Tile tile = gameMap.getTile(x,y);
+        Tile tile = gameMap.getTile(x, y);
         return !tile.hasUnit() && tile.isTraversable() && tile.getOwner() == currentPlayer;
     }
 
@@ -264,8 +265,8 @@ class BuildingAndUnitCreator{
 
         gameMap.constructAndSetBuildingTile(buttonText, x, y, currentPlayer);
 
-        if(buttonText.equals("Road")){
-            gameMap.setUnit(x,y,tempUnit);
+        if (buttonText.equals("Road")) {
+            gameMap.setUnit(x, y, tempUnit);
         }
     }
 }
