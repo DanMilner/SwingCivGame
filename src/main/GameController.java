@@ -77,6 +77,8 @@ public class GameController {
     }
 
     public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
+        if (!Map.coordinatesOnMap(targetX, targetY, MAPSIZE))
+            return false;
         if (!gameMap.getTile(targetX, targetY).hasUnit()) {
             return false;
         }
