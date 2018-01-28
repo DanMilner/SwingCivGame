@@ -55,7 +55,6 @@ public class GuiManager extends JFrame implements ActionListener {
         });
         uiPanel.add(endTurn, BorderLayout.LINE_END);
 
-
         for (int i = 0; i < 12; i++) {
             uiButtons.add(new JButton());
             uiButtons.get(i).setBounds(xPosition, yPosition, 110, 50);
@@ -106,7 +105,7 @@ public class GuiManager extends JFrame implements ActionListener {
 
                 Tile currentTile = gameController.getMap().getTile(x, y);
 
-                ImageIcon icon = gameController.getTileImage(x,y);
+                ImageIcon icon = gameController.getTileImage(x, y);
                 buttonBeingUpdated.setIcon(icon);
 
                 setButtonBorders(currentTile, buttonBeingUpdated);
@@ -122,7 +121,7 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void setButtonText() {
         ArrayList<String> buttonsToBuild = gameController.getTileButtonList(unitSelected, currentX, currentY);
-        if(buttonsToBuild == null)
+        if (buttonsToBuild == null)
             return;
 
         int index = 0;
@@ -148,23 +147,23 @@ public class GuiManager extends JFrame implements ActionListener {
     private void setButtonBorders(Tile currentTile, BoardButton buttonBeingUpdated) {
         Color borderColour;
 
-        if(currentTile.hasOwner()){
+        if (currentTile.hasOwner()) {
             borderColour = currentTile.getOwner().getColour();
             createLargerBorder(borderColour, buttonBeingUpdated);
             if (currentTile.getResource().isInUse()) {
                 createSmallBorder(borderColour, buttonBeingUpdated);
-            }else if(currentTile.hasBuildingWithCityConnection()){
+            } else if (currentTile.hasBuildingWithCityConnection()) {
                 createSmallBorder(Color.green, buttonBeingUpdated);
             }
         }
 
-        if(currentTile.hasUnit()){
+        if (currentTile.hasUnit()) {
             borderColour = currentTile.getUnit().getOwner().getColour();
             createSmallBorder(borderColour, buttonBeingUpdated);
         }
     }
 
-    private void createSmallBorder(Color borderColour, BoardButton buttonBeingUpdated){
+    private void createSmallBorder(Color borderColour, BoardButton buttonBeingUpdated) {
         final int BORDER_THICKNESS = 1;
         buttonBeingUpdated.setBorder(BorderFactory.createLineBorder(borderColour, BORDER_THICKNESS));
     }
@@ -310,32 +309,21 @@ public class GuiManager extends JFrame implements ActionListener {
                 && tileClicked.getUnit().getOwner() == gameController.getCurrentPlayer()
                 && tileClicked.getUnit().getRemainingMoves() > 0) {
             unitSelected = true;
-            highlightTilesForMovement(tileClicked.getUnit().getRemainingMoves());
-            highlightTilesForAttack(tileClicked.getUnit().getAttackRange());
+            highlightTiles(tileClicked.getUnit().getRemainingMoves());
             setButtonText();
         } else if (tileClicked.hasBuilding() && tileClicked.getOwner() == gameController.getCurrentPlayer()) {
             setButtonText();
         }
     }
-    private void highlightTilesForMovement(int maxUnitMoves){
+
+    private void highlightTiles(int maxUnitMoves) {
         final int BORDER_THICKNESS = 2;
-        for (int endX = currentX-maxUnitMoves; endX <= currentX+maxUnitMoves; endX++) {
-            for (int endY = currentY-maxUnitMoves; endY <= currentY+maxUnitMoves; endY++) {
+        for (int endX = currentX - maxUnitMoves; endX <= currentX + maxUnitMoves; endX++) {
+            for (int endY = currentY - maxUnitMoves; endY <= currentY + maxUnitMoves; endY++) {
                 if (gameController.isValidMove(currentX, currentY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
                 }
-                if(gameController.attackIsPossible(currentX, currentY, endX, endY)){
-                    boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.red, BORDER_THICKNESS));
-                }
-            }
-        }
-    }
-
-    private void highlightTilesForAttack(int attackRange){
-        final int BORDER_THICKNESS = 2;
-        for (int endX = currentX-attackRange; endX <= currentX+attackRange; endX++) {
-            for (int endY = currentY-attackRange; endY <= currentY+attackRange; endY++) {
-                if(gameController.attackIsPossible(currentX, currentY, endX, endY)){
+                if (gameController.attackIsPossible(currentX, currentY, endX, endY)) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.red, BORDER_THICKNESS));
                 }
             }
@@ -343,7 +331,7 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 }
 
-class FrameHandler{
+class FrameHandler {
     public static void createAndSetupFrameAndScrollPane(JPanel uiPanel, BoardPanel boardPanel) {
         JScrollPane scrollPane = new JScrollPane(boardPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
