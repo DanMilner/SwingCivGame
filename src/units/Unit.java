@@ -6,7 +6,7 @@ import main.ResourceTypes;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class Unit {
+public abstract class Unit {
 
     int maxMoves;
     int remainingMoves;
