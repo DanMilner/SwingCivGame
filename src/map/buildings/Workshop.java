@@ -11,6 +11,8 @@ public class Workshop extends Building {
 
         super.setImageIcon(icon);
         this.type = "Workshop";
+        this.maxHealth = 400;
+        this.currentHealth = maxHealth;
 
         this.resourceCost[ResourceTypes.COPPER] = 2; //20 Copper
         this.resourceCost[ResourceTypes.WOOD] = 10; //10 Wood

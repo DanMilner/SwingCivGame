@@ -9,5 +9,7 @@ public class Farm extends Building {
         this.buildingImage = new ImageIcon("textures\\buildings\\Farm.png");
         this.type = "Farm";
         this.resourceCost[ResourceTypes.WOOD] = 5; //5 wood
+        this.maxHealth = 150;
+        this.currentHealth = maxHealth;
     }
 }

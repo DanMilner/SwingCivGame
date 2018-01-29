@@ -13,6 +13,8 @@ public class City extends Building {
         this.resourceCost[ResourceTypes.STONE] = 10; //10 stone
         this.hasCityConnection = true;
         this.borderSize = 3;
+        this.maxHealth = 1000;
+        this.currentHealth = maxHealth;
 
         this.buttonList = new ArrayList<>();
         buttonList.add("Settler");

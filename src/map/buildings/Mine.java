@@ -11,6 +11,8 @@ public class Mine extends Building {
         this.resourceCost[ResourceTypes.WOOD] = 2; //2 wood
         this.borderSize = 1;
         this.harvestableResourceTypes = new boolean[ResourceTypes.getNumberOfResourceTypes()];
+        this.maxHealth = 300;
+        this.currentHealth = maxHealth;
 
         this.harvestableResourceTypes[ResourceTypes.STONE] = true;
         this.harvestableResourceTypes[ResourceTypes.IRON] = true;

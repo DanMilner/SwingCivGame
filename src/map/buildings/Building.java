@@ -10,6 +10,8 @@ public abstract class Building {
     ImageIcon buildingImage;
     int[] resourceCost = new int[ResourceTypes.getNumberOfResourceTypes()];
     int borderSize;
+    int maxHealth;
+    int currentHealth;
     boolean hasCityConnection = false;
     boolean harvestableResourceTypes[];
     ArrayList<String> buttonList;
@@ -83,5 +85,13 @@ public abstract class Building {
         Image scaledImage = img.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, java.awt.Image.SCALE_SMOOTH);
 
         this.buildingImage = new ImageIcon(scaledImage);
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 }

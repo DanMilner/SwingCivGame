@@ -11,6 +11,8 @@ public class Stable extends Building {
 
         super.setImageIcon(icon);
         this.type = "Stable";
+        this.maxHealth = 400;
+        this.currentHealth = maxHealth;
 
         this.resourceCost[ResourceTypes.WOOD] = 10; //10 wood
         this.resourceCost[ResourceTypes.GOLD] = 2; //2 Gold

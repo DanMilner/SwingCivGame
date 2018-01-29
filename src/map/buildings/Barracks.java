@@ -11,6 +11,8 @@ public class Barracks extends Building {
 
         super.setImageIcon(icon);
         this.type = "Barracks";
+        this.maxHealth = 400;
+        this.currentHealth = maxHealth;
 
         this.resourceCost[ResourceTypes.WOOD] = 15; //15 wood
         this.resourceCost[ResourceTypes.STONE] = 3; //3 stone

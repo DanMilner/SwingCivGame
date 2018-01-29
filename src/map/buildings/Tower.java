@@ -12,5 +12,7 @@ public class Tower extends Building {
         this.resourceCost[ResourceTypes.IRON] = 1; //1 iron
         this.resourceCost[ResourceTypes.STONE] = 5; //5 stone
         this.borderSize = 2;
+        this.maxHealth = 500;
+        this.currentHealth = maxHealth;
     }
 }

@@ -7,6 +7,8 @@ public class Road extends Building {
         this.buildingImage = new ImageIcon("textures/roads/Road.png");
         this.type = "Road";
         this.borderSize = 0;
+        this.maxHealth = 0;
+        this.currentHealth = maxHealth;
     }
 
     public ImageIcon getImage(boolean North, boolean South, boolean East, boolean West) {

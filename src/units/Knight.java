@@ -12,7 +12,9 @@ public class Knight extends Unit {
         this.imageIcon = new ImageIcon("textures\\unit\\Knight.png");
         this.type = "Knight";
         this.maxMoves = 6;
-        this.remainingMoves = 6;
+        this.remainingMoves = maxMoves;
+        this.maxHealth = 150;
+        this.currentHealth = maxHealth;
         this.attackRange = 1;
         this.resourceCost[ResourceTypes.GOLD] = 2; //costs 2 gold
         this.resourceCost[ResourceTypes.FOOD] = 5; //costs 5 food

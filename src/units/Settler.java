@@ -13,7 +13,9 @@ public class Settler extends Unit {
         this.imageIcon = new ImageIcon("textures\\unit\\settler.png");
         this.type = "Settler";
         this.maxMoves = 2;
-        this.remainingMoves = 2;
+        this.remainingMoves = maxMoves;
+        this.maxHealth = 10;
+        this.currentHealth = maxHealth;
         this.attackRange = 0;
         this.resourceCost[ResourceTypes.FOOD] = 20; //20 food
 

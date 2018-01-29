@@ -13,7 +13,9 @@ public class Builder extends Unit {
         this.imageIcon = new ImageIcon("textures\\unit\\Builder.png");
         this.type = "Builder";
         this.maxMoves = 4;
-        this.remainingMoves = 4;
+        this.remainingMoves = maxMoves;
+        this.maxHealth = 20;
+        this.currentHealth = maxHealth;
         this.attackRange = 0;
         this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
 

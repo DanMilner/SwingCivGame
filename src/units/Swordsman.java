@@ -11,8 +11,10 @@ public class Swordsman extends Unit {
         this.imageIcon = new ImageIcon("textures\\unit\\Swordsman.png");
         this.type = "Swordsman";
         this.maxMoves = 3;
-        this.remainingMoves = 3;
+        this.remainingMoves = maxMoves;
         this.attackRange = 1;
+        this.maxHealth = 100;
+        this.currentHealth = maxHealth;
         this.resourceCost[ResourceTypes.IRON] = 2; //costs 2 iron
         this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
     }

@@ -11,6 +11,8 @@ public abstract class Unit {
     int maxMoves;
     int remainingMoves;
     int attackRange;
+    int maxHealth;
+    int currentHealth;
     ImageIcon imageIcon;
     String type;
     private Player owner;
@@ -55,5 +57,13 @@ public abstract class Unit {
 
     public int getAttackRange() {
         return attackRange;
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 }

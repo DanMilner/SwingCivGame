@@ -11,7 +11,9 @@ public class Catapult extends Unit {
         this.imageIcon = new ImageIcon("textures\\unit\\Catapult.png");
         this.type = "Catapult";
         this.maxMoves = 2;
-        this.remainingMoves = 2;
+        this.remainingMoves = maxMoves;
+        this.maxHealth = 200;
+        this.currentHealth = maxHealth;
         this.attackRange = 2;
         this.resourceCost[ResourceTypes.WOOD] = 2; //costs 2 wood
         this.resourceCost[ResourceTypes.IRON] = 2; //costs 2 iron
