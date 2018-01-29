@@ -79,17 +79,37 @@ public class GameController {
     public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
         if (!Map.coordinatesOnMap(targetX, targetY, MAPSIZE))
             return false;
-        if (!gameMap.getTile(targetX, targetY).hasUnit()) {
-            return false;
-        }
+
         Unit currentUnit = gameMap.getUnit(currentX, currentY);
-        Unit targetUnit = gameMap.getUnit(targetX, targetY);
+        if (unitMovementHandler.tileIsOutOfRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange()))
+            return false;
 
+        Tile targetTile = gameMap.getTile(targetX, targetY);
+        if (targetTile.hasUnit())
+            return targetTile.getUnit().getOwner() != currentUnit.getOwner();
+        if (targetTile.hasBuilding())
+            return targetTile.getOwner() != currentUnit.getOwner();
 
-        if (unitMovementHandler.tileIsInRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange())) {
-            return targetUnit.getOwner() != currentUnit.getOwner();
-        }
         return false;
+    }
+
+    public void performAttack(int currentX, int currentY, int targetX, int targetY) {
+        Unit currentUnit = gameMap.getUnit(currentX, currentY);
+
+        if (gameMap.getTile(targetX, targetY).hasUnit()) {
+            Unit targetUnit = gameMap.getUnit(targetX, targetY);
+            targetUnit.reduceCurrentHealthBy(currentUnit.getAttackDamage());
+            if (targetUnit.getCurrentHealth() <= 0)
+                gameMap.killUnitAndRefundCost(targetX, targetY);
+        } else {
+            Building targetBuilding = gameMap.getTile(targetX, targetY).getBuilding();
+            targetBuilding.reduceCurrentHealthBy(currentUnit.getAttackDamage());
+            if (targetBuilding.getCurrentHealth() <= 0) {
+                gameMap.destroyBuildingAndRefundCost(targetX, targetY);
+                PlayerResourceHandler.calculateResources(gameMap.getTile(targetX, targetY).getOwner());
+            }
+        }
+        currentUnit.setRemainingMoves(0);
     }
 }
 
@@ -106,20 +126,28 @@ class UnitMovementHandler {
         if (!Map.coordinatesOnMap(newX, newY, MAPSIZE))
             return false;
         Tile destinationTile = gameMap.getTile(newX, newY);
+        Unit currentUnit = gameMap.getUnit(oldX, oldY);
 
         if (!destinationTile.isTraversable())
             return false;
 
-        if (!tileIsInRange(oldX, oldY, newX, newY, gameMap.getUnit(oldX, oldY).getRemainingMoves()))
+        if (tileIsOutOfRange(oldX, oldY, newX, newY, currentUnit.getRemainingMoves()))
+            return false;
+
+        if (tileHasEnemyBuilding(currentUnit, destinationTile))
             return false;
 
         return !destinationTile.hasUnit();
     }
 
-    boolean tileIsInRange(int oldX, int oldY, int newX, int newY, int moves) {
+    private boolean tileHasEnemyBuilding(Unit currentUnit, Tile destinationTile) {
+        return destinationTile.hasBuilding() && destinationTile.getOwner() != currentUnit.getOwner();
+    }
+
+    boolean tileIsOutOfRange(int oldX, int oldY, int newX, int newY, int range) {
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); //distance moved on x axis
-        return moves - yDistance - xDistance >= 0;
+        return range - yDistance - xDistance < 0;
     }
 
     boolean moveUnit(int oldX, int oldY, int newX, int newY) {

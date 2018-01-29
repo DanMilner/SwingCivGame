@@ -92,11 +92,13 @@ public class Map {
         this.currentMap[x][y].setUnit(newUnit);
     }
 
-    private void killUnitAndRefundCost(int x, int y) {
+    public void killUnitAndRefundCost(int x, int y) {
         if (currentMap[x][y].hasUnit()) {
-            String buildingType = currentMap[x][y].getBuilding().getType();
-            if (buildingType.equals("Wheat") || buildingType.equals("Road"))
-                return;
+            if (currentMap[x][y].hasBuilding()) {
+                String buildingType = currentMap[x][y].getBuilding().getType();
+                if (buildingType.equals("Wheat") || buildingType.equals("Road"))
+                    return;
+            }
 
             currentMap[x][y].getUnit().getOwner().refundUnitCost(currentMap[x][y].getUnit());
             currentMap[x][y].setUnit(null);
@@ -117,7 +119,7 @@ public class Map {
                             setUnit(x, y, unitOnTile);
 
                         currentMap[xCoord][yCoord].getBuilding().increaseResourceHarvestAmount(6);
-                        currentMap[x][y].getResource().setInUse();
+                        currentMap[xCoord][yCoord].getBuilding().claimResourceTile(currentMap[x][y].getResource());
                     }
                 }
             }
@@ -163,6 +165,12 @@ public class Map {
 
     public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
         return currentMap[currentX][currentY].getButtonList(unitSelected);
+    }
+
+    public void destroyBuildingAndRefundCost(int targetX, int targetY) {
+        currentMap[targetX][targetY].getOwner().refundBuildingCost(currentMap[targetX][targetY].getBuilding());
+        roadManager.removeRoad(currentMap[targetX][targetY]);
+        currentMap[targetX][targetY].setBuilding(null);
     }
 }
 
@@ -301,9 +309,9 @@ class ResourceYieldCalculator {
             for (int j = y - borderSize; j <= y + borderSize; j++) {
                 Resource resourceBeingChecked = currentMap[i][j].getResource();
                 if (currentMap[i][j].getOwner() != currentPlayer)
-                    return;
+                    continue;
                 if (resourceBeingChecked.isInUse())
-                    return;
+                    continue;
                 if (resourceBeingChecked.isHarvestable())
                     findAdjacentResourceType(resourceBeingChecked, building);
             }
@@ -319,6 +327,6 @@ class ResourceYieldCalculator {
 
     private static void incrementTileResource(int type, Building building, Resource resourceTile) {
         building.increaseResourceHarvestAmount(type);
-        resourceTile.setInUse();
+        building.claimResourceTile(resourceTile);
     }
 }

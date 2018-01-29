@@ -16,6 +16,7 @@ public class Knight extends Unit {
         this.maxHealth = 150;
         this.currentHealth = maxHealth;
         this.attackRange = 1;
+        this.attackDamage = 60;
         this.resourceCost[ResourceTypes.GOLD] = 2; //costs 2 gold
         this.resourceCost[ResourceTypes.FOOD] = 5; //costs 5 food
     }

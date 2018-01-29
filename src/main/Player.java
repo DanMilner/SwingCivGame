@@ -6,7 +6,6 @@ import units.Unit;
 import java.awt.*;
 import java.util.ArrayList;
 
-
 public class Player {
     private String name;
     private Color colour;
@@ -71,10 +70,27 @@ public class Player {
     }
 
     public void refundUnitCost(Unit deadUnit) {
-        int[] resourceCost = deadUnit.getResourceCost();
+        refundCost(deadUnit.getResourceCost());
+        units.remove(deadUnit);
+    }
+
+    public void refundBuildingCost(Building destroyedBuilding) {
+        refundCost(destroyedBuilding.getResourceCost());
+        int multiplier = 1;
+        if (destroyedBuilding.getHasCityConnection()) {
+            multiplier = 2;
+        }
+        int[] resourceHarvestAmount = destroyedBuilding.getResourceHarvestAmount();
+        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
+            setResource(i, getResource(i) - resourceHarvestAmount[i] * multiplier);
+        }
+        destroyedBuilding.releaseClaimedTiles();
+        buildings.remove(destroyedBuilding);
+    }
+
+    private void refundCost(int[] resourceCost) {
         for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
             increaseResource(type, resourceCost[type]);
         }
-        units.remove(deadUnit);
     }
 }

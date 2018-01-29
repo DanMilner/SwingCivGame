@@ -1,6 +1,7 @@
 package map.buildings;
 
 import main.ResourceTypes;
+import map.resources.Resource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +17,7 @@ public abstract class Building {
     boolean harvestableResourceTypes[];
     ArrayList<String> buttonList;
     private int[] resourceHarvestAmount = new int[ResourceTypes.getNumberOfResourceTypes()];
+    private ArrayList<Resource> claimedResourceTiles = new ArrayList<>();
     private boolean visited;
     public String type;
 
@@ -62,6 +64,10 @@ public abstract class Building {
         return resourceHarvestAmount[type];
     }
 
+    public int[] getResourceHarvestAmount() {
+        return resourceHarvestAmount;
+    }
+
     public void increaseResourceHarvestAmount(int type) {
         resourceHarvestAmount[type]++;
     }
@@ -93,5 +99,20 @@ public abstract class Building {
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    public void claimResourceTile(Resource resourceTile) {
+        claimedResourceTiles.add(resourceTile);
+        resourceTile.setInUse(true);
+    }
+
+    public void reduceCurrentHealthBy(int attackDamage) {
+        currentHealth -= attackDamage;
+    }
+
+    public void releaseClaimedTiles() {
+        for (Resource resource : claimedResourceTiles) {
+            resource.setInUse(false);
+        }
     }
 }

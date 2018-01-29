@@ -10,8 +10,9 @@ public abstract class Unit {
 
     int maxMoves;
     int remainingMoves;
-    int attackRange;
-    int maxHealth;
+    int attackRange = 0;
+    int attackDamage = 0;
+    int maxHealth = 0;
     int currentHealth;
     ImageIcon imageIcon;
     String type;
@@ -59,11 +60,19 @@ public abstract class Unit {
         return attackRange;
     }
 
+    public int getAttackDamage() {
+        return attackDamage;
+    }
+
     public int getCurrentHealth() {
         return currentHealth;
     }
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    public void reduceCurrentHealthBy(int attackDamage) {
+        currentHealth -= attackDamage;
     }
 }

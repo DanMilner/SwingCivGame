@@ -13,8 +13,8 @@ public abstract class Resource {
         return inUse;
     }
 
-    public void setInUse() {
-        inUse = true;
+    public void setInUse(Boolean inUse) {
+        this.inUse = inUse;
     }
 
     public String getType() {

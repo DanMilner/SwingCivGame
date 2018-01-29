@@ -291,7 +291,11 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord) {
-        if (gameController.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord)) {
+        if(gameController.attackIsPossible(currentX, currentY, buttonXCoord, buttonYCoord)){
+            gameController.performAttack(currentX, currentY, buttonXCoord, buttonYCoord);
+            updateBoardButtonIconsAndBorders();
+            unitSelected = false;
+        }else if (gameController.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord)) {
             boardButtons[currentX][currentY].setIcon(gameController.getTileImage(buttonXCoord, buttonYCoord));
             unitSelected = false;
             updateBoardButtonIconsAndBorders();

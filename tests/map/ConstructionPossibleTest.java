@@ -68,7 +68,7 @@ public class ConstructionPossibleTest {
     public void isConstructionPossibleTestTileHasResourceInUse(){
         String buildingType = "LumberMill";
         currentMap[2][2].setResource(new Forest());
-        currentMap[2][2].getResource().setInUse();
+        currentMap[2][2].getResource().setInUse(true);
         assertFalse(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
     }
 }

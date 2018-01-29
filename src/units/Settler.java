@@ -16,7 +16,6 @@ public class Settler extends Unit {
         this.remainingMoves = maxMoves;
         this.maxHealth = 10;
         this.currentHealth = maxHealth;
-        this.attackRange = 0;
         this.resourceCost[ResourceTypes.FOOD] = 20; //20 food
 
         this.buttonList = new ArrayList<>();
