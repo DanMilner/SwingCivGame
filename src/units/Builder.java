@@ -16,7 +16,7 @@ public class Builder extends Unit {
         this.remainingMoves = maxMoves;
         this.maxHealth = 20;
         this.currentHealth = maxHealth;
-        this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
+        this.resourceCost[ResourceTypes.FOOD.ordinal()] = 2; //costs 2 food
 
         this.buttonList = new ArrayList<>();
         buttonList.add("Farm");

@@ -20,14 +20,14 @@ public class PlayerTest {
 
     @Test
     public void setResourceTest(){
-        player.setResource(ResourceTypes.WOOD, 100);
-        assertEquals(100, player.getResource(ResourceTypes.WOOD));
+        player.setResource(ResourceTypes.WOOD.ordinal(), 100);
+        assertEquals(100, player.getResource(ResourceTypes.WOOD.ordinal()));
     }
 
     @Test
     public void increaseResourceTest(){
-        player.increaseResource(ResourceTypes.WOOD, 10);
-        assertEquals(10, player.getResource(ResourceTypes.WOOD));
+        player.increaseResource(ResourceTypes.WOOD.ordinal(), 10);
+        assertEquals(10, player.getResource(ResourceTypes.WOOD.ordinal()));
     }
 
     @Test
@@ -44,15 +44,15 @@ public class PlayerTest {
 
     @Test
     public void resetResourcesTest(){
-        player.setResource(ResourceTypes.WOOD, 100);
-        player.setResource(ResourceTypes.IRON, 100);
-        player.setResource(ResourceTypes.COPPER, 100);
-        player.setResource(ResourceTypes.COAL, 100);
-        player.setResource(ResourceTypes.DIAMONDS, 100);
-        player.setResource(ResourceTypes.FOOD, 100);
-        player.setResource(ResourceTypes.STONE, 100);
-        player.setResource(ResourceTypes.GOLD, 100);
-        player.setResource(ResourceTypes.WATER, 100);
+        player.setResource(ResourceTypes.WOOD.ordinal(), 100);
+        player.setResource(ResourceTypes.IRON.ordinal(), 100);
+        player.setResource(ResourceTypes.COPPER.ordinal(), 100);
+        player.setResource(ResourceTypes.COAL.ordinal(), 100);
+        player.setResource(ResourceTypes.DIAMONDS.ordinal(), 100);
+        player.setResource(ResourceTypes.FOOD.ordinal(), 100);
+        player.setResource(ResourceTypes.STONE.ordinal(), 100);
+        player.setResource(ResourceTypes.GOLD.ordinal(), 100);
+        player.setResource(ResourceTypes.WATER.ordinal(), 100);
 
         player.resetResources();
 

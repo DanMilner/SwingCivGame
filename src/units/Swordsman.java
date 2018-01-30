@@ -16,7 +16,7 @@ public class Swordsman extends Unit {
         this.maxHealth = 100;
         this.currentHealth = maxHealth;
         this.attackDamage = 40;
-        this.resourceCost[ResourceTypes.IRON] = 2; //costs 2 iron
-        this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
+        this.resourceCost[ResourceTypes.IRON.ordinal()] = 2; //costs 2 iron
+        this.resourceCost[ResourceTypes.FOOD.ordinal()] = 2; //costs 2 food
     }
 }

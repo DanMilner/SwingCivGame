@@ -14,8 +14,8 @@ public class Barracks extends Building {
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
-        this.resourceCost[ResourceTypes.WOOD] = 15; //15 wood
-        this.resourceCost[ResourceTypes.STONE] = 3; //3 stone
+        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 15; //15 wood
+        this.resourceCost[ResourceTypes.STONE.ordinal()] = 3; //3 stone
 
         this.buttonList = new ArrayList<>();
         buttonList.add("Swordsman");

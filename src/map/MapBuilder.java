@@ -1,6 +1,7 @@
 package map;
 
 import exceptions.TypeNotFound;
+import main.ResourceTypes;
 import map.resources.Resource;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -62,7 +63,7 @@ class MapBuilder {
         for (int x = 0; x <= MAPSIZE; x++) {
             for (int y = 0; y <= MAPSIZE; y++) {
                 map[x][y] = new Tile(x, y, null);
-                constructResourceTile("Grass", x, y);
+                constructResourceTile(ResourceTypes.GRASS, x, y);
             }
         }
     }
@@ -72,7 +73,7 @@ class MapBuilder {
         //add trees
         randomValues.setAmount(MAPSIZE * 2, MAPSIZE * 3);
         randomValues.setIntensity(3, 10);
-        addResource(randomValues, "Forest");
+        addResource(randomValues, ResourceTypes.WOOD);
 
         addSnow();
 
@@ -86,35 +87,35 @@ class MapBuilder {
         //add Mountains
         randomValues.setAmount(MAPSIZE / 10, MAPSIZE / 6);
         randomValues.setIntensity(MAPSIZE, MAPSIZE * 2);
-        addResource(randomValues, "Mountain");
+        addResource(randomValues, ResourceTypes.STONE);
 
         //add Iron
         randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
         randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(randomValues, "Iron");
+        addResource(randomValues, ResourceTypes.IRON);
 
         //add Gold
         randomValues.setAmount(MAPSIZE / 8, MAPSIZE / 5);
         randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(randomValues, "Gold");
+        addResource(randomValues, ResourceTypes.GOLD);
 
         //add Copper
         randomValues.setAmount(MAPSIZE / 7, MAPSIZE / 5);
         randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(randomValues, "Copper");
+        addResource(randomValues, ResourceTypes.COPPER);
 
         //add Coal
         randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
         randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(randomValues, "Coal");
+        addResource(randomValues, ResourceTypes.COAL);
 
         //add Diamonds
         randomValues.setAmount(MAPSIZE / 6, MAPSIZE / 4);
         randomValues.setIntensity(2, 6);
-        addResource(randomValues, "Diamonds");
+        addResource(randomValues, ResourceTypes.DIAMONDS);
     }
 
-    private void generateTilesInBodies(int xCoord, int yCoord, int intensity, String tileType) {
+    private void generateTilesInBodies(int xCoord, int yCoord, int intensity, ResourceTypes resourceType) {
         int originX = xCoord;
         int originY = yCoord;
         int numberOfTilesGenerated = 0;
@@ -123,8 +124,8 @@ class MapBuilder {
             xCoord = directionResult.getxCoord();
             yCoord = directionResult.getyCoord();
             if (coordinatesOnMap(xCoord, yCoord)) {
-                if (!map[xCoord][yCoord].getResource().getType().equals(tileType)) {
-                    constructResourceTile(tileType, xCoord, yCoord);
+                if (map[xCoord][yCoord].getResource().getResourceType() != resourceType) {
+                    constructResourceTile(resourceType, xCoord, yCoord);
                     xCoord = originX;
                     yCoord = originY;
                     numberOfTilesGenerated++;
@@ -143,7 +144,7 @@ class MapBuilder {
 
         int xCoord = ThreadLocalRandom.current().nextInt(1, MAPSIZE);
         int yCoord = ThreadLocalRandom.current().nextInt(quarterMapSize, MAPSIZE - quarterMapSize);
-        generateTilesInBodies(xCoord, yCoord, intensity, "Sand");
+        generateTilesInBodies(xCoord, yCoord, intensity, ResourceTypes.SAND);
     }
 
     private void addSnow() {
@@ -151,18 +152,18 @@ class MapBuilder {
 
         for (int y = 0; y < rowsOfSnow; y++) {
             for (int x = 0; x < MAPSIZE; x++) {
-                constructResourceTile("Snow", x, y);
+                constructResourceTile(ResourceTypes.SNOW, x, y);
             }
         }
 
         for (int y = MAPSIZE; y >= MAPSIZE - rowsOfSnow; y--) {
             for (int x = 0; x < MAPSIZE; x++) {
-                constructResourceTile("Snow", x, y);
+                constructResourceTile(ResourceTypes.SNOW, x, y);
             }
         }
     }
 
-    private void addResource(RandomValues randomValues, String type) {
+    private void addResource(RandomValues randomValues, ResourceTypes resourceType) {
         int amount = randomValues.getAmount();
         int intensity = randomValues.getIntensity();
         int xCoord;
@@ -172,14 +173,14 @@ class MapBuilder {
             do {
                 xCoord = randomValues.getRandomCoordinate(MAPSIZE);
                 yCoord = randomValues.getRandomCoordinate(MAPSIZE);
-            } while (map[xCoord][yCoord].getResource().getType().equals("Water"));
+            } while (map[xCoord][yCoord].getResource().getResourceType() == ResourceTypes.WATER);
 
             for (int i = 0; i < intensity; i++) {
                 RandomDirectionResult directionResult = randomDirection(xCoord, yCoord);
                 xCoord = directionResult.getxCoord();
                 yCoord = directionResult.getyCoord();
                 if (coordinatesOnMap(xCoord, yCoord))
-                    constructResourceTile(type, xCoord, yCoord);
+                    constructResourceTile(resourceType, xCoord, yCoord);
             }
         }
     }
@@ -194,7 +195,7 @@ class MapBuilder {
             xCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
             yCoord = ThreadLocalRandom.current().nextInt(0, MAPSIZE);
 
-            generateTilesInBodies(xCoord, yCoord, intensity, "Water");
+            generateTilesInBodies(xCoord, yCoord, intensity, ResourceTypes.WATER);
         }
     }
 
@@ -217,9 +218,9 @@ class MapBuilder {
         return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 
-    private void constructResourceTile(String type, int x, int y) {
+    private void constructResourceTile(ResourceTypes resourceType, int x, int y) {
         try {
-            Resource newResource = TileFactory.buildResourceTile(type);
+            Resource newResource = TileFactory.buildResourceTile(resourceType);
             map[x][y].setResource(newResource);
 //            System.out.println(type + " spawned at " + x + " " + y);
         } catch (TypeNotFound typeNotFound) {

@@ -60,7 +60,7 @@ public class MapTest {
         gameMap.setTileResource(4,4,new Forest());
         gameMap.constructAndSetBuildingTile("Lumber Mill",5,5,player);
 
-        assertTrue(gameMap.getTile(5,5).getBuilding().getResourceAmount(ResourceTypes.WOOD) == 1);
+        assertTrue(gameMap.getTile(5,5).getBuilding().getResourceAmount(ResourceTypes.WOOD.ordinal()) == 1);
     }
 
     @Test

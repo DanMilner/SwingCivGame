@@ -9,8 +9,8 @@ public class City extends Building {
     public City() {
         this.buildingImage = new ImageIcon("textures\\buildings\\village.png");
         this.type = "City";
-        this.resourceCost[ResourceTypes.WOOD] = 20; //20 wood
-        this.resourceCost[ResourceTypes.STONE] = 10; //10 stone
+        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 20; //20 wood
+        this.resourceCost[ResourceTypes.STONE.ordinal()] = 10; //10 stone
         this.hasCityConnection = true;
         this.borderSize = 3;
         this.maxHealth = 1000;

@@ -88,7 +88,7 @@ class UiTextManager {
             currentHealth = tileClicked.getBuilding().getCurrentHealth();
             maxHealth = tileClicked.getBuilding().getMaxHealth();
         } else {
-            tileType = tileClicked.getResource().getType();
+            tileType = tileClicked.getResource().getResourceType().toString();
         }
 
         updateTileType(tileType);

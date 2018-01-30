@@ -16,8 +16,8 @@ public class Archer extends Unit {
         this.currentHealth = maxHealth;
         this.attackRange = 4;
         this.attackDamage = 30;
-        this.resourceCost[ResourceTypes.WOOD] = 1; //costs 1 wood
-        this.resourceCost[ResourceTypes.IRON] = 1; //costs 1 iron
-        this.resourceCost[ResourceTypes.FOOD] = 2; //costs 2 food
+        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 1; //costs 1 wood
+        this.resourceCost[ResourceTypes.IRON.ordinal()] = 1; //costs 1 iron
+        this.resourceCost[ResourceTypes.FOOD.ordinal()] = 2; //costs 2 food
     }
 }

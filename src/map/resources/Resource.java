@@ -1,5 +1,7 @@
 package map.resources;
 
+import main.ResourceTypes;
+
 import javax.swing.*;
 
 public abstract class Resource {
@@ -7,7 +9,7 @@ public abstract class Resource {
     boolean isTraversable = true;
     boolean isHarvestable = false;
     private boolean inUse = false;
-    public String type;
+    ResourceTypes resourceType;
 
     public boolean isInUse() {
         return inUse;
@@ -15,10 +17,6 @@ public abstract class Resource {
 
     public void setInUse(Boolean inUse) {
         this.inUse = inUse;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public ImageIcon getImage() {
@@ -31,5 +29,9 @@ public abstract class Resource {
 
     public boolean isHarvestable() {
         return isHarvestable;
+    }
+
+    public ResourceTypes getResourceType() {
+        return resourceType;
     }
 }

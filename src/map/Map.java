@@ -110,7 +110,7 @@ public class Map {
         for (int x = xCoord; x <= xCoord + FARM_SIZE; x++) {
             for (int y = yCoord - FARM_SIZE; y <= yCoord; y++) {
                 if (coordinatesOnMap(x, y)) {
-                    if (currentMap[x][y].getResource().getType().equals("Grass")) {
+                    if (currentMap[x][y].getResource().getResourceType() == ResourceTypes.GRASS) {
                         Unit unitOnTile = currentMap[x][y].getUnit();
 
                         constructAndSetBuildingTile("Wheat", x, y, owner);
@@ -258,7 +258,7 @@ class ConstructionPossible {
         for (int x = xCoord - DOCK_SIZE; x <= xCoord + DOCK_SIZE; x++) {
             for (int y = yCoord - DOCK_SIZE; y <= yCoord + DOCK_SIZE; y++) {
                 if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
-                    if (currentMap[x][y].getResource().getType().equals("Water")) {
+                    if (currentMap[x][y].getResource().getResourceType() == ResourceTypes.WATER) {
                         return true;
                     }
                 }
@@ -323,8 +323,7 @@ class ResourceYieldCalculator {
     }
 
     private static void findAdjacentResourceType(Resource resourceTile, Building building) {
-        String type = resourceTile.getType();
-        int index = ResourceTypes.getResourceTypeIndex(type);
+        int index = resourceTile.getResourceType().ordinal();
         if (building.canHarvestResourceType(index))
             incrementTileResource(index, building, resourceTile);
     }
