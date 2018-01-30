@@ -17,14 +17,17 @@ public class GameController {
     private BuildingAndUnitCreator buildingAndUnitCreator;
     private PlayerHandler playerHandler;
     private UnitMovementHandler unitMovementHandler;
+    private AttackHandler attackHandler;
 
+    //temporary until a menu GUI is made
     public static final int MAPSIZE = 40;
 
     GameController() {
         gameMap = new Map(false, MAPSIZE);
         buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
         playerHandler = new PlayerHandler();
-        unitMovementHandler = new UnitMovementHandler(gameMap, MAPSIZE);
+        unitMovementHandler = new UnitMovementHandler(gameMap);
+        attackHandler = new AttackHandler(gameMap);
 
         playerHandler.addPlayer("Daniel");
         playerHandler.addPlayer("Alastair");
@@ -77,11 +80,27 @@ public class GameController {
     }
 
     public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
-        if (!Map.coordinatesOnMap(targetX, targetY, MAPSIZE))
+        return attackHandler.attackIsPossible(currentX, currentY, targetX, targetY);
+    }
+
+    public void performAttack(int currentX, int currentY, int targetX, int targetY) {
+        attackHandler.performAttack(currentX, currentY, targetX, targetY);
+    }
+}
+
+class AttackHandler {
+    private Map gameMap;
+
+    AttackHandler(Map gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
+        if (!gameMap.coordinatesOnMap(targetX, targetY))
             return false;
 
         Unit currentUnit = gameMap.getUnit(currentX, currentY);
-        if (unitMovementHandler.tileIsOutOfRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange()))
+        if (UnitMovementHandler.tileIsOutOfRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange()))
             return false;
 
         Tile targetTile = gameMap.getTile(targetX, targetY);
@@ -115,15 +134,13 @@ public class GameController {
 
 class UnitMovementHandler {
     private Map gameMap;
-    private int MAPSIZE;
 
-    UnitMovementHandler(Map gameMap, int MAPSIZE) {
+    UnitMovementHandler(Map gameMap) {
         this.gameMap = gameMap;
-        this.MAPSIZE = MAPSIZE;
     }
 
     boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        if (!Map.coordinatesOnMap(newX, newY, MAPSIZE))
+        if (!gameMap.coordinatesOnMap(newX, newY))
             return false;
         Tile destinationTile = gameMap.getTile(newX, newY);
         Unit currentUnit = gameMap.getUnit(oldX, oldY);
@@ -144,7 +161,7 @@ class UnitMovementHandler {
         return destinationTile.hasBuilding() && destinationTile.getOwner() != currentUnit.getOwner();
     }
 
-    boolean tileIsOutOfRange(int oldX, int oldY, int newX, int newY, int range) {
+    public static boolean tileIsOutOfRange(int oldX, int oldY, int newX, int newY, int range) {
         int yDistance = Math.abs(oldY - newY); //distance moved on y axis
         int xDistance = Math.abs(oldX - newX); //distance moved on x axis
         return range - yDistance - xDistance < 0;
