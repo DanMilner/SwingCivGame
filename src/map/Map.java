@@ -44,7 +44,7 @@ public class Map {
                 //check the surrounding tiles to not collide with existing cities
                 for (int x = xCoord - CITY_BORDER_SIZE; x <= xCoord + CITY_BORDER_SIZE; x++) {
                     for (int y = yCoord - CITY_BORDER_SIZE; y <= yCoord + CITY_BORDER_SIZE; y++) {
-                        if (coordinatesOnMap(x, y, MAPSIZE)) {
+                        if (coordinatesOnMap(x, y)) {
                             if (currentMap[x][y].hasOwner()) {
                                 placeCity = false; //if a tile is owned by another player then the cities are too close together
                             }
@@ -59,7 +59,7 @@ public class Map {
         } while (true);
     }
 
-    public static boolean coordinatesOnMap(int x, int y, int MAPSIZE) {
+    public boolean coordinatesOnMap(int x, int y) {
         return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 
@@ -109,7 +109,7 @@ public class Map {
         final int FARM_SIZE = 2;
         for (int x = xCoord; x <= xCoord + FARM_SIZE; x++) {
             for (int y = yCoord - FARM_SIZE; y <= yCoord; y++) {
-                if (coordinatesOnMap(x, y, MAPSIZE)) {
+                if (coordinatesOnMap(x, y)) {
                     if (currentMap[x][y].getResource().getType().equals("Grass")) {
                         Unit unitOnTile = currentMap[x][y].getUnit();
 
@@ -183,7 +183,7 @@ class TileOwnerHandler {
         int endY = yOrigin + borderSize;
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                if (Map.coordinatesOnMap(x, y, currentMap.length)) {
+                if (coordinatesOnMap(x, y)) {
                     if (!currentMap[x][y].hasOwner()) {
                         currentMap[x][y].setOwner(owner);
                     }
@@ -196,7 +196,7 @@ class TileOwnerHandler {
         final int BORDER_REQUIRED = 3;
         final int BORDER_NOT_REQUIRED = 0;
 
-        if (!Map.coordinatesOnMap(adjacentX, adjacentY, currentMap.length)) {
+        if (!coordinatesOnMap(adjacentX, adjacentY)) {
             return BORDER_REQUIRED;
         }
         if (currentMap[currentX][currentY].getOwner() != currentMap[adjacentX][adjacentY].getOwner()) {
@@ -204,6 +204,10 @@ class TileOwnerHandler {
         } else {
             return BORDER_NOT_REQUIRED;
         }
+    }
+
+    private static boolean coordinatesOnMap(int x, int y) {
+        return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 }
 

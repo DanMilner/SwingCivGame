@@ -1,13 +1,11 @@
 package main;
 
 public class ButtonData {
-    private boolean unitSelected;
     private int CurrentX;
     private int CurrentY;
     private String text;
 
-    ButtonData(boolean unitSelected, int x, int y, String text) {
-        this.unitSelected = unitSelected;
+    ButtonData(int x, int y, String text) {
         this.CurrentX = x;
         this.CurrentY = y;
         this.text = text;
@@ -23,9 +21,5 @@ public class ButtonData {
 
     String getText() {
         return text;
-    }
-
-    public boolean isUnitSelected() {
-        return unitSelected;
     }
 }

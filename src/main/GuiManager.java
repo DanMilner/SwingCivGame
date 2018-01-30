@@ -77,7 +77,7 @@ public class GuiManager extends JFrame implements ActionListener {
     private void uiButtonAction(int ButtonNum) {
         String buttonText = uiButtons.get(ButtonNum).getText();
 
-        ButtonData buttonData = new ButtonData(unitSelected, currentX, currentY, buttonText);
+        ButtonData buttonData = new ButtonData(currentX, currentY, buttonText);
 
         gameController.buttonClicked(buttonData);
         updateBoardButtonIconsAndBorders();

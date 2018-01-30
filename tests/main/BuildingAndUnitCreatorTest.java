@@ -26,7 +26,7 @@ public class BuildingAndUnitCreatorTest {
     public void createUnitTest() {
         gameMap.spawnCity(player);
 
-        ButtonData data = new ButtonData(false, 3, 3, "Builder");
+        ButtonData data = new ButtonData(3, 3, "Builder");
         buildingAndUnitCreator.createUnit(data,player);
         ArrayList<Unit> playerUnits = player.getUnits();
 
@@ -35,7 +35,7 @@ public class BuildingAndUnitCreatorTest {
 
     @Test
     public void createBuildingTestTower() {
-        ButtonData data = new ButtonData(false, 3, 3, "Tower");
+        ButtonData data = new ButtonData(3, 3, "Tower");
         buildingAndUnitCreator.createBuilding(data, player);
 
         ArrayList<Building> playerBuildings = player.getBuildings();
@@ -45,7 +45,7 @@ public class BuildingAndUnitCreatorTest {
 
     @Test
     public void createBuildingTestRoad() {
-        ButtonData data = new ButtonData(false, 3, 3, "Road");
+        ButtonData data = new ButtonData( 3, 3, "Road");
         Unit newUnit = new Builder(player);
         gameMap.setUnit(3,3,newUnit);
 
