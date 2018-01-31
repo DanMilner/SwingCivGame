@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.awt.*;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ResourceYieldCalculatorTest {
     private Tile[][] currentMap;
@@ -23,9 +24,9 @@ public class ResourceYieldCalculatorTest {
         currentMap = new Tile[5][5];
         player = new Player("Daniel", Color.yellow);
 
-        for(int i = 0; i < currentMap.length; i++){
-            for(int j = 0; j < currentMap.length; j++){
-                currentMap[i][j] = new Tile(i,j,player);
+        for (int i = 0; i < currentMap.length; i++) {
+            for (int j = 0; j < currentMap.length; j++) {
+                currentMap[i][j] = new Tile(i, j, player);
             }
         }
     }
@@ -34,16 +35,16 @@ public class ResourceYieldCalculatorTest {
     public void calculateResourceYieldsTestLumberMill() {
         setMapTo(ResourceTypes.WOOD);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3,3,lumberMill,player,currentMap);
-        assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD.ordinal()) == 9);
+        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD) == 9);
     }
 
     @Test
     public void calculateResourceYieldsTestMine() {
         setMapTo(ResourceTypes.IRON);
         Building mine = new Mine();
-        ResourceYieldCalculator.calculateResourceYields(3,3,mine,player,currentMap);
-        assertTrue(mine.getResourceAmount(ResourceTypes.IRON.ordinal()) == 9);
+        ResourceYieldCalculator.calculateResourceYields(3, 3, mine, player, currentMap);
+        assertTrue(mine.getResourceAmount(ResourceTypes.IRON) == 9);
     }
 
     @Test
@@ -59,42 +60,45 @@ public class ResourceYieldCalculatorTest {
         currentMap[2][2].setResource(TileFactory.buildResourceTile(ResourceTypes.COPPER));
 
         Building mine = new Mine();
-        ResourceYieldCalculator.calculateResourceYields(1,1,mine,player,currentMap);
+        ResourceYieldCalculator.calculateResourceYields(1, 1, mine, player, currentMap);
 
-        assertTrue(mine.getResourceAmount(ResourceTypes.IRON.ordinal()) == 3);
-        assertTrue(mine.getResourceAmount(ResourceTypes.COAL.ordinal()) == 2);
-        assertTrue(mine.getResourceAmount(ResourceTypes.DIAMONDS.ordinal()) == 1);
-        assertTrue(mine.getResourceAmount(ResourceTypes.COPPER.ordinal()) == 2);
-        assertTrue(mine.getResourceAmount(ResourceTypes.STONE.ordinal()) == 1);
+        assertTrue(mine.getResourceAmount(ResourceTypes.IRON) == 3);
+        assertTrue(mine.getResourceAmount(ResourceTypes.COAL) == 2);
+        assertTrue(mine.getResourceAmount(ResourceTypes.DIAMONDS) == 1);
+        assertTrue(mine.getResourceAmount(ResourceTypes.COPPER) == 2);
+        assertTrue(mine.getResourceAmount(ResourceTypes.STONE) == 1);
     }
 
     @Test
-    public void calculateResourceYieldsTestCityConnection(){
+    public void calculateResourceYieldsTestCityConnection() {
         setMapTo(ResourceTypes.WOOD);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3,3,lumberMill,player,currentMap);
+        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
 
         lumberMill.setHasCityConnection(true);
-        assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD.ordinal()) == 18);
+        assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD) == 18);
         lumberMill.setHasCityConnection(false);
-        assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD.ordinal()) == 9);
+        assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD) == 9);
     }
+
     @Test
-    public void calculateResourceYieldsTestNoResources(){
+    public void calculateResourceYieldsTestNoResources() {
         setMapTo(ResourceTypes.GRASS);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3,3,lumberMill,player,currentMap);
-        for (int type = 0; type<ResourceTypes.getNumberOfResourceTypes(); type++){
-            assertTrue(lumberMill.getResourceAmount(type) == 0);
+        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        lumberMill.setUpHarvestedResourcesIterator();
+        while (lumberMill.hasNextResourceCost()) {
+            assertTrue(lumberMill.getResourceAmount(lumberMill.getNextType()) == 0);
         }
     }
 
-    @Test
-    public void calculateResourceYieldsTestWrongHarvester(){
+    @Test(expected = NullPointerException.class)
+    public void calculateResourceYieldsTestWrongHarvester() {
         setMapTo(ResourceTypes.COPPER);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3,3,lumberMill,player,currentMap);
-        assertTrue(lumberMill.getResourceAmount(ResourceTypes.COPPER.ordinal()) == 0);
+        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        lumberMill.getResourceAmount(ResourceTypes.COPPER);
+        fail();
     }
 
     private void setMapTo(ResourceTypes resourceType) {

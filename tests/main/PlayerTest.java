@@ -14,24 +14,25 @@ public class PlayerTest {
     private Player player;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         player = new Player("Daniel", Color.yellow);
     }
 
     @Test
-    public void setResourceTest(){
-        player.setResource(ResourceTypes.WOOD.ordinal(), 100);
-        assertEquals(100, player.getResource(ResourceTypes.WOOD.ordinal()));
+    public void setResourceTest() {
+        player.setResource(ResourceTypes.WOOD, 100);
+        assertEquals(100, player.getResource(ResourceTypes.WOOD));
     }
 
     @Test
-    public void increaseResourceTest(){
-        player.increaseResource(ResourceTypes.WOOD.ordinal(), 10);
-        assertEquals(10, player.getResource(ResourceTypes.WOOD.ordinal()));
+    public void increaseResourceTest() {
+        player.setResource(ResourceTypes.WOOD, 0);
+        player.increaseResource(ResourceTypes.WOOD, 10);
+        assertEquals(10, player.getResource(ResourceTypes.WOOD));
     }
 
     @Test
-    public void resetUnitMovesTest(){
+    public void resetUnitMovesTest() {
         Unit unit = new Knight(player);
         int maxMoves = unit.getRemainingMoves();
 
@@ -43,34 +44,35 @@ public class PlayerTest {
     }
 
     @Test
-    public void resetResourcesTest(){
-        player.setResource(ResourceTypes.WOOD.ordinal(), 100);
-        player.setResource(ResourceTypes.IRON.ordinal(), 100);
-        player.setResource(ResourceTypes.COPPER.ordinal(), 100);
-        player.setResource(ResourceTypes.COAL.ordinal(), 100);
-        player.setResource(ResourceTypes.DIAMONDS.ordinal(), 100);
-        player.setResource(ResourceTypes.FOOD.ordinal(), 100);
-        player.setResource(ResourceTypes.STONE.ordinal(), 100);
-        player.setResource(ResourceTypes.GOLD.ordinal(), 100);
-        player.setResource(ResourceTypes.WATER.ordinal(), 100);
+    public void resetResourcesTest() {
+        player.setResource(ResourceTypes.WOOD, 100);
+        player.setResource(ResourceTypes.IRON, 100);
+        player.setResource(ResourceTypes.COPPER, 100);
+        player.setResource(ResourceTypes.COAL, 100);
+        player.setResource(ResourceTypes.DIAMONDS, 100);
+        player.setResource(ResourceTypes.FOOD, 100);
+        player.setResource(ResourceTypes.STONE, 100);
+        player.setResource(ResourceTypes.GOLD, 100);
+        player.setResource(ResourceTypes.WATER, 100);
 
         player.resetResources();
 
-        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            assertEquals(0,player.getResource(type));
+        for (ResourceTypes resourceType : ResourceTypes.values()) {
+            assertEquals(0, player.getResource(resourceType));
         }
     }
 
     @Test
-    public void refundUnitCostTest(){
+    public void refundUnitCostTest() {
         Unit unit = new Catapult(player);
-        int cost[] = unit.getResourceCost();
 
         player.addUnit(unit);
         player.refundUnitCost(unit);
 
-        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            assertEquals(cost[type],player.getResource(type));
+        unit.setUpResourceIterator();
+        while (unit.hasNextResourceCost()) {
+            assertEquals(unit.getNextValue(), player.getResource(unit.getNextType()));
+
         }
     }
 }

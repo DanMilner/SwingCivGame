@@ -16,10 +16,10 @@ public class Catapult extends Unit {
         this.currentHealth = maxHealth;
         this.attackRange = 2;
         this.attackDamage = 800;
-        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 2; //costs 2 wood
-        this.resourceCost[ResourceTypes.IRON.ordinal()] = 2; //costs 2 iron
-        this.resourceCost[ResourceTypes.COPPER.ordinal()] = 1; //costs 1 Copper
-        this.resourceCost[ResourceTypes.STONE.ordinal()] = 1; //costs 1 Stone
-        this.resourceCost[ResourceTypes.FOOD.ordinal()] = 5; //costs 5 food
+        this.resourceCost.put(ResourceTypes.WOOD, 2);
+        this.resourceCost.put(ResourceTypes.IRON, 2);
+        this.resourceCost.put(ResourceTypes.COPPER, 1);
+        this.resourceCost.put(ResourceTypes.STONE, 1);
+        this.resourceCost.put(ResourceTypes.FOOD, 5);
     }
 }

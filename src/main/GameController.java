@@ -231,9 +231,19 @@ class PlayerHandler {
 }
 
 class PlayerResourceHandler {
-    static void subtractUsedResources(int[] resourceCosts, Player player) {
-        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
-            player.setResource(i, player.getResource(i) - resourceCosts[i]);
+    private static void subtractUsedResourcesUnit(Unit newUnit, Player player) {
+        newUnit.setUpResourceIterator();
+        while (newUnit.hasNextResourceCost()) {
+            ResourceTypes ResourceType = newUnit.getNextType();
+            player.setResource(ResourceType, player.getResource(ResourceType) - newUnit.getNextValue());
+        }
+    }
+
+    private static void subtractUsedResourcesBuilding(Building building, Player player) {
+        building.setUpResourceIterator();
+        while (building.hasNextResourceCost()) {
+            ResourceTypes ResourceType = building.getNextType();
+            player.setResource(ResourceType, player.getResource(ResourceType) - building.getNextValue());
         }
     }
 
@@ -243,20 +253,24 @@ class PlayerResourceHandler {
         giveStartingResources(player);
 
         for (Building currentBuilding : player.getBuildings()) {
-            for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-                player.increaseResource(type, currentBuilding.getResourceAmount(type));
+            if (currentBuilding.isResourceHarvester()) {
+                currentBuilding.setUpHarvestedResourcesIterator();
+                while (currentBuilding.hasNextResourceCost()) {
+                    ResourceTypes resourceType = currentBuilding.getNextType();
+                    player.increaseResource(resourceType, currentBuilding.getResourceAmount(resourceType));
+                }
             }
-            subtractUsedResources(currentBuilding.getResourceCost(), player);
+            subtractUsedResourcesBuilding(currentBuilding, player);
         }
 
         for (Unit currentUnit : player.getUnits()) {
-            subtractUsedResources(currentUnit.getResourceCost(), player);
+            subtractUsedResourcesUnit(currentUnit, player);
         }
     }
 
     private static void giveStartingResources(Player player) {
-        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            player.increaseResource(type, 200);
+        for (ResourceTypes resourceType : ResourceTypes.values()) {
+            player.increaseResource(resourceType, 200);
         }
     }
 }
@@ -295,7 +309,7 @@ class BuildingAndUnitCreator {
             return;
         }
         currentPlayer.addUnit(newUnit);
-        PlayerResourceHandler.subtractUsedResources(newUnit.getResourceCost(), currentPlayer);
+        PlayerResourceHandler.calculateResources(currentPlayer);
     }
 
     private boolean isTileAvailable(int x, int y) {

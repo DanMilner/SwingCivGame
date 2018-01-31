@@ -118,7 +118,7 @@ public class Map {
                         if (unitOnTile != null)
                             setUnit(x, y, unitOnTile);
 
-                        currentMap[xCoord][yCoord].getBuilding().increaseResourceHarvestAmount(6);
+                        currentMap[xCoord][yCoord].getBuilding().increaseResourceHarvestAmount(ResourceTypes.FOOD);
                         currentMap[xCoord][yCoord].getBuilding().claimResourceTile(currentMap[x][y].getResource());
                     }
                 }
@@ -146,9 +146,11 @@ public class Map {
         killUnitAndRefundCost(x, y);
 
         if (newBuilding.isResourceHarvester()) {
-            ResourceYieldCalculator.calculateResourceYields(x, y, newBuilding, owner, currentMap);
-        } else if (type.equals("Farm")) {
-            placeWheat(x, y, owner);
+            if (type.equals("Farm")) {
+                placeWheat(x, y, owner);
+            } else {
+                ResourceYieldCalculator.calculateResourceYields(x, y, newBuilding, owner, currentMap);
+            }
         }
 
         System.out.println(type + " spawned at " + x + " " + y);
@@ -271,34 +273,34 @@ class ConstructionPossible {
 
 class ResourceCostChecker {
     static boolean checkCost(String type, Player owner, Boolean buildingCostCheck) {
-        int[] resourceCost;
-
         try {
             if (buildingCostCheck) {
-                resourceCost = getBuildingResourceCost(type);
+                Building buildingType = TileFactory.buildBuildingTile(type);
+                return playerHasEnoughResourcesForBuilding(buildingType, owner);
             } else {
-                resourceCost = getUnitResourceCost(type);
+                Unit unitType = UnitFactory.buildUnit(type, null);
+                return playerHasEnoughResourcesForUnit(unitType, owner);
             }
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
             return false;
         }
-        return playerHasEnoughResources(resourceCost, owner);
     }
 
-    private static int[] getUnitResourceCost(String type) throws TypeNotFound {
-        Unit unitType = UnitFactory.buildUnit(type, null);
-        return unitType.getResourceCost();
+    private static boolean playerHasEnoughResourcesForUnit(Unit unitType, Player owner) {
+        unitType.setUpResourceIterator();
+        while (unitType.hasNextResourceCost()) {
+            if (unitType.getNextValue() > owner.getResource(unitType.getNextType())) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private static int[] getBuildingResourceCost(String type) throws TypeNotFound {
-        Building buildingType = TileFactory.buildBuildingTile(type);
-        return buildingType.getResourceCost();
-    }
-
-    private static boolean playerHasEnoughResources(int[] resourceCost, Player owner) {
-        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
-            if (resourceCost[i] > owner.getResource(i)) {
+    private static boolean playerHasEnoughResourcesForBuilding(Building buildingType, Player owner) {
+        buildingType.setUpResourceIterator();
+        while (buildingType.hasNextResourceCost()) {
+            if (buildingType.getNextValue() > owner.getResource(buildingType.getNextType())) {
                 return false;
             }
         }
@@ -323,13 +325,13 @@ class ResourceYieldCalculator {
     }
 
     private static void findAdjacentResourceType(Resource resourceTile, Building building) {
-        int index = resourceTile.getResourceType().ordinal();
-        if (building.canHarvestResourceType(index))
-            incrementTileResource(index, building, resourceTile);
+        ResourceTypes resourceType = resourceTile.getResourceType();
+        if (building.canHarvestResourceType(resourceType))
+            incrementTileResource(resourceType, building, resourceTile);
     }
 
-    private static void incrementTileResource(int type, Building building, Resource resourceTile) {
-        building.increaseResourceHarvestAmount(type);
+    private static void incrementTileResource(ResourceTypes resourceType, Building building, Resource resourceTile) {
+        building.increaseResourceHarvestAmount(resourceType);
         building.claimResourceTile(resourceTile);
     }
 }

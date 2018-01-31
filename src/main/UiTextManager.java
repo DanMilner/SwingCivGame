@@ -63,14 +63,14 @@ class UiTextManager {
     }
 
     void updateUI(Player currentPlayer) {
-        UIComponents[4].setText("Wood x " + currentPlayer.getResource(0));
-        UIComponents[6].setText("Iron x " + currentPlayer.getResource(1));
-        UIComponents[8].setText("Gold x " + currentPlayer.getResource(2));
-        UIComponents[10].setText("Coal x " + currentPlayer.getResource(3));
-        UIComponents[12].setText("Copper x " + currentPlayer.getResource(4));
-        UIComponents[14].setText("Stone x " + currentPlayer.getResource(5));
-        UIComponents[16].setText("Food x " + currentPlayer.getResource(6));
-        UIComponents[18].setText("Diamonds x " + currentPlayer.getResource(8));
+        UIComponents[4].setText("Wood x " + currentPlayer.getResource(ResourceTypes.WOOD));
+        UIComponents[6].setText("Iron x " + currentPlayer.getResource(ResourceTypes.IRON));
+        UIComponents[8].setText("Gold x " + currentPlayer.getResource(ResourceTypes.GOLD));
+        UIComponents[10].setText("Coal x " + currentPlayer.getResource(ResourceTypes.COAL));
+        UIComponents[12].setText("Copper x " + currentPlayer.getResource(ResourceTypes.COPPER));
+        UIComponents[14].setText("Stone x " + currentPlayer.getResource(ResourceTypes.STONE));
+        UIComponents[16].setText("Food x " + currentPlayer.getResource(ResourceTypes.FOOD));
+        UIComponents[18].setText("Diamonds x " + currentPlayer.getResource(ResourceTypes.DIAMONDS));
         UIComponents[0].setText(currentPlayer.getName() + "'s Turn");
     }
 

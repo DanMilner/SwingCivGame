@@ -14,9 +14,9 @@ public class Workshop extends Building {
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
-        this.resourceCost[ResourceTypes.COPPER.ordinal()] = 2; //20 Copper
-        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 10; //10 Wood
-        this.resourceCost[ResourceTypes.IRON.ordinal()] = 1; //1 Iron
+        this.resourceCost.put(ResourceTypes.COPPER, 2);
+        this.resourceCost.put(ResourceTypes.WOOD, 10);
+        this.resourceCost.put(ResourceTypes.IRON, 1);
 
         this.buttonList = new ArrayList<>();
         buttonList.add("Catapult");

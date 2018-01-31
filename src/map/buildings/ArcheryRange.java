@@ -14,8 +14,9 @@ public class ArcheryRange extends Building {
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
-        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 10; //10 Wood
-        this.resourceCost[ResourceTypes.STONE.ordinal()] = 2; //2 Stone
+        this.resourceCost.put(ResourceTypes.WOOD, 10);
+        this.resourceCost.put(ResourceTypes.STONE, 2);
+
 
         this.buttonList = new ArrayList<>();
         buttonList.add("Archer");

@@ -15,8 +15,9 @@ public class BuildingAndUnitCreatorTest {
     private Player player;
     private BuildingAndUnitCreator buildingAndUnitCreator;
     private Map gameMap;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         player = new Player("Daniel", Color.yellow);
         gameMap = new Map(true, 7);
         buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
@@ -27,7 +28,7 @@ public class BuildingAndUnitCreatorTest {
         gameMap.spawnCity(player);
 
         ButtonData data = new ButtonData(3, 3, "Builder");
-        buildingAndUnitCreator.createUnit(data,player);
+        buildingAndUnitCreator.createUnit(data, player);
         ArrayList<Unit> playerUnits = player.getUnits();
 
         Assert.assertTrue(playerUnits.get(0).getType().equals("Builder"));
@@ -45,16 +46,16 @@ public class BuildingAndUnitCreatorTest {
 
     @Test
     public void createBuildingTestRoad() {
-        ButtonData data = new ButtonData( 3, 3, "Road");
+        ButtonData data = new ButtonData(3, 3, "Road");
         Unit newUnit = new Builder(player);
-        gameMap.setUnit(3,3,newUnit);
+        gameMap.setUnit(3, 3, newUnit);
 
         buildingAndUnitCreator.createBuilding(data, player);
 
         ArrayList<Building> playerBuildings = player.getBuildings();
 
         Assert.assertTrue(playerBuildings.get(0).getType().equals("Road"));
-        Assert.assertTrue(gameMap.getTile(3,3).getBuilding().getType().equals("Road"));
-        Assert.assertTrue(gameMap.getTile(3,3).getUnit().getType().equals("Builder"));
+        Assert.assertTrue(gameMap.getTile(3, 3).getBuilding().getType().equals("Road"));
+        Assert.assertTrue(gameMap.getTile(3, 3).getUnit().getType().equals("Builder"));
     }
 }

@@ -3,23 +3,28 @@ package map.buildings;
 import main.ResourceTypes;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Mine extends Building {
     public Mine() {
         this.buildingImage = new ImageIcon("textures\\buildings\\Quarry.png");
         this.type = "Mine";
-        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 2; //2 wood
+        this.resourceCost.put(ResourceTypes.WOOD, 2);
+        this.resourceHarvestAmount = new HashMap<>();
+        this.claimedResourceTiles = new ArrayList<>();
+
         this.borderSize = 1;
-        this.harvestableResourceTypes = new boolean[ResourceTypes.getNumberOfResourceTypes()];
         this.maxHealth = 300;
         this.currentHealth = maxHealth;
 
-        this.harvestableResourceTypes[ResourceTypes.STONE.ordinal()] = true;
-        this.harvestableResourceTypes[ResourceTypes.IRON.ordinal()] = true;
-        this.harvestableResourceTypes[ResourceTypes.COPPER.ordinal()] = true;
-        this.harvestableResourceTypes[ResourceTypes.GOLD.ordinal()] = true;
-        this.harvestableResourceTypes[ResourceTypes.COAL.ordinal()] = true;
-        this.harvestableResourceTypes[ResourceTypes.DIAMONDS.ordinal()] = true;
+        this.resourceHarvestAmount.put(ResourceTypes.STONE, 0);
+        this.resourceHarvestAmount.put(ResourceTypes.IRON, 0);
+        this.resourceHarvestAmount.put(ResourceTypes.COPPER, 0);
+        this.resourceHarvestAmount.put(ResourceTypes.GOLD, 0);
+        this.resourceHarvestAmount.put(ResourceTypes.COAL, 0);
+        this.resourceHarvestAmount.put(ResourceTypes.DIAMONDS, 0);
+
     }
 }
 

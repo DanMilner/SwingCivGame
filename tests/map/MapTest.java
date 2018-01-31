@@ -22,8 +22,8 @@ public class MapTest {
     private Map gameMap;
 
     @Before
-    public void setUp(){
-        gameMap = new Map(true,10);
+    public void setUp() {
+        gameMap = new Map(true, 10);
         player = new Player("Daniel", Color.yellow);
     }
 
@@ -31,10 +31,10 @@ public class MapTest {
     public void spawnCity() {
         gameMap.spawnCity(player);
 
-        for(int x =0; x < 10; x++){
-            for(int y =0; y < 10; y++) {
-                if(gameMap.getTile(x,y).hasBuilding()){
-                    assertTrue(gameMap.getTile(x,y).getBuilding().getType().equals("City"));
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                if (gameMap.getTile(x, y).hasBuilding()) {
+                    assertTrue(gameMap.getTile(x, y).getBuilding().getType().equals("City"));
                 }
             }
         }
@@ -42,75 +42,72 @@ public class MapTest {
 
     @Test
     public void constructAndSetBuildingTileTest() {
-        gameMap.constructAndSetBuildingTile("Mine",5,5,player);
+        gameMap.constructAndSetBuildingTile("Mine", 5, 5, player);
 
-        assertTrue(gameMap.getTile(5,5).getBuilding().getType().equals("Mine"));
+        assertTrue(gameMap.getTile(5, 5).getBuilding().getType().equals("Mine"));
     }
 
     @Test
     public void constructAndSetBuildingTileTestConstructionNotPossible() {
-        gameMap.getTile(5,5).setBuilding(new Mine());
-        gameMap.constructAndSetBuildingTile("Tower",5,5,player);
+        gameMap.getTile(5, 5).setBuilding(new Mine());
+        gameMap.constructAndSetBuildingTile("Tower", 5, 5, player);
 
-        assertFalse(gameMap.getTile(5,5).getBuilding().getType().equals("Tower"));
+        assertFalse(gameMap.getTile(5, 5).getBuilding().getType().equals("Tower"));
     }
 
     @Test
     public void constructAndSetBuildingTileTestResourcesHarvested() {
-        gameMap.setTileResource(4,4,new Forest());
-        gameMap.constructAndSetBuildingTile("Lumber Mill",5,5,player);
+        gameMap.setTileResource(4, 4, new Forest());
+        gameMap.constructAndSetBuildingTile("Lumber Mill", 5, 5, player);
 
-        assertTrue(gameMap.getTile(5,5).getBuilding().getResourceAmount(ResourceTypes.WOOD.ordinal()) == 1);
+        assertTrue(gameMap.getTile(5, 5).getBuilding().getResourceAmount(ResourceTypes.WOOD) == 1);
     }
 
     @Test
-    public void killUnitAndRefundCostTest(){
-        Unit builder = new Builder(player);
-        int[] resourceCost = builder.getResourceCost();
-        player.addUnit(builder);
-        gameMap.setUnit(5,5, builder);
-        gameMap.constructAndSetBuildingTile("Mine",5,5,player);
-
-        for(int type : resourceCost){
-            assertTrue(player.getResource(type) == resourceCost[type]);
-        }
-        assertFalse(gameMap.getTile(5,5).hasUnit());
-    }
-
-    @Test
-    public void killUnitAndRefundCostTestRoad(){
+    public void killUnitAndRefundCostTest() {
         Unit builder = new Builder(player);
         player.addUnit(builder);
-        gameMap.setUnit(5,5, builder);
-        gameMap.constructAndSetBuildingTile("Road",5,5,player);
+        gameMap.setUnit(5, 5, builder);
+        gameMap.constructAndSetBuildingTile("Mine", 5, 5, player);
 
-        for(int i =0; i < ResourceTypes.getNumberOfResourceTypes(); i++){
-            assertTrue(player.getResource(i) == 0);
+        builder.setUpResourceIterator();
+        while (builder.hasNextResourceCost()) {
+            assertTrue(player.getResource(builder.getNextType()) == builder.getNextValue());
         }
-        assertTrue(gameMap.getTile(5,5).hasUnit());
+        assertFalse(gameMap.getTile(5, 5).hasUnit());
     }
 
     @Test
-    public void moveUnitTest(){
+    public void killUnitAndRefundCostTestRoad() {
+        Unit builder = new Builder(player);
+        player.addUnit(builder);
+        gameMap.setUnit(5, 5, builder);
+        gameMap.constructAndSetBuildingTile("Road", 5, 5, player);
+
+        assertTrue(gameMap.getTile(5, 5).hasUnit());
+    }
+
+    @Test
+    public void moveUnitTest() {
         Unit unit = new Knight(player);
-        gameMap.setUnit(5,5,unit);
-        gameMap.moveUnit(5,5,6,6);
+        gameMap.setUnit(5, 5, unit);
+        gameMap.moveUnit(5, 5, 6, 6);
 
-        assertFalse(gameMap.getTile(5,5).hasUnit());
-        assertTrue(gameMap.getTile(6,6).hasUnit());
-        assertTrue(gameMap.getUnit(6,6) == unit);
+        assertFalse(gameMap.getTile(5, 5).hasUnit());
+        assertTrue(gameMap.getTile(6, 6).hasUnit());
+        assertTrue(gameMap.getUnit(6, 6) == unit);
     }
 
     @Test
-    public void placeWheatTest(){
-        gameMap.setTileResource(5,4, new Mountain());
-        gameMap.setTileResource(6,5, new Water());
+    public void placeWheatTest() {
+        gameMap.setTileResource(5, 4, new Mountain());
+        gameMap.setTileResource(6, 5, new Water());
 
-        gameMap.constructAndSetBuildingTile("Farm",5,5,player);
+        gameMap.constructAndSetBuildingTile("Farm", 5, 5, player);
 
-        assertFalse(gameMap.getTile(5,4).hasBuilding());
-        assertFalse(gameMap.getTile(6,5).hasBuilding());
+        assertFalse(gameMap.getTile(5, 4).hasBuilding());
+        assertFalse(gameMap.getTile(6, 5).hasBuilding());
 
-        assertTrue(gameMap.getTile(6,4).getBuilding().getType().equals("Wheat"));
+        assertTrue(gameMap.getTile(6, 4).getBuilding().getType().equals("Wheat"));
     }
 }

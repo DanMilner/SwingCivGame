@@ -14,8 +14,8 @@ public class Stable extends Building {
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
-        this.resourceCost[ResourceTypes.WOOD.ordinal()] = 10; //10 wood
-        this.resourceCost[ResourceTypes.GOLD.ordinal()] = 2; //2 Gold
+        this.resourceCost.put(ResourceTypes.WOOD, 10);
+        this.resourceCost.put(ResourceTypes.GOLD, 2);
 
         this.buttonList = new ArrayList<>();
         buttonList.add("Knight");

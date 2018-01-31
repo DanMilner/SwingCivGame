@@ -3,19 +3,21 @@ package map.buildings;
 import main.ResourceTypes;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LumberMill extends Building {
     public LumberMill() {
         this.buildingImage = new ImageIcon("textures\\buildings\\Lumber_Mill.png");
         this.type = "Lumber Mill";
-        this.resourceCost[ResourceTypes.STONE.ordinal()] = 1; //1 stone
+        this.resourceCost.put(ResourceTypes.STONE, 1);
+        this.resourceHarvestAmount = new HashMap<>();
+        this.claimedResourceTiles = new ArrayList<>();
+
         this.borderSize = 1;
         this.maxHealth = 300;
         this.currentHealth = maxHealth;
-
-        this.harvestableResourceTypes = new boolean[ResourceTypes.getNumberOfResourceTypes()];
-
-        this.harvestableResourceTypes[ResourceTypes.WOOD.ordinal()] = true;
+        this.resourceHarvestAmount.put(ResourceTypes.WOOD, 0);
     }
 }
 

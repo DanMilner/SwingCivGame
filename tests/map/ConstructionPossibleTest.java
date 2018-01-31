@@ -18,57 +18,57 @@ public class ConstructionPossibleTest {
     private Player player;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         currentMap = new Tile[5][5];
         player = new Player("Daniel", Color.yellow);
 
-        for(int i = 0; i < currentMap.length; i++){
-            for(int j = 0; j < currentMap.length; j++){
-                currentMap[i][j] = new Tile(i,j,player);
+        for (int i = 0; i < currentMap.length; i++) {
+            for (int j = 0; j < currentMap.length; j++) {
+                currentMap[i][j] = new Tile(i, j, player);
                 currentMap[i][j].setResource(new Grass());
             }
         }
     }
 
     @Test
-    public void isConstructionPossibleTest(){
+    public void isConstructionPossibleTest() {
         String buildingType = "Mine";
-        assertTrue(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
+        assertTrue(ConstructionPossible.isConstructionPossible(currentMap, buildingType, 2, 2, player));
     }
 
     @Test
-    public void isConstructionPossibleTestDockNoWater(){
+    public void isConstructionPossibleTestDockNoWater() {
         String buildingType = "Dock";
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, buildingType, 2, 2, player));
     }
 
     @Test
-    public void isConstructionPossibleTestDockWithWater(){
+    public void isConstructionPossibleTestDockWithWater() {
         String buildingType = "Dock";
         currentMap[2][3].setResource(new Water());
-        assertTrue(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
+        assertTrue(ConstructionPossible.isConstructionPossible(currentMap, buildingType, 2, 2, player));
     }
 
     @Test
-    public void isConstructionPossibleTestInEnemyTerritory(){
+    public void isConstructionPossibleTestInEnemyTerritory() {
         String buildingType = "Tower";
         Player enemy = new Player("Baddie", Color.red);
         currentMap[2][2].setOwner(enemy);
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, buildingType, 2, 2, player));
     }
 
     @Test
-    public void isConstructionPossibleTestTileHasBuilding(){
+    public void isConstructionPossibleTestTileHasBuilding() {
         String buildingType = "Tower";
         currentMap[2][2].setBuilding(new Mine());
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, buildingType, 2, 2, player));
     }
 
     @Test
-    public void isConstructionPossibleTestTileHasResourceInUse(){
+    public void isConstructionPossibleTestTileHasResourceInUse() {
         String buildingType = "LumberMill";
         currentMap[2][2].setResource(new Forest());
         currentMap[2][2].getResource().setInUse(true);
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap,buildingType, 2,2,player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, buildingType, 2, 2, player));
     }
 }

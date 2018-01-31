@@ -14,44 +14,46 @@ import units.Unit;
 
 import java.awt.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TileTest {
     private Player player;
     private Tile tile;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         player = new Player("Daniel", Color.yellow);
-        tile = new Tile(1,1,player);
+        tile = new Tile(1, 1, player);
     }
 
     @Test
-    public void hasOwnerTest(){
+    public void hasOwnerTest() {
         assertTrue(tile.hasOwner());
     }
+
     @Test
-    public void hasUnitTest(){
+    public void hasUnitTest() {
         givenTileHasUnit();
 
         assertTrue(tile.hasUnit());
     }
+
     @Test
-    public void hasBuildingTest(){
+    public void hasBuildingTest() {
         givenTileHasBuilding();
 
         assertTrue(tile.hasBuilding());
     }
+
     @Test
-    public void hasRoadTest(){
+    public void hasRoadTest() {
         Building road = new Road();
         tile.setBuilding(road);
         assertTrue(tile.hasRoad());
     }
+
     @Test
-    public void isTraversableTest(){
+    public void isTraversableTest() {
         Resource mountain = new Mountain();
         tile.setResource(mountain);
         assertFalse(tile.isTraversable());
@@ -60,8 +62,9 @@ public class TileTest {
         tile.setResource(water);
         assertFalse(tile.isTraversable());
     }
+
     @Test
-    public void getImageUnitTest(){
+    public void getImageUnitTest() {
         givenTileHasUnit();
         givenTileHasBuilding();
         givenTileHasResource();
@@ -69,23 +72,26 @@ public class TileTest {
         String imageLocation = tile.getUnit().getImage().toString();
         assertEquals(imageLocation, tile.getImage().toString());
     }
+
     @Test
-    public void getImageBuildingTest(){
+    public void getImageBuildingTest() {
         givenTileHasBuilding();
         givenTileHasResource();
 
         String imageLocation = tile.getBuilding().getImage().toString();
         assertEquals(imageLocation, tile.getImage().toString());
     }
+
     @Test
-    public void getImageResourceTest(){
+    public void getImageResourceTest() {
         givenTileHasResource();
 
         String imageLocation = tile.getResource().getImage().toString();
         assertEquals(imageLocation, tile.getImage().toString());
     }
+
     @Test
-    public void hasBuildingWithCityConnectionTest(){
+    public void hasBuildingWithCityConnectionTest() {
         givenTileHasBuilding();
         tile.getBuilding().setHasCityConnection(true);
 
@@ -93,7 +99,7 @@ public class TileTest {
     }
 
     @Test
-    public void getButtonListTest(){
+    public void getButtonListTest() {
         givenTileHasUnit();
         givenTileHasBuilding();
 
@@ -104,17 +110,17 @@ public class TileTest {
         assertEquals(tile.getButtonList(unitSelected), tile.getBuilding().getButtonList());
     }
 
-    private void givenTileHasUnit(){
+    private void givenTileHasUnit() {
         Unit unit = new Builder(player);
         tile.setUnit(unit);
     }
 
-    private void givenTileHasBuilding(){
+    private void givenTileHasBuilding() {
         Building city = new City();
         tile.setBuilding(city);
     }
 
-    private void givenTileHasResource(){
+    private void givenTileHasResource() {
         Resource mountain = new Mountain();
         tile.setResource(mountain);
     }

@@ -5,20 +5,22 @@ import units.Unit;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Player {
     private String name;
     private Color colour;
     private ArrayList<Building> buildings;
     private ArrayList<Unit> units;
-    private int[] resources;
+    private Map<ResourceTypes, Integer> resources;
 
     public Player(String name, Color colour) {
         this.name = name;
         this.colour = colour;
         buildings = new ArrayList<>();
         units = new ArrayList<>();
-        resources = new int[ResourceTypes.getNumberOfResourceTypes()];
+        resources = new HashMap<>();
     }
 
     ArrayList<Building> getBuildings() {
@@ -45,16 +47,17 @@ public class Player {
         return name;
     }
 
-    void setResource(int type, int amount) {
-        resources[type] = amount;
+    public void setResource(ResourceTypes resourceType, int amount) {
+        resources.put(resourceType, amount);
     }
 
-    public void increaseResource(int type, int amount) {
-        resources[type] = resources[type] + amount;
+    public void increaseResource(ResourceTypes resourceType, int amount) {
+        amount += resources.get(resourceType);
+        resources.put(resourceType, amount);
     }
 
-    public int getResource(int type) {
-        return resources[type];
+    public int getResource(ResourceTypes resourceType) {
+        return resources.get(resourceType);
     }
 
     void resetUnitMoves() {
@@ -64,33 +67,39 @@ public class Player {
     }
 
     void resetResources() {
-        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            setResource(type, 0);
+        for (ResourceTypes resourceType : ResourceTypes.values()) {
+            setResource(resourceType, 0);
         }
     }
 
     public void refundUnitCost(Unit deadUnit) {
-        refundCost(deadUnit.getResourceCost());
+        deadUnit.setUpResourceIterator();
+        while (deadUnit.hasNextResourceCost()) {
+            ResourceTypes resourceType = deadUnit.getNextType();
+            int value = deadUnit.getNextValue();
+            resources.put(resourceType, value);
+        }
         units.remove(deadUnit);
     }
 
     public void refundBuildingCost(Building destroyedBuilding) {
-        refundCost(destroyedBuilding.getResourceCost());
+        destroyedBuilding.setUpResourceIterator();
+        while (destroyedBuilding.hasNextResourceCost()) {
+            setResource(destroyedBuilding.getNextType(), destroyedBuilding.getNextValue());
+        }
+
         int multiplier = 1;
         if (destroyedBuilding.getHasCityConnection()) {
             multiplier = 2;
         }
-        int[] resourceHarvestAmount = destroyedBuilding.getResourceHarvestAmount();
-        for (int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++) {
-            setResource(i, getResource(i) - resourceHarvestAmount[i] * multiplier);
+
+        destroyedBuilding.setUpHarvestedResourcesIterator();
+        while (destroyedBuilding.hasNextResourceCost()) {
+            ResourceTypes resourceType = destroyedBuilding.getNextType();
+            setResource(resourceType, getResource(resourceType) - destroyedBuilding.getNextValue() * multiplier);
         }
+
         destroyedBuilding.releaseClaimedTiles();
         buildings.remove(destroyedBuilding);
-    }
-
-    private void refundCost(int[] resourceCost) {
-        for (int type = 0; type < ResourceTypes.getNumberOfResourceTypes(); type++) {
-            increaseResource(type, resourceCost[type]);
-        }
     }
 }

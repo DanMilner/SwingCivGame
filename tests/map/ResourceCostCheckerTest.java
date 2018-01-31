@@ -14,7 +14,7 @@ public class ResourceCostCheckerTest {
     private Player player;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         player = new Player("Daniel", Color.yellow);
     }
 
@@ -24,7 +24,7 @@ public class ResourceCostCheckerTest {
         Boolean buildingCostCheck = true;
         givePlayerResources(50);
 
-        assertTrue(ResourceCostChecker.checkCost(buildType,player,buildingCostCheck));
+        assertTrue(ResourceCostChecker.checkCost(buildType, player, buildingCostCheck));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class ResourceCostCheckerTest {
         Boolean buildingCostCheck = true;
         givePlayerResources(10);
 
-        assertFalse(ResourceCostChecker.checkCost(buildType,player,buildingCostCheck));
+        assertFalse(ResourceCostChecker.checkCost(buildType, player, buildingCostCheck));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ResourceCostCheckerTest {
         Boolean buildingCostCheck = false;
         givePlayerResources(40);
 
-        assertTrue(ResourceCostChecker.checkCost(unitType,player,buildingCostCheck));
+        assertTrue(ResourceCostChecker.checkCost(unitType, player, buildingCostCheck));
     }
 
     @Test
@@ -51,12 +51,12 @@ public class ResourceCostCheckerTest {
         Boolean buildingCostCheck = false;
         givePlayerResources(1);
 
-        assertFalse(ResourceCostChecker.checkCost(unitType,player,buildingCostCheck));
+        assertFalse(ResourceCostChecker.checkCost(unitType, player, buildingCostCheck));
     }
 
-    private void givePlayerResources(int amount){
-        for(int i = 0; i < ResourceTypes.getNumberOfResourceTypes(); i++){
-            player.increaseResource(i, amount);
+    private void givePlayerResources(int amount) {
+        for (ResourceTypes resourceType : ResourceTypes.values()) {
+            player.setResource(resourceType, amount);
         }
     }
 }

@@ -6,23 +6,31 @@ import map.resources.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public abstract class Building {
     ImageIcon buildingImage;
-    int[] resourceCost = new int[ResourceTypes.getNumberOfResourceTypes()];
+
+    Map<ResourceTypes, Integer> resourceCost = new HashMap<>();
+    private Iterator resourceIterator;
+    private Map.Entry pair;
+
     int borderSize;
     int maxHealth;
     int currentHealth;
     boolean hasCityConnection = false;
-    boolean harvestableResourceTypes[];
+
     ArrayList<String> buttonList;
-    private int[] resourceHarvestAmount = new int[ResourceTypes.getNumberOfResourceTypes()];
-    private ArrayList<Resource> claimedResourceTiles = new ArrayList<>();
+    Map<ResourceTypes, Integer> resourceHarvestAmount;
+    ArrayList<Resource> claimedResourceTiles;
+
     private boolean visited;
     public String type;
 
-    public boolean canHarvestResourceType(int index) {
-        return harvestableResourceTypes[index];
+    public boolean canHarvestResourceType(ResourceTypes resourceType) {
+        return resourceHarvestAmount.containsKey(resourceType);
     }
 
     public int getBorderSize() {
@@ -45,10 +53,6 @@ public abstract class Building {
         return type;
     }
 
-    public int[] getResourceCost() {
-        return resourceCost;
-    }
-
     public void setVisited(boolean visitedStatus) {
         visited = visitedStatus;
     }
@@ -57,19 +61,16 @@ public abstract class Building {
         return visited;
     }
 
-    public int getResourceAmount(int type) {
+    public int getResourceAmount(ResourceTypes resourceType) {
         final int RESOURCE_BONUS = 2;
         if (hasCityConnection)
-            return resourceHarvestAmount[type] * RESOURCE_BONUS;
-        return resourceHarvestAmount[type];
+            return resourceHarvestAmount.get(resourceType) * RESOURCE_BONUS;
+        return resourceHarvestAmount.get(resourceType);
     }
 
-    public int[] getResourceHarvestAmount() {
-        return resourceHarvestAmount;
-    }
-
-    public void increaseResourceHarvestAmount(int type) {
-        resourceHarvestAmount[type]++;
+    public void increaseResourceHarvestAmount(ResourceTypes resourceType) {
+        int amount = resourceHarvestAmount.get(resourceType) + 1;
+        resourceHarvestAmount.put(resourceType, amount);
     }
 
     public ImageIcon getImage() {
@@ -81,7 +82,7 @@ public abstract class Building {
     }
 
     public boolean isResourceHarvester() {
-        return harvestableResourceTypes != null;
+        return resourceHarvestAmount != null;
     }
 
     void setImageIcon(ImageIcon imageIcon) {
@@ -114,5 +115,30 @@ public abstract class Building {
         for (Resource resource : claimedResourceTiles) {
             resource.setInUse(false);
         }
+    }
+
+    public void setUpResourceIterator() {
+        resourceIterator = resourceCost.entrySet().iterator();
+    }
+
+    public void setUpHarvestedResourcesIterator() {
+        resourceIterator = resourceHarvestAmount.entrySet().iterator();
+    }
+
+    public boolean hasNextResourceCost() {
+        if (resourceIterator.hasNext()) {
+            pair = (Map.Entry) resourceIterator.next();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getNextValue() {
+        return (int) pair.getValue();
+    }
+
+    public ResourceTypes getNextType() {
+        return (ResourceTypes) pair.getKey();
     }
 }

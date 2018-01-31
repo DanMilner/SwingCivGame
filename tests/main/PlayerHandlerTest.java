@@ -10,8 +10,9 @@ import static org.junit.Assert.assertTrue;
 public class PlayerHandlerTest {
     private PlayerHandler playerHandler;
     private Map gameMap;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         playerHandler = new PlayerHandler();
         gameMap = new Map(true, 30);
     }
@@ -28,13 +29,13 @@ public class PlayerHandlerTest {
     @Test
     public void setUpPlayersTest() {
         String[] players = {"Daniel", "Joe", "Jane", "Al", "Mary"};
-        for (String playerName: players) {
+        for (String playerName : players) {
             playerHandler.addPlayer(playerName);
         }
 
         playerHandler.setUpPlayers(gameMap);
 
-        for(String ignored : players) {
+        for (String ignored : players) {
             assertFalse(playerHandler.getCurrentPlayer().getBuildings().isEmpty());
             assertTrue(playerHandler.getCurrentPlayer().getUnits().isEmpty());
             assertTrue(playerHandler.getCurrentPlayer().getColour() != null);
