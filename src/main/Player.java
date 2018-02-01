@@ -73,30 +73,27 @@ public class Player {
     }
 
     public void refundUnitCost(Unit deadUnit) {
-        deadUnit.setUpResourceIterator();
-        while (deadUnit.hasNextResourceCost()) {
-            ResourceTypes resourceType = deadUnit.getNextType();
-            int value = deadUnit.getNextValue();
+        ResourceIterator resourceIterator = new ResourceIterator(deadUnit);
+        while (resourceIterator.hasNext()) {
+            ResourceTypes resourceType = resourceIterator.getType();
+            int value = resourceIterator.getValue();
             resources.put(resourceType, value);
         }
         units.remove(deadUnit);
     }
 
     public void refundBuildingCost(Building destroyedBuilding) {
-        destroyedBuilding.setUpResourceIterator();
-        while (destroyedBuilding.hasNextResourceCost()) {
-            setResource(destroyedBuilding.getNextType(), destroyedBuilding.getNextValue());
+        ResourceIterator resourceIterator = new ResourceIterator(destroyedBuilding, true);
+        while (resourceIterator.hasNext()) {
+            setResource(resourceIterator.getType(), resourceIterator.getValue());
         }
 
-        int multiplier = 1;
-        if (destroyedBuilding.getHasCityConnection()) {
-            multiplier = 2;
-        }
+        int multiplier = destroyedBuilding.getHasCityConnection() ? 1 : 2;
 
-        destroyedBuilding.setUpHarvestedResourcesIterator();
-        while (destroyedBuilding.hasNextResourceCost()) {
-            ResourceTypes resourceType = destroyedBuilding.getNextType();
-            setResource(resourceType, getResource(resourceType) - destroyedBuilding.getNextValue() * multiplier);
+        resourceIterator = new ResourceIterator(destroyedBuilding, false);
+        while (resourceIterator.hasNext()) {
+            ResourceTypes resourceType = resourceIterator.getType();
+            setResource(resourceType, getResource(resourceType) - resourceIterator.getValue() * multiplier);
         }
 
         destroyedBuilding.releaseClaimedTiles();

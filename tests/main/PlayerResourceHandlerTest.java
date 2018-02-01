@@ -25,9 +25,9 @@ public class PlayerResourceHandlerTest {
 
         player.addBuilding(city);
         PlayerResourceHandler.calculateResources(player);
-        city.setUpResourceIterator();
-        while (city.hasNextResourceCost()) {
-            assertTrue(player.getResource(city.getNextType()) == 200 - city.getNextValue());
+        ResourceIterator resourceIterator = new ResourceIterator(city, true);
+        while (resourceIterator.hasNext()) {
+            assertTrue(player.getResource(resourceIterator.getType()) == 200 - resourceIterator.getValue());
         }
     }
 
@@ -101,30 +101,30 @@ public class PlayerResourceHandlerTest {
         }
     }
 
+    private void addUnitCostAndAddUnit(Map<ResourceTypes, Integer> resourceCost, Unit newUnit){
+        ResourceIterator resourceIterator = new ResourceIterator(newUnit);
+
+        addCost(resourceCost, resourceIterator);
+
+        player.addUnit(newUnit);
+    }
+
     private void addBuildingCostAndAddBuilding(Map<ResourceTypes, Integer> resourceCost, Building newBuilding) {
-        newBuilding.setUpResourceIterator();
-        while (newBuilding.hasNextResourceCost()) {
-            ResourceTypes resourceType = newBuilding.getNextType();
-            if (resourceCost.containsKey(resourceType)) {
-                resourceCost.put(resourceType, newBuilding.getNextValue() + resourceCost.get(resourceType));
-            } else {
-                resourceCost.put(resourceType, newBuilding.getNextValue());
-            }
-        }
+        ResourceIterator resourceIterator = new ResourceIterator(newBuilding, true);
+
+        addCost(resourceCost, resourceIterator);
+
         player.addBuilding(newBuilding);
     }
 
-    private void addUnitCostAndAddUnit(Map<ResourceTypes, Integer> resourceCostOfUnits, Unit newUnit) {
-        newUnit.setUpResourceIterator();
-        while (newUnit.hasNextResourceCost()) {
-            ResourceTypes resourceType = newUnit.getNextType();
-            if (resourceCostOfUnits.containsKey(resourceType)) {
-                resourceCostOfUnits.put(resourceType, newUnit.getNextValue() + resourceCostOfUnits.get(resourceType));
+    private void addCost(Map<ResourceTypes, Integer> resourceCost, ResourceIterator resourceIterator) {
+        while (resourceIterator.hasNext()) {
+            ResourceTypes resourceType = resourceIterator.getType();
+            if (resourceCost.containsKey(resourceType)) {
+                resourceCost.put(resourceType, resourceIterator.getValue() + resourceCost.get(resourceType));
             } else {
-                resourceCostOfUnits.put(resourceType, newUnit.getNextValue());
+                resourceCost.put(resourceType, resourceIterator.getValue());
             }
         }
-
-        player.addUnit(newUnit);
     }
 }

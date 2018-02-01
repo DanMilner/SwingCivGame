@@ -1,6 +1,7 @@
 package map;
 
 import main.Player;
+import main.ResourceIterator;
 import main.ResourceTypes;
 import map.buildings.Mine;
 import map.resources.Forest;
@@ -70,9 +71,9 @@ public class MapTest {
         gameMap.setUnit(5, 5, builder);
         gameMap.constructAndSetBuildingTile("Mine", 5, 5, player);
 
-        builder.setUpResourceIterator();
-        while (builder.hasNextResourceCost()) {
-            assertTrue(player.getResource(builder.getNextType()) == builder.getNextValue());
+        ResourceIterator resourceIterator = new ResourceIterator(builder);
+        while (resourceIterator.hasNext()) {
+            assertTrue(player.getResource(resourceIterator.getType()) == resourceIterator.getValue());
         }
         assertFalse(gameMap.getTile(5, 5).hasUnit());
     }

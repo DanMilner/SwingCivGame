@@ -7,25 +7,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public abstract class Building {
     ImageIcon buildingImage;
-
     Map<ResourceTypes, Integer> resourceCost = new HashMap<>();
-    private Iterator resourceIterator;
-    private Map.Entry pair;
-
     int borderSize;
     int maxHealth;
     int currentHealth;
     boolean hasCityConnection = false;
-
     ArrayList<String> buttonList;
     Map<ResourceTypes, Integer> resourceHarvestAmount;
     ArrayList<Resource> claimedResourceTiles;
-
     private boolean visited;
     public String type;
 
@@ -117,28 +110,11 @@ public abstract class Building {
         }
     }
 
-    public void setUpResourceIterator() {
-        resourceIterator = resourceCost.entrySet().iterator();
+    public Map<ResourceTypes, Integer> getResourceCostMap() {
+        return resourceCost;
     }
 
-    public void setUpHarvestedResourcesIterator() {
-        resourceIterator = resourceHarvestAmount.entrySet().iterator();
-    }
-
-    public boolean hasNextResourceCost() {
-        if (resourceIterator.hasNext()) {
-            pair = (Map.Entry) resourceIterator.next();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public int getNextValue() {
-        return (int) pair.getValue();
-    }
-
-    public ResourceTypes getNextType() {
-        return (ResourceTypes) pair.getKey();
+    public Map<ResourceTypes, Integer> getHarvestedResourcesMap() {
+        return resourceHarvestAmount;
     }
 }

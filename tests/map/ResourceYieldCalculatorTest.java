@@ -2,6 +2,7 @@ package map;
 
 import exceptions.TypeNotFound;
 import main.Player;
+import main.ResourceIterator;
 import main.ResourceTypes;
 import map.buildings.Building;
 import map.buildings.LumberMill;
@@ -86,9 +87,9 @@ public class ResourceYieldCalculatorTest {
         setMapTo(ResourceTypes.GRASS);
         Building lumberMill = new LumberMill();
         ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
-        lumberMill.setUpHarvestedResourcesIterator();
-        while (lumberMill.hasNextResourceCost()) {
-            assertTrue(lumberMill.getResourceAmount(lumberMill.getNextType()) == 0);
+        ResourceIterator resourceIterator = new ResourceIterator(lumberMill, false);
+        while (resourceIterator.hasNext()) {
+            assertTrue(lumberMill.getResourceAmount(resourceIterator.getType()) == 0);
         }
     }
 

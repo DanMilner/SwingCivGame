@@ -69,9 +69,9 @@ public class PlayerTest {
         player.addUnit(unit);
         player.refundUnitCost(unit);
 
-        unit.setUpResourceIterator();
-        while (unit.hasNextResourceCost()) {
-            assertEquals(unit.getNextValue(), player.getResource(unit.getNextType()));
+        ResourceIterator resourceIterator = new ResourceIterator(unit);
+        while (resourceIterator.hasNext()) {
+            assertEquals(resourceIterator.getValue(), player.getResource(resourceIterator.getType()));
 
         }
     }

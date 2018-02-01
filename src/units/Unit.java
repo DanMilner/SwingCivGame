@@ -6,7 +6,6 @@ import main.ResourceTypes;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public abstract class Unit {
@@ -21,9 +20,6 @@ public abstract class Unit {
     String type;
     private Player owner;
     Map<ResourceTypes, Integer> resourceCost = new HashMap<>();
-    private Iterator resourceIterator;
-    private Map.Entry pair;
-
     ArrayList<String> buttonList;
 
     Unit(Player owner) {
@@ -58,25 +54,8 @@ public abstract class Unit {
         return type;
     }
 
-    public void setUpResourceIterator(){
-        resourceIterator = resourceCost.entrySet().iterator();
-    }
-
-    public boolean hasNextResourceCost(){
-        if (resourceIterator.hasNext()){
-            pair = (Map.Entry)resourceIterator.next();
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public int getNextValue(){
-        return (int) pair.getValue();
-    }
-
-    public ResourceTypes getNextType(){
-        return (ResourceTypes) pair.getKey();
+    public Map<ResourceTypes, Integer> getResourceCostMap(){
+        return resourceCost;
     }
 
     public int getAttackRange() {

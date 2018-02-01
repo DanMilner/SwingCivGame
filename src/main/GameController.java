@@ -232,31 +232,32 @@ class PlayerHandler {
 
 class PlayerResourceHandler {
     private static void subtractUsedResourcesUnit(Unit newUnit, Player player) {
-        newUnit.setUpResourceIterator();
-        while (newUnit.hasNextResourceCost()) {
-            ResourceTypes ResourceType = newUnit.getNextType();
-            player.setResource(ResourceType, player.getResource(ResourceType) - newUnit.getNextValue());
+        ResourceIterator resourceIterator = new ResourceIterator(newUnit);
+        while (resourceIterator.hasNext()) {
+            ResourceTypes ResourceType = resourceIterator.getType();
+            player.setResource(ResourceType, player.getResource(ResourceType) - resourceIterator.getValue());
         }
     }
 
     private static void subtractUsedResourcesBuilding(Building building, Player player) {
-        building.setUpResourceIterator();
-        while (building.hasNextResourceCost()) {
-            ResourceTypes ResourceType = building.getNextType();
-            player.setResource(ResourceType, player.getResource(ResourceType) - building.getNextValue());
+        ResourceIterator resourceIterator = new ResourceIterator(building, true);
+        while (resourceIterator.hasNext()) {
+            ResourceTypes ResourceType = resourceIterator.getType();
+            player.setResource(ResourceType, player.getResource(ResourceType) - resourceIterator.getValue());
         }
     }
 
     static void calculateResources(Player player) {
+        ResourceIterator resourceIterator;
         player.resetResources();
 
         giveStartingResources(player);
 
         for (Building currentBuilding : player.getBuildings()) {
             if (currentBuilding.isResourceHarvester()) {
-                currentBuilding.setUpHarvestedResourcesIterator();
-                while (currentBuilding.hasNextResourceCost()) {
-                    ResourceTypes resourceType = currentBuilding.getNextType();
+                resourceIterator = new ResourceIterator(currentBuilding, false);
+                while (resourceIterator.hasNext()) {
+                    ResourceTypes resourceType = resourceIterator.getType();
                     player.increaseResource(resourceType, currentBuilding.getResourceAmount(resourceType));
                 }
             }

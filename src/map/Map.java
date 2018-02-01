@@ -2,6 +2,7 @@ package map;
 
 import exceptions.TypeNotFound;
 import main.Player;
+import main.ResourceIterator;
 import main.ResourceTypes;
 import map.buildings.Building;
 import map.resources.Resource;
@@ -287,20 +288,20 @@ class ResourceCostChecker {
         }
     }
 
-    private static boolean playerHasEnoughResourcesForUnit(Unit unitType, Player owner) {
-        unitType.setUpResourceIterator();
-        while (unitType.hasNextResourceCost()) {
-            if (unitType.getNextValue() > owner.getResource(unitType.getNextType())) {
+    private static boolean playerHasEnoughResourcesForUnit(Unit unit, Player owner) {
+        ResourceIterator resourceIterator = new ResourceIterator(unit);
+        while (resourceIterator.hasNext()) {
+            if (resourceIterator.getValue() > owner.getResource(resourceIterator.getType())) {
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean playerHasEnoughResourcesForBuilding(Building buildingType, Player owner) {
-        buildingType.setUpResourceIterator();
-        while (buildingType.hasNextResourceCost()) {
-            if (buildingType.getNextValue() > owner.getResource(buildingType.getNextType())) {
+    private static boolean playerHasEnoughResourcesForBuilding(Building building, Player owner) {
+        ResourceIterator resourceIterator = new ResourceIterator(building, true);
+        while (resourceIterator.hasNext()) {
+            if (resourceIterator.getValue() > owner.getResource(resourceIterator.getType())) {
                 return false;
             }
         }
