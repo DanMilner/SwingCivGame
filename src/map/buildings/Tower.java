@@ -1,13 +1,14 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 
 public class Tower extends Building {
     public Tower() {
         this.buildingImage = new ImageIcon("textures\\buildings\\tower.png");
-        this.type = "Tower";
+        this.type = Constructable.TOWER;
         this.resourceCost.put(ResourceTypes.WOOD, 7);
         this.resourceCost.put(ResourceTypes.IRON, 1);
         this.resourceCost.put(ResourceTypes.STONE, 5);

@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 public class City extends Building {
     public City() {
         this.buildingImage = new ImageIcon("textures\\buildings\\village.png");
-        this.type = "City";
+        this.type = Constructable.CITY;
 
         this.resourceCost.put(ResourceTypes.WOOD, 20);
         this.resourceCost.put(ResourceTypes.STONE, 10);
@@ -19,11 +20,11 @@ public class City extends Building {
         this.currentHealth = maxHealth;
 
         this.buttonList = new ArrayList<>();
-        buttonList.add("Settler");
-        buttonList.add("Builder");
-        buttonList.add("Swordsman");
-        buttonList.add("Archer");
-        buttonList.add("Knight");
-        buttonList.add("Catapult");
+        buttonList.add(Constructable.SETTLER);
+        buttonList.add(Constructable.BUILDER);
+        buttonList.add(Constructable.SWORDSMAN);
+        buttonList.add(Constructable.ARCHER);
+        buttonList.add(Constructable.KNIGHT);
+        buttonList.add(Constructable.CATAPULT);
     }
 }

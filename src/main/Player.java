@@ -1,7 +1,8 @@
 package main;
 
 import map.buildings.Building;
-import units.Unit;
+import map.resources.ResourceTypes;
+import map.units.Unit;
 
 import java.awt.*;
 import java.util.ArrayList;

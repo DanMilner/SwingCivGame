@@ -3,10 +3,10 @@ package map;
 import exceptions.TypeNotFound;
 import main.Player;
 import main.ResourceIterator;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 import map.buildings.Building;
 import map.resources.Resource;
-import units.Unit;
+import map.units.Unit;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class Map {
                     }
                 }
                 if (placeCity) {
-                    constructAndSetBuildingTile("City", xCoord, yCoord, owner);
+                    constructAndSetBuildingTile(Constructable.CITY, xCoord, yCoord, owner);
                     return;
                 }
             }
@@ -85,8 +85,8 @@ public class Map {
         currentMap[oldX][oldY].setUnit(null);
     }
 
-    public boolean checkCost(String type, Player owner, Boolean unitCheck) {
-        return ResourceCostChecker.checkCost(type, owner, unitCheck);
+    public boolean checkCost(Constructable constructable, Player owner, Boolean unitCheck) {
+        return ResourceCostChecker.checkCost(constructable, owner, unitCheck);
     }
 
     public void setUnit(int x, int y, Unit newUnit) {
@@ -96,8 +96,8 @@ public class Map {
     public void killUnitAndRefundCost(int x, int y) {
         if (currentMap[x][y].hasUnit()) {
             if (currentMap[x][y].hasBuilding()) {
-                String buildingType = currentMap[x][y].getBuilding().getType();
-                if (buildingType.equals("Wheat") || buildingType.equals("Road"))
+                Constructable buildingType = currentMap[x][y].getBuilding().getType();
+                if (buildingType == Constructable.WHEAT || buildingType == Constructable.ROAD)
                     return;
             }
 
@@ -114,7 +114,7 @@ public class Map {
                     if (currentMap[x][y].getResource().getResourceType() == ResourceTypes.GRASS) {
                         Unit unitOnTile = currentMap[x][y].getUnit();
 
-                        constructAndSetBuildingTile("Wheat", x, y, owner);
+                        constructAndSetBuildingTile(Constructable.WHEAT, x, y, owner);
 
                         if (unitOnTile != null)
                             setUnit(x, y, unitOnTile);
@@ -127,13 +127,13 @@ public class Map {
         }
     }
 
-    public void constructAndSetBuildingTile(String type, int x, int y, Player owner) {
-        if (!ConstructionPossible.isConstructionPossible(currentMap, type, x, y, owner))
+    public void constructAndSetBuildingTile(Constructable buildingType, int x, int y, Player owner) {
+        if (!ConstructionPossible.isConstructionPossible(currentMap, buildingType, x, y, owner))
             return;
 
         Building newBuilding;
         try {
-            newBuilding = TileFactory.buildBuildingTile(type);
+            newBuilding = TileFactory.buildBuildingTile(buildingType);
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
             return;
@@ -147,14 +147,14 @@ public class Map {
         killUnitAndRefundCost(x, y);
 
         if (newBuilding.isResourceHarvester()) {
-            if (type.equals("Farm")) {
+            if (buildingType == Constructable.FARM) {
                 placeWheat(x, y, owner);
             } else {
                 ResourceYieldCalculator.calculateResourceYields(x, y, newBuilding, owner, currentMap);
             }
         }
 
-        System.out.println(type + " spawned at " + x + " " + y);
+        System.out.println(buildingType + " spawned at " + x + " " + y);
     }
 
     public ImageIcon getTileImage(int x, int y) {
@@ -166,7 +166,7 @@ public class Map {
         return currentTile.getImage();
     }
 
-    public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
+    public ArrayList<Constructable> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
         return currentMap[currentX][currentY].getButtonList(unitSelected);
     }
 
@@ -215,8 +215,8 @@ class TileOwnerHandler {
 }
 
 class ConstructionPossible {
-    static boolean isConstructionPossible(Tile[][] currentMap, String type, int xCoord, int yCoord, Player owner) {
-        if (type.equals("Dock")) {
+    static boolean isConstructionPossible(Tile[][] currentMap, Constructable buildingType, int xCoord, int yCoord, Player owner) {
+        if (buildingType == Constructable.DOCK) {
             if (!checkForNearbyWater(currentMap, xCoord, yCoord))
                 return false;
         }
@@ -240,7 +240,7 @@ class ConstructionPossible {
     }
 
     private static boolean doesTileAlreadyHaveABuilding(Tile candidateTile) {
-        if (candidateTile.hasBuilding() && !candidateTile.getBuilding().getType().equals("Road")) {
+        if (candidateTile.hasBuilding() && !candidateTile.getBuilding().getType().equals(Constructable.ROAD)) {
             System.out.println("Cannot build on top of another building");
             return true;
         }
@@ -273,13 +273,13 @@ class ConstructionPossible {
 }
 
 class ResourceCostChecker {
-    static boolean checkCost(String type, Player owner, Boolean buildingCostCheck) {
+    static boolean checkCost(Constructable constructable, Player owner, Boolean buildingCostCheck) {
         try {
             if (buildingCostCheck) {
-                Building buildingType = TileFactory.buildBuildingTile(type);
+                Building buildingType = TileFactory.buildBuildingTile(constructable);
                 return playerHasEnoughResourcesForBuilding(buildingType, owner);
             } else {
-                Unit unitType = UnitFactory.buildUnit(type, null);
+                Unit unitType = UnitFactory.buildUnit(constructable, null);
                 return playerHasEnoughResourcesForUnit(unitType, owner);
             }
         } catch (TypeNotFound typeNotFound) {

@@ -1,12 +1,13 @@
 package main;
 
+import map.Constructable;
 import map.Map;
 import map.buildings.Building;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import units.Builder;
-import units.Unit;
+import map.units.Builder;
+import map.units.Unit;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,26 +28,26 @@ public class BuildingAndUnitCreatorTest {
     public void createUnitTest() {
         gameMap.spawnCity(player);
 
-        ButtonData data = new ButtonData(3, 3, "Builder");
+        ButtonData data = new ButtonData(3, 3, Constructable.BUILDER);
         buildingAndUnitCreator.createUnit(data, player);
         ArrayList<Unit> playerUnits = player.getUnits();
 
-        Assert.assertTrue(playerUnits.get(0).getType().equals("Builder"));
+        Assert.assertTrue(playerUnits.get(0).getType().equals(Constructable.BUILDER));
     }
 
     @Test
     public void createBuildingTestTower() {
-        ButtonData data = new ButtonData(3, 3, "Tower");
+        ButtonData data = new ButtonData(3, 3, Constructable.TOWER);
         buildingAndUnitCreator.createBuilding(data, player);
 
         ArrayList<Building> playerBuildings = player.getBuildings();
 
-        Assert.assertTrue(playerBuildings.get(0).getType().equals("Tower"));
+        Assert.assertTrue(playerBuildings.get(0).getType().equals(Constructable.TOWER));
     }
 
     @Test
     public void createBuildingTestRoad() {
-        ButtonData data = new ButtonData(3, 3, "Road");
+        ButtonData data = new ButtonData(3, 3, Constructable.ROAD);
         Unit newUnit = new Builder(player);
         gameMap.setUnit(3, 3, newUnit);
 
@@ -54,8 +55,8 @@ public class BuildingAndUnitCreatorTest {
 
         ArrayList<Building> playerBuildings = player.getBuildings();
 
-        Assert.assertTrue(playerBuildings.get(0).getType().equals("Road"));
-        Assert.assertTrue(gameMap.getTile(3, 3).getBuilding().getType().equals("Road"));
-        Assert.assertTrue(gameMap.getTile(3, 3).getUnit().getType().equals("Builder"));
+        Assert.assertTrue(playerBuildings.get(0).getType().equals(Constructable.ROAD));
+        Assert.assertTrue(gameMap.getTile(3, 3).getBuilding().getType().equals(Constructable.ROAD));
+        Assert.assertTrue(gameMap.getTile(3, 3).getUnit().getType().equals(Constructable.BUILDER));
     }
 }

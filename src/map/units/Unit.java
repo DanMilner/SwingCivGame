@@ -1,7 +1,8 @@
-package units;
+package map.units;
 
+import map.Constructable;
 import main.Player;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -17,16 +18,16 @@ public abstract class Unit {
     int maxHealth = 0;
     int currentHealth;
     ImageIcon imageIcon;
-    String type;
+    Constructable type;
     private Player owner;
     Map<ResourceTypes, Integer> resourceCost = new HashMap<>();
-    ArrayList<String> buttonList;
+    ArrayList<Constructable> buttonList;
 
     Unit(Player owner) {
         this.owner = owner;
     }
 
-    public ArrayList<String> getButtonList() {
+    public ArrayList<Constructable> getButtonList() {
         return buttonList;
     }
 
@@ -50,7 +51,7 @@ public abstract class Unit {
         return owner;
     }
 
-    public String getType() {
+    public Constructable getType() {
         return type;
     }
 

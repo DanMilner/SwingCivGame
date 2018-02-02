@@ -9,8 +9,8 @@ import map.resources.Resource;
 import map.resources.Water;
 import org.junit.Before;
 import org.junit.Test;
-import units.Builder;
-import units.Unit;
+import map.units.Builder;
+import map.units.Unit;
 
 import java.awt.*;
 

@@ -1,11 +1,13 @@
 package main;
 
 import exceptions.TypeNotFound;
+import map.Constructable;
 import map.Map;
 import map.Tile;
 import map.UnitFactory;
 import map.buildings.Building;
-import units.Unit;
+import map.resources.ResourceTypes;
+import map.units.Unit;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,8 +58,8 @@ public class GameController {
         return unitMovementHandler.moveUnit(oldX, oldY, newX, newY);
     }
 
-    boolean checkAvailableResources(String type, Boolean unitCheck) {
-        return gameMap.checkCost(type, playerHandler.getCurrentPlayer(), unitCheck);
+    boolean checkAvailableResources(Constructable constructable, Boolean unitCheck) {
+        return gameMap.checkCost(constructable, playerHandler.getCurrentPlayer(), unitCheck);
     }
 
     void buttonClicked(ButtonData data) {
@@ -75,7 +77,7 @@ public class GameController {
         return gameMap.getTileImage(xCoord, yCoord);
     }
 
-    public ArrayList<String> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
+    public ArrayList<Constructable> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
         return gameMap.getTileButtonList(unitSelected, currentX, currentY);
     }
 
@@ -286,12 +288,13 @@ class BuildingAndUnitCreator {
 
     void createUnit(ButtonData data, Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        String buttonText = data.getText();
+        Constructable unitType = data.getConstructable();
+
         int x = data.getCurrentX();
         int y = data.getCurrentY();
         Unit newUnit;
         try {
-            newUnit = UnitFactory.buildUnit(buttonText, currentPlayer);
+            newUnit = UnitFactory.buildUnit(unitType, currentPlayer);
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
             return;
@@ -306,7 +309,7 @@ class BuildingAndUnitCreator {
         } else if (isTileAvailable(x, y - 1)) {
             gameMap.setUnit(x, y - 1, newUnit);
         } else {
-            System.out.println("nowhere to spawn a " + buttonText);
+            System.out.println("nowhere to spawn a " + unitType);
             return;
         }
         currentPlayer.addUnit(newUnit);
@@ -319,15 +322,17 @@ class BuildingAndUnitCreator {
     }
 
     void createBuilding(ButtonData data, Player currentPlayer) {
-        String buttonText = data.getText();
+        Constructable buildingType = data.getConstructable();
+
         int x = data.getCurrentX();
         int y = data.getCurrentY();
 
+        //is this needed? -----------------------------------------------------------------------------------------------------------------------------------------------
         Unit tempUnit = gameMap.getUnit(x, y);
 
-        gameMap.constructAndSetBuildingTile(buttonText, x, y, currentPlayer);
+        gameMap.constructAndSetBuildingTile(buildingType, x, y, currentPlayer);
 
-        if (buttonText.equals("Road")) {
+        if (buildingType == Constructable.ROAD) {
             gameMap.setUnit(x, y, tempUnit);
         }
     }

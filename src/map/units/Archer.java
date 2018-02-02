@@ -1,7 +1,8 @@
-package units;
+package map.units;
 
+import map.Constructable;
 import main.Player;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 
@@ -9,7 +10,7 @@ public class Archer extends Unit {
     public Archer(Player owner) {
         super(owner);
         this.imageIcon = new ImageIcon("textures\\unit\\Archer.png");
-        this.type = "Archer";
+        this.type = Constructable.ARCHER;
         this.maxMoves = 3;
         this.remainingMoves = maxMoves;
         this.maxHealth = 50;

@@ -3,7 +3,7 @@ package map;
 import exceptions.TypeNotFound;
 import main.Player;
 import main.ResourceIterator;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 import map.buildings.Building;
 import map.buildings.LumberMill;
 import map.buildings.Mine;

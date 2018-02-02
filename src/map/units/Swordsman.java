@@ -1,7 +1,8 @@
-package units;
+package map.units;
 
+import map.Constructable;
 import main.Player;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 
@@ -9,7 +10,7 @@ public class Swordsman extends Unit {
     public Swordsman(Player owner) {
         super(owner);
         this.imageIcon = new ImageIcon("textures\\unit\\Swordsman.png");
-        this.type = "Swordsman";
+        this.type = Constructable.SWORDSMAN;
         this.maxMoves = 3;
         this.remainingMoves = maxMoves;
         this.attackRange = 1;

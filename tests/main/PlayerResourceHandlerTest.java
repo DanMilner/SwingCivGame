@@ -1,9 +1,10 @@
 package main;
 
 import map.buildings.*;
+import map.resources.ResourceTypes;
 import org.junit.Before;
 import org.junit.Test;
-import units.*;
+import map.units.*;
 
 import java.awt.*;
 import java.util.HashMap;

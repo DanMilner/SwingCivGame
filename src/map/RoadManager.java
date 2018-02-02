@@ -64,7 +64,7 @@ class RoadManager {
     }
 
     public void addConnectableTile(Tile newBuilding) {
-        if (newBuilding.getBuilding().getType().equals("City")) {
+        if (newBuilding.getBuilding().getType() == Constructable.CITY) {
             addCity(newBuilding);
         } else {
             addRoad(newBuilding);
@@ -83,7 +83,7 @@ class RoadManager {
     }
 
     public void removeRoad(Tile tile) {
-        if (tile.getBuilding().getType().equals("City")) {
+        if (tile.getBuilding().getType().equals(Constructable.CITY)) {
             cities.remove(tile);
         } else {
             roads.remove(tile);

@@ -1,7 +1,7 @@
 package map;
 
 import main.Player;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,38 +20,34 @@ public class ResourceCostCheckerTest {
 
     @Test
     public void checkCostTestBuildingHasEnoughResources() {
-        String buildType = "City";
         Boolean buildingCostCheck = true;
         givePlayerResources(50);
 
-        assertTrue(ResourceCostChecker.checkCost(buildType, player, buildingCostCheck));
+        assertTrue(ResourceCostChecker.checkCost(Constructable.CITY, player, buildingCostCheck));
     }
 
     @Test
     public void checkCostTestBuildingNotEnoughResources() {
-        String buildType = "City";
         Boolean buildingCostCheck = true;
         givePlayerResources(10);
 
-        assertFalse(ResourceCostChecker.checkCost(buildType, player, buildingCostCheck));
+        assertFalse(ResourceCostChecker.checkCost(Constructable.CITY, player, buildingCostCheck));
     }
 
     @Test
     public void checkCostTestUnitHasEnoughResources() {
-        String unitType = "Builder";
         Boolean buildingCostCheck = false;
         givePlayerResources(40);
 
-        assertTrue(ResourceCostChecker.checkCost(unitType, player, buildingCostCheck));
+        assertTrue(ResourceCostChecker.checkCost(Constructable.BUILDER, player, buildingCostCheck));
     }
 
     @Test
     public void checkCostTestUnitNotEnoughResources() {
-        String unitType = "Builder";
         Boolean buildingCostCheck = false;
         givePlayerResources(1);
 
-        assertFalse(ResourceCostChecker.checkCost(unitType, player, buildingCostCheck));
+        assertFalse(ResourceCostChecker.checkCost(Constructable.BUILDER, player, buildingCostCheck));
     }
 
     private void givePlayerResources(int amount) {

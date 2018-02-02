@@ -1,7 +1,5 @@
 package map.resources;
 
-import main.ResourceTypes;
-
 import javax.swing.*;
 
 public class Coal extends Resource {

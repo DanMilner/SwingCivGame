@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class Barracks extends Building {
         ImageIcon icon = new ImageIcon("textures\\buildings\\Barracks.png");
 
         super.setImageIcon(icon);
-        this.type = "Barracks";
+        this.type = Constructable.BARRACKS;
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
@@ -18,6 +19,6 @@ public class Barracks extends Building {
         this.resourceCost.put(ResourceTypes.STONE, 3);
 
         this.buttonList = new ArrayList<>();
-        buttonList.add("Swordsman");
+        buttonList.add(Constructable.SWORDSMAN);
     }
 }

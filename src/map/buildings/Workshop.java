@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class Workshop extends Building {
         ImageIcon icon = new ImageIcon("textures\\buildings\\Workshop.png");
 
         super.setImageIcon(icon);
-        this.type = "Workshop";
+        this.type = Constructable.WORKSHOP;
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
@@ -19,6 +20,6 @@ public class Workshop extends Building {
         this.resourceCost.put(ResourceTypes.IRON, 1);
 
         this.buttonList = new ArrayList<>();
-        buttonList.add("Catapult");
+        buttonList.add(Constructable.CATAPULT);
     }
 }

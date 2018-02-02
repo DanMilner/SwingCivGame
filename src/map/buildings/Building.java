@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 import map.resources.Resource;
 
 import javax.swing.*;
@@ -16,11 +17,11 @@ public abstract class Building {
     int maxHealth;
     int currentHealth;
     boolean hasCityConnection = false;
-    ArrayList<String> buttonList;
+    ArrayList<Constructable> buttonList;
     Map<ResourceTypes, Integer> resourceHarvestAmount;
     ArrayList<Resource> claimedResourceTiles;
     private boolean visited;
-    public String type;
+    public Constructable type;
 
     public boolean canHarvestResourceType(ResourceTypes resourceType) {
         return resourceHarvestAmount.containsKey(resourceType);
@@ -30,7 +31,7 @@ public abstract class Building {
         return borderSize;
     }
 
-    public ArrayList<String> getButtonList() {
+    public ArrayList<Constructable> getButtonList() {
         return buttonList;
     }
 
@@ -42,7 +43,7 @@ public abstract class Building {
         hasCityConnection = connected;
     }
 
-    public String getType() {
+    public Constructable getType() {
         return type;
     }
 

@@ -1,10 +1,11 @@
 package main;
 
+import map.resources.ResourceTypes;
 import org.junit.Before;
 import org.junit.Test;
-import units.Catapult;
-import units.Knight;
-import units.Unit;
+import map.units.Catapult;
+import map.units.Knight;
+import map.units.Unit;
 
 import java.awt.*;
 

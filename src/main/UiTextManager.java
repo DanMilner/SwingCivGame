@@ -1,6 +1,7 @@
 package main;
 
 import map.Tile;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 
@@ -80,11 +81,11 @@ class UiTextManager {
         int maxHealth = 0;
 
         if (tileClicked.hasUnit()) {
-            tileType = tileClicked.getUnit().getType();
+            tileType = tileClicked.getUnit().getType().toString().toLowerCase();
             currentHealth = tileClicked.getUnit().getCurrentHealth();
             maxHealth = tileClicked.getUnit().getMaxHealth();
         } else if (tileClicked.hasBuilding()) {
-            tileType = tileClicked.getBuilding().getType();
+            tileType = tileClicked.getBuilding().getType().toString().toLowerCase();
             currentHealth = tileClicked.getBuilding().getCurrentHealth();
             maxHealth = tileClicked.getBuilding().getMaxHealth();
         } else {

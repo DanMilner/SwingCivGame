@@ -2,22 +2,22 @@ package map;
 
 import exceptions.TypeNotFound;
 import main.Player;
-import units.*;
+import map.units.*;
 
 public class UnitFactory {
-    public static Unit buildUnit(String type, Player owner) throws TypeNotFound {
+    public static Unit buildUnit(Constructable type, Player owner) throws TypeNotFound {
         switch (type) {
-            case "Settler":
+            case SETTLER:
                 return new Settler(owner);
-            case "Builder":
+            case BUILDER:
                 return new Builder(owner);
-            case "Swordsman":
+            case SWORDSMAN:
                 return new Swordsman(owner);
-            case "Archer":
+            case ARCHER:
                 return new Archer(owner);
-            case "Knight":
+            case KNIGHT:
                 return new Knight(owner);
-            case "Catapult":
+            case CATAPULT:
                 return new Catapult(owner);
         }
         throw new TypeNotFound("There is no unit of type: " + type);

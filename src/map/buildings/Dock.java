@@ -1,13 +1,14 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 
 public class Dock extends Building {
     public Dock() {
         this.buildingImage = new ImageIcon("textures\\buildings\\shipyard.png");
-        this.type = "Dock";
+        this.type = Constructable.DOCK;
         this.resourceCost.put(ResourceTypes.WOOD, 10);
 
         this.maxHealth = 300;

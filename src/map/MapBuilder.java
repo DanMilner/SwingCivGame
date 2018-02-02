@@ -1,7 +1,7 @@
 package map;
 
 import exceptions.TypeNotFound;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 import map.resources.Resource;
 
 import java.util.concurrent.ThreadLocalRandom;

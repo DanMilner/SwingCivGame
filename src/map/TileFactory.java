@@ -1,39 +1,39 @@
 package map;
 
 import exceptions.TypeNotFound;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 import map.buildings.*;
 import map.resources.*;
 
 class TileFactory {
 
-    static Building buildBuildingTile(String type) throws TypeNotFound {
+    static Building buildBuildingTile(Constructable type) throws TypeNotFound {
         switch (type) {
-            case "Tower":
+            case TOWER:
                 return new Tower();
-            case "Mine":
+            case MINE:
                 return new Mine();
-            case "Lumber Mill":
+            case LUMBERMILL:
                 return new LumberMill();
-            case "Farm":
+            case FARM:
                 return new Farm();
-            case "Aqueduct":
+            case AQUEDUCT:
                 return new Aqueduct();
-            case "Dock":
+            case DOCK:
                 return new Dock();
-            case "City":
+            case CITY:
                 return new City();
-            case "Wheat":
+            case WHEAT:
                 return new Wheat();
-            case "Barracks":
+            case BARRACKS:
                 return new Barracks();
-            case "Workshop":
+            case WORKSHOP:
                 return new Workshop();
-            case "ArcheryRange":
+            case ARCHERYRANGE:
                 return new ArcheryRange();
-            case "Stable":
+            case STABLE:
                 return new Stable();
-            case "Road":
+            case ROAD:
                 return new Road();
         }
         throw new TypeNotFound("There is no building of type: " + type);

@@ -1,5 +1,6 @@
 package main;
 
+import map.Constructable;
 import map.Tile;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class GuiManager extends JFrame implements ActionListener {
     private static final int MAPSIZE = GameController.MAPSIZE;
     private BoardButton[][] boardButtons = new BoardButton[MAPSIZE + 1][MAPSIZE + 1];
-    private ArrayList<JButton> uiButtons = new ArrayList<>();
+    private ArrayList<UiButton> uiButtons = new ArrayList<>();
     private GameController gameController;
     private int currentX;
     private int currentY;
@@ -56,7 +57,7 @@ public class GuiManager extends JFrame implements ActionListener {
         uiPanel.add(endTurn, BorderLayout.LINE_END);
 
         for (int i = 0; i < 12; i++) {
-            uiButtons.add(new JButton());
+            uiButtons.add(new UiButton());
             uiButtons.get(i).setBounds(xPosition, yPosition, 110, 50);
             uiButtons.get(i).setVisible(false);
             uiButtons.get(i).setBackground(Color.white);
@@ -75,9 +76,9 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void uiButtonAction(int ButtonNum) {
-        String buttonText = uiButtons.get(ButtonNum).getText();
+        Constructable constructable = uiButtons.get(ButtonNum).getConstructable();
 
-        ButtonData buttonData = new ButtonData(currentX, currentY, buttonText);
+        ButtonData buttonData = new ButtonData(currentX, currentY, constructable);
 
         gameController.buttonClicked(buttonData);
         updateBoardButtonIconsAndBorders();
@@ -120,22 +121,23 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void setButtonText() {
-        ArrayList<String> buttonsToBuild = gameController.getTileButtonList(unitSelected, currentX, currentY);
+        ArrayList<Constructable> buttonsToBuild = gameController.getTileButtonList(unitSelected, currentX, currentY);
         if (buttonsToBuild == null)
             return;
 
         int index = 0;
-        for (String button : buttonsToBuild) {
-            uiButtons.get(index).setText(button);
+        for (Constructable constructable : buttonsToBuild) {
+            uiButtons.get(index).setText(constructable.toString().toLowerCase());
+            uiButtons.get(index).setConstructable(constructable);
             uiButtons.get(index).setVisible(true);
-            if (!button.equals("Road"))
-                colourUIButtons(index, button);
+            if (constructable != Constructable.ROAD)
+                colourUIButtons(index, constructable);
             index++;
         }
     }
 
-    private void colourUIButtons(int index, String type) {
-        if (gameController.checkAvailableResources(type, unitSelected)) {
+    private void colourUIButtons(int index, Constructable constructable) {
+        if (gameController.checkAvailableResources(constructable, unitSelected)) {
             uiButtons.get(index).setBackground(Color.white);
             uiButtons.get(index).setEnabled(true);
         } else {

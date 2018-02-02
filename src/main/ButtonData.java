@@ -1,14 +1,16 @@
 package main;
 
+import map.Constructable;
+
 public class ButtonData {
     private int CurrentX;
     private int CurrentY;
-    private String text;
+    private Constructable constructable;
 
-    ButtonData(int x, int y, String text) {
+    ButtonData(int x, int y, Constructable constructable) {
         this.CurrentX = x;
         this.CurrentY = y;
-        this.text = text;
+        this.constructable = constructable;
     }
 
     int getCurrentX() {
@@ -19,7 +21,7 @@ public class ButtonData {
         return CurrentY;
     }
 
-    String getText() {
-        return text;
+    Constructable getConstructable() {
+        return constructable;
     }
 }

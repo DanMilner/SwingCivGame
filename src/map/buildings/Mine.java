@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 public class Mine extends Building {
     public Mine() {
         this.buildingImage = new ImageIcon("textures\\buildings\\Quarry.png");
-        this.type = "Mine";
+        this.type = Constructable.MINE;
         this.resourceCost.put(ResourceTypes.WOOD, 2);
         this.resourceHarvestAmount = new HashMap<>();
         this.claimedResourceTiles = new ArrayList<>();

@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class Stable extends Building {
         ImageIcon icon = new ImageIcon("textures\\buildings\\Stable.png");
 
         super.setImageIcon(icon);
-        this.type = "Stable";
+        this.type = Constructable.STABLE;
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
@@ -18,6 +19,6 @@ public class Stable extends Building {
         this.resourceCost.put(ResourceTypes.GOLD, 2);
 
         this.buttonList = new ArrayList<>();
-        buttonList.add("Knight");
+        buttonList.add(Constructable.KNIGHT);
     }
 }

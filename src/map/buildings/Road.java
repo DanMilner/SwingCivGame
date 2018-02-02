@@ -1,11 +1,13 @@
 package map.buildings;
 
+import map.Constructable;
+
 import javax.swing.*;
 
 public class Road extends Building {
     public Road() {
         this.buildingImage = new ImageIcon("textures/roads/Road.png");
-        this.type = "Road";
+        this.type = Constructable.ROAD;
         this.borderSize = 0;
         this.maxHealth = 0;
         this.currentHealth = maxHealth;

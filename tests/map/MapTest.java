@@ -2,16 +2,16 @@ package map;
 
 import main.Player;
 import main.ResourceIterator;
-import main.ResourceTypes;
+import map.resources.ResourceTypes;
 import map.buildings.Mine;
 import map.resources.Forest;
 import map.resources.Mountain;
 import map.resources.Water;
 import org.junit.Before;
 import org.junit.Test;
-import units.Builder;
-import units.Knight;
-import units.Unit;
+import map.units.Builder;
+import map.units.Knight;
+import map.units.Unit;
 
 import java.awt.*;
 
@@ -35,7 +35,7 @@ public class MapTest {
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 if (gameMap.getTile(x, y).hasBuilding()) {
-                    assertTrue(gameMap.getTile(x, y).getBuilding().getType().equals("City"));
+                    assertTrue(gameMap.getTile(x, y).getBuilding().getType().equals(Constructable.CITY));
                 }
             }
         }
@@ -43,23 +43,23 @@ public class MapTest {
 
     @Test
     public void constructAndSetBuildingTileTest() {
-        gameMap.constructAndSetBuildingTile("Mine", 5, 5, player);
+        gameMap.constructAndSetBuildingTile(Constructable.MINE, 5, 5, player);
 
-        assertTrue(gameMap.getTile(5, 5).getBuilding().getType().equals("Mine"));
+        assertTrue(gameMap.getTile(5, 5).getBuilding().getType().equals(Constructable.MINE));
     }
 
     @Test
     public void constructAndSetBuildingTileTestConstructionNotPossible() {
         gameMap.getTile(5, 5).setBuilding(new Mine());
-        gameMap.constructAndSetBuildingTile("Tower", 5, 5, player);
+        gameMap.constructAndSetBuildingTile(Constructable.TOWER, 5, 5, player);
 
-        assertFalse(gameMap.getTile(5, 5).getBuilding().getType().equals("Tower"));
+        assertFalse(gameMap.getTile(5, 5).getBuilding().getType().equals(Constructable.TOWER));
     }
 
     @Test
     public void constructAndSetBuildingTileTestResourcesHarvested() {
         gameMap.setTileResource(4, 4, new Forest());
-        gameMap.constructAndSetBuildingTile("Lumber Mill", 5, 5, player);
+        gameMap.constructAndSetBuildingTile(Constructable.LUMBERMILL, 5, 5, player);
 
         assertTrue(gameMap.getTile(5, 5).getBuilding().getResourceAmount(ResourceTypes.WOOD) == 1);
     }
@@ -69,7 +69,7 @@ public class MapTest {
         Unit builder = new Builder(player);
         player.addUnit(builder);
         gameMap.setUnit(5, 5, builder);
-        gameMap.constructAndSetBuildingTile("Mine", 5, 5, player);
+        gameMap.constructAndSetBuildingTile(Constructable.MINE, 5, 5, player);
 
         ResourceIterator resourceIterator = new ResourceIterator(builder);
         while (resourceIterator.hasNext()) {
@@ -83,7 +83,7 @@ public class MapTest {
         Unit builder = new Builder(player);
         player.addUnit(builder);
         gameMap.setUnit(5, 5, builder);
-        gameMap.constructAndSetBuildingTile("Road", 5, 5, player);
+        gameMap.constructAndSetBuildingTile(Constructable.ROAD, 5, 5, player);
 
         assertTrue(gameMap.getTile(5, 5).hasUnit());
     }
@@ -104,11 +104,11 @@ public class MapTest {
         gameMap.setTileResource(5, 4, new Mountain());
         gameMap.setTileResource(6, 5, new Water());
 
-        gameMap.constructAndSetBuildingTile("Farm", 5, 5, player);
+        gameMap.constructAndSetBuildingTile(Constructable.FARM, 5, 5, player);
 
         assertFalse(gameMap.getTile(5, 4).hasBuilding());
         assertFalse(gameMap.getTile(6, 5).hasBuilding());
 
-        assertTrue(gameMap.getTile(6, 4).getBuilding().getType().equals("Wheat"));
+        assertTrue(gameMap.getTile(6, 4).getBuilding().getType().equals(Constructable.WHEAT));
     }
 }

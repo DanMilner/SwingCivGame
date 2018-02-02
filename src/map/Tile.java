@@ -3,7 +3,7 @@ package map;
 import main.Player;
 import map.buildings.Building;
 import map.resources.Resource;
-import units.Unit;
+import map.units.Unit;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class Tile {
     }
 
     public boolean hasRoad() {
-        return hasBuilding() && building.type.equals("Road");
+        return hasBuilding() && building.type == Constructable.ROAD;
     }
 
     public boolean hasOwner() {
@@ -91,7 +91,7 @@ public class Tile {
         return building != null && building.getHasCityConnection();
     }
 
-    public ArrayList<String> getButtonList(boolean unitSelected) {
+    public ArrayList<Constructable> getButtonList(boolean unitSelected) {
         if (unitSelected)
             return unit.getButtonList();
         return building.getButtonList();

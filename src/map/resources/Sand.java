@@ -1,7 +1,5 @@
 package map.resources;
 
-import main.ResourceTypes;
-
 import javax.swing.*;
 
 public class Sand extends Resource {

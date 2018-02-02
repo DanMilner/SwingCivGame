@@ -1,7 +1,5 @@
 package map.resources;
 
-import main.ResourceTypes;
-
 import javax.swing.*;
 
 public class Copper extends Resource {

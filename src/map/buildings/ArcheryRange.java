@@ -1,6 +1,7 @@
 package map.buildings;
 
-import main.ResourceTypes;
+import map.Constructable;
+import map.resources.ResourceTypes;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class ArcheryRange extends Building {
         ImageIcon icon = new ImageIcon("textures\\buildings\\ArcheryRange.png");
 
         super.setImageIcon(icon);
-        this.type = "ArcheryRange";
+        this.type = Constructable.ARCHERYRANGE;
         this.maxHealth = 400;
         this.currentHealth = maxHealth;
 
@@ -19,6 +20,6 @@ public class ArcheryRange extends Building {
 
 
         this.buttonList = new ArrayList<>();
-        buttonList.add("Archer");
+        buttonList.add(Constructable.ARCHER);
     }
 }
