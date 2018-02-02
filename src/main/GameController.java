@@ -323,17 +323,9 @@ class BuildingAndUnitCreator {
 
     void createBuilding(ButtonData data, Player currentPlayer) {
         Constructable buildingType = data.getConstructable();
-
         int x = data.getCurrentX();
         int y = data.getCurrentY();
 
-        //is this needed? -----------------------------------------------------------------------------------------------------------------------------------------------
-        Unit tempUnit = gameMap.getUnit(x, y);
-
         gameMap.constructAndSetBuildingTile(buildingType, x, y, currentPlayer);
-
-        if (buildingType == Constructable.ROAD) {
-            gameMap.setUnit(x, y, tempUnit);
-        }
     }
 }
