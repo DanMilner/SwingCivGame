@@ -1,21 +1,17 @@
 package main;
 
+import map.Coordinates;
+
 import javax.swing.*;
 
 public class BoardButton extends JButton {
-    private int xCoord;
-    private int yCoord;
+    private Coordinates coordinates;
 
-    BoardButton(int xCoord, int yCoord) {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
+    BoardButton(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
-    public int getYCoord() {
-        return yCoord;
-    }
-
-    public int getXCoord() {
-        return xCoord;
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 }

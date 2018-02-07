@@ -1,35 +1,35 @@
 package main;
 
 import map.Constructable;
+import map.Coordinates;
 import map.Map;
 import map.buildings.Building;
+import map.units.Builder;
+import map.units.Unit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import map.units.Builder;
-import map.units.Unit;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class BuildingAndUnitCreatorTest {
     private Player player;
-    private BuildingAndUnitCreator buildingAndUnitCreator;
+    private UnitCreator unitCreator;
     private Map gameMap;
 
     @Before
     public void setUp() {
         player = new Player("Daniel", Color.yellow);
         gameMap = new Map(true, 7);
-        buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
+        unitCreator = new UnitCreator(gameMap);
     }
 
     @Test
     public void createUnitTest() {
         gameMap.spawnCity(player);
 
-        ButtonData data = new ButtonData(3, 3, Constructable.BUILDER);
-        buildingAndUnitCreator.createUnit(data, player);
+        unitCreator.createUnit(new Coordinates(3, 3), Constructable.BUILDER, player);
         ArrayList<Unit> playerUnits = player.getUnits();
 
         Assert.assertTrue(playerUnits.get(0).getType().equals(Constructable.BUILDER));
@@ -37,8 +37,7 @@ public class BuildingAndUnitCreatorTest {
 
     @Test
     public void createBuildingTestTower() {
-        ButtonData data = new ButtonData(3, 3, Constructable.TOWER);
-        buildingAndUnitCreator.createBuilding(data, player);
+        gameMap.constructAndSetBuildingTile(Constructable.TOWER, new Coordinates(3, 3), player);
 
         ArrayList<Building> playerBuildings = player.getBuildings();
 
@@ -47,16 +46,16 @@ public class BuildingAndUnitCreatorTest {
 
     @Test
     public void createBuildingTestRoad() {
-        ButtonData data = new ButtonData(3, 3, Constructable.ROAD);
         Unit newUnit = new Builder(player);
-        gameMap.setUnit(3, 3, newUnit);
+        Coordinates coordinates = new Coordinates(3, 3);
+        gameMap.setUnit(coordinates, newUnit);
 
-        buildingAndUnitCreator.createBuilding(data, player);
+        gameMap.constructAndSetBuildingTile(Constructable.ROAD, coordinates, player);
 
         ArrayList<Building> playerBuildings = player.getBuildings();
 
         Assert.assertTrue(playerBuildings.get(0).getType().equals(Constructable.ROAD));
-        Assert.assertTrue(gameMap.getTile(3, 3).getBuilding().getType().equals(Constructable.ROAD));
-        Assert.assertTrue(gameMap.getTile(3, 3).getUnit().getType().equals(Constructable.BUILDER));
+        Assert.assertTrue(gameMap.getTile(coordinates).getBuilding().getType().equals(Constructable.ROAD));
+        Assert.assertTrue(gameMap.getTile(coordinates).getUnit().getType().equals(Constructable.BUILDER));
     }
 }

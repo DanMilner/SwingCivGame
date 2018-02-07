@@ -1,8 +1,8 @@
 package map;
 
 import exceptions.TypeNotFound;
-import map.resources.ResourceTypes;
 import map.resources.Resource;
+import map.resources.ResourceTypes;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -115,6 +115,34 @@ class MapBuilder {
         addResource(randomValues, ResourceTypes.DIAMONDS);
     }
 
+    public Coordinates generateNewCityCoordinates() {
+        final int CITY_BORDER_SIZE = 3;
+        int xCoord;
+        int yCoord;
+        Resource currentTileResource;
+        do {
+            xCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
+            yCoord = ThreadLocalRandom.current().nextInt(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
+            currentTileResource = map[xCoord][yCoord].getResource();
+            if (currentTileResource.isTraversable()) {
+                Boolean placeCity = true;
+                //check the surrounding tiles to not collide with existing cities
+                for (int x = xCoord - CITY_BORDER_SIZE; x <= xCoord + CITY_BORDER_SIZE; x++) {
+                    for (int y = yCoord - CITY_BORDER_SIZE; y <= yCoord + CITY_BORDER_SIZE; y++) {
+                        if (coordinatesOnMap(x, y)) {
+                            if (map[x][y].hasOwner()) {
+                                placeCity = false; //if a tile is owned by another player then the cities are too close together
+                            }
+                        }
+                    }
+                }
+                if (placeCity) {
+                    return new Coordinates(xCoord, yCoord);
+                }
+            }
+        } while (true);
+    }
+
     private void generateTilesInBodies(int xCoord, int yCoord, int intensity, ResourceTypes resourceType) {
         int originX = xCoord;
         int originY = yCoord;
@@ -222,7 +250,6 @@ class MapBuilder {
         try {
             Resource newResource = TileFactory.buildResourceTile(resourceType);
             map[x][y].setResource(newResource);
-//            System.out.println(type + " spawned at " + x + " " + y);
         } catch (TypeNotFound typeNotFound) {
             typeNotFound.printStackTrace();
         }

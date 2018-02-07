@@ -32,37 +32,37 @@ public class ConstructionPossibleTest {
 
     @Test
     public void isConstructionPossibleTest() {
-        assertTrue(ConstructionPossible.isConstructionPossible(currentMap, Constructable.MINE, 2, 2, player));
+        assertTrue(ConstructionPossible.isConstructionPossible(currentMap, Constructable.MINE, new Coordinates(2, 2), player));
     }
 
     @Test
     public void isConstructionPossibleTestDockNoWater() {
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.DOCK, 2, 2, player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.DOCK, new Coordinates(2, 2), player));
     }
 
     @Test
     public void isConstructionPossibleTestDockWithWater() {
         currentMap[2][3].setResource(new Water());
-        assertTrue(ConstructionPossible.isConstructionPossible(currentMap, Constructable.DOCK, 2, 2, player));
+        assertTrue(ConstructionPossible.isConstructionPossible(currentMap, Constructable.DOCK, new Coordinates(2, 2), player));
     }
 
     @Test
     public void isConstructionPossibleTestInEnemyTerritory() {
         Player enemy = new Player("Baddie", Color.red);
         currentMap[2][2].setOwner(enemy);
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.TOWER, 2, 2, player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.TOWER, new Coordinates(2, 2), player));
     }
 
     @Test
     public void isConstructionPossibleTestTileHasBuilding() {
         currentMap[2][2].setBuilding(new Mine());
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.TOWER, 2, 2, player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.TOWER, new Coordinates(2, 2), player));
     }
 
     @Test
     public void isConstructionPossibleTestTileHasResourceInUse() {
         currentMap[2][2].setResource(new Forest());
         currentMap[2][2].getResource().setInUse(true);
-        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.LUMBERMILL, 2, 2, player));
+        assertFalse(ConstructionPossible.isConstructionPossible(currentMap, Constructable.LUMBERMILL, new Coordinates(2, 2), player));
     }
 }

@@ -3,11 +3,11 @@ package map;
 import exceptions.TypeNotFound;
 import main.Player;
 import main.ResourceIterator;
-import map.resources.ResourceTypes;
 import map.buildings.Building;
 import map.buildings.LumberMill;
 import map.buildings.Mine;
 import map.resources.Resource;
+import map.resources.ResourceTypes;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class ResourceYieldCalculatorTest {
     public void calculateResourceYieldsTestLumberMill() {
         setMapTo(ResourceTypes.WOOD);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        ResourceYieldCalculator.calculateResourceYields(new Coordinates(3, 3), lumberMill, player, currentMap);
         assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD) == 9);
     }
 
@@ -44,7 +44,7 @@ public class ResourceYieldCalculatorTest {
     public void calculateResourceYieldsTestMine() {
         setMapTo(ResourceTypes.IRON);
         Building mine = new Mine();
-        ResourceYieldCalculator.calculateResourceYields(3, 3, mine, player, currentMap);
+        ResourceYieldCalculator.calculateResourceYields(new Coordinates(3, 3), mine, player, currentMap);
         assertTrue(mine.getResourceAmount(ResourceTypes.IRON) == 9);
     }
 
@@ -61,7 +61,7 @@ public class ResourceYieldCalculatorTest {
         currentMap[2][2].setResource(TileFactory.buildResourceTile(ResourceTypes.COPPER));
 
         Building mine = new Mine();
-        ResourceYieldCalculator.calculateResourceYields(1, 1, mine, player, currentMap);
+        ResourceYieldCalculator.calculateResourceYields(new Coordinates(1, 1), mine, player, currentMap);
 
         assertTrue(mine.getResourceAmount(ResourceTypes.IRON) == 3);
         assertTrue(mine.getResourceAmount(ResourceTypes.COAL) == 2);
@@ -74,7 +74,7 @@ public class ResourceYieldCalculatorTest {
     public void calculateResourceYieldsTestCityConnection() {
         setMapTo(ResourceTypes.WOOD);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        ResourceYieldCalculator.calculateResourceYields(new Coordinates(3, 3), lumberMill, player, currentMap);
 
         lumberMill.setHasCityConnection(true);
         assertTrue(lumberMill.getResourceAmount(ResourceTypes.WOOD) == 18);
@@ -86,7 +86,7 @@ public class ResourceYieldCalculatorTest {
     public void calculateResourceYieldsTestNoResources() {
         setMapTo(ResourceTypes.GRASS);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        ResourceYieldCalculator.calculateResourceYields(new Coordinates(3, 3), lumberMill, player, currentMap);
         ResourceIterator resourceIterator = new ResourceIterator(lumberMill, false);
         while (resourceIterator.hasNext()) {
             assertTrue(lumberMill.getResourceAmount(resourceIterator.getType()) == 0);
@@ -97,7 +97,7 @@ public class ResourceYieldCalculatorTest {
     public void calculateResourceYieldsTestWrongHarvester() {
         setMapTo(ResourceTypes.COPPER);
         Building lumberMill = new LumberMill();
-        ResourceYieldCalculator.calculateResourceYields(3, 3, lumberMill, player, currentMap);
+        ResourceYieldCalculator.calculateResourceYields(new Coordinates(3, 3), lumberMill, player, currentMap);
         lumberMill.getResourceAmount(ResourceTypes.COPPER);
         fail();
     }

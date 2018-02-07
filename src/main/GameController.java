@@ -1,10 +1,7 @@
 package main;
 
 import exceptions.TypeNotFound;
-import map.Constructable;
-import map.Map;
-import map.Tile;
-import map.UnitFactory;
+import map.*;
 import map.buildings.Building;
 import map.resources.ResourceTypes;
 import map.units.Unit;
@@ -16,7 +13,7 @@ import java.util.Random;
 
 public class GameController {
     private Map gameMap;
-    private BuildingAndUnitCreator buildingAndUnitCreator;
+    private UnitCreator unitCreator;
     private PlayerHandler playerHandler;
     private UnitMovementHandler unitMovementHandler;
     private AttackHandler attackHandler;
@@ -26,7 +23,7 @@ public class GameController {
 
     GameController() {
         gameMap = new Map(false, MAPSIZE);
-        buildingAndUnitCreator = new BuildingAndUnitCreator(gameMap);
+        unitCreator = new UnitCreator(gameMap);
         playerHandler = new PlayerHandler();
         unitMovementHandler = new UnitMovementHandler(gameMap);
         attackHandler = new AttackHandler(gameMap);
@@ -50,43 +47,43 @@ public class GameController {
         return playerHandler.getCurrentPlayer();
     }
 
-    boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        return unitMovementHandler.isValidMove(oldX, oldY, newX, newY);
+    boolean isValidMove(Coordinates originCoordinates, Coordinates destinationCoordinates) {
+        return unitMovementHandler.isValidMove(originCoordinates, destinationCoordinates);
     }
 
-    boolean moveUnit(int oldX, int oldY, int newX, int newY) {
-        return unitMovementHandler.moveUnit(oldX, oldY, newX, newY);
+    boolean moveUnit(Coordinates originCoordinates, Coordinates destinationCoordinates) {
+        return unitMovementHandler.moveUnit(originCoordinates, destinationCoordinates);
     }
 
     boolean checkAvailableResources(Constructable constructable, Boolean unitCheck) {
         return gameMap.checkCost(constructable, playerHandler.getCurrentPlayer(), unitCheck);
     }
 
-    void buttonClicked(ButtonData data) {
+    void buttonClicked(Coordinates coordinates, Constructable constructable) {
         Player currentPlayer = playerHandler.getCurrentPlayer();
 
-        if (gameMap.getTile(data.getCurrentX(), data.getCurrentY()).hasBuilding()) {
-            buildingAndUnitCreator.createUnit(data, currentPlayer);
+        if (gameMap.getTile(coordinates).hasBuilding()) {
+            unitCreator.createUnit(coordinates, constructable, currentPlayer);
         } else {
-            buildingAndUnitCreator.createBuilding(data, currentPlayer);
+            gameMap.constructAndSetBuildingTile(constructable, coordinates, currentPlayer);
             PlayerResourceHandler.calculateResources(currentPlayer);
         }
     }
 
-    public ImageIcon getTileImage(int xCoord, int yCoord) {
-        return gameMap.getTileImage(xCoord, yCoord);
+    public ImageIcon getTileImage(Coordinates coordinates) {
+        return gameMap.getTileImage(coordinates);
     }
 
-    public ArrayList<Constructable> getTileButtonList(boolean unitSelected, int currentX, int currentY) {
-        return gameMap.getTileButtonList(unitSelected, currentX, currentY);
+    public ArrayList<Constructable> getTileButtonList(boolean unitSelected, Coordinates coordinates) {
+        return gameMap.getTileButtonList(unitSelected, coordinates);
     }
 
-    public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
-        return attackHandler.attackIsPossible(currentX, currentY, targetX, targetY);
+    public boolean attackIsPossible(Coordinates originCoordinates, Coordinates targetCoordinates) {
+        return attackHandler.attackIsPossible(originCoordinates, targetCoordinates);
     }
 
-    public void performAttack(int currentX, int currentY, int targetX, int targetY) {
-        attackHandler.performAttack(currentX, currentY, targetX, targetY);
+    public void performAttack(Coordinates originCoordinates, Coordinates targetCoordinates) {
+        attackHandler.performAttack(originCoordinates, targetCoordinates);
     }
 }
 
@@ -97,15 +94,15 @@ class AttackHandler {
         this.gameMap = gameMap;
     }
 
-    public boolean attackIsPossible(int currentX, int currentY, int targetX, int targetY) {
-        if (!gameMap.coordinatesOnMap(targetX, targetY))
+    public boolean attackIsPossible(Coordinates originCoordinates, Coordinates targetCoordinates) {
+        if (!gameMap.coordinatesOnMap(targetCoordinates))
             return false;
 
-        Unit currentUnit = gameMap.getUnit(currentX, currentY);
-        if (UnitMovementHandler.tileIsOutOfRange(currentX, currentY, targetX, targetY, currentUnit.getAttackRange()))
+        Unit currentUnit = gameMap.getUnit(originCoordinates);
+        if (UnitMovementHandler.tileIsOutOfRange(originCoordinates, targetCoordinates, currentUnit.getAttackRange()))
             return false;
 
-        Tile targetTile = gameMap.getTile(targetX, targetY);
+        Tile targetTile = gameMap.getTile(targetCoordinates);
         if (targetTile.hasUnit())
             return targetTile.getUnit().getOwner() != currentUnit.getOwner();
         if (targetTile.hasBuilding())
@@ -114,20 +111,20 @@ class AttackHandler {
         return false;
     }
 
-    public void performAttack(int currentX, int currentY, int targetX, int targetY) {
-        Unit currentUnit = gameMap.getUnit(currentX, currentY);
+    public void performAttack(Coordinates originCoordinates, Coordinates targetCoordinates) {
+        Unit currentUnit = gameMap.getUnit(originCoordinates);
 
-        if (gameMap.getTile(targetX, targetY).hasUnit()) {
-            Unit targetUnit = gameMap.getUnit(targetX, targetY);
+        if (gameMap.getTile(targetCoordinates).hasUnit()) {
+            Unit targetUnit = gameMap.getUnit(targetCoordinates);
             targetUnit.reduceCurrentHealthBy(currentUnit.getAttackDamage());
             if (targetUnit.getCurrentHealth() <= 0)
-                gameMap.killUnitAndRefundCost(targetX, targetY);
+                gameMap.killUnitAndRefundCost(targetCoordinates);
         } else {
-            Building targetBuilding = gameMap.getTile(targetX, targetY).getBuilding();
+            Building targetBuilding = gameMap.getTile(targetCoordinates).getBuilding();
             targetBuilding.reduceCurrentHealthBy(currentUnit.getAttackDamage());
             if (targetBuilding.getCurrentHealth() <= 0) {
-                gameMap.destroyBuildingAndRefundCost(targetX, targetY);
-                PlayerResourceHandler.calculateResources(gameMap.getTile(targetX, targetY).getOwner());
+                gameMap.destroyBuildingAndRefundCost(targetCoordinates);
+                PlayerResourceHandler.calculateResources(gameMap.getTile(targetCoordinates).getOwner());
             }
         }
         currentUnit.setRemainingMoves(0);
@@ -141,16 +138,16 @@ class UnitMovementHandler {
         this.gameMap = gameMap;
     }
 
-    boolean isValidMove(int oldX, int oldY, int newX, int newY) {
-        if (!gameMap.coordinatesOnMap(newX, newY))
+    boolean isValidMove(Coordinates originCoordinates, Coordinates targetCoordinates) {
+        if (!gameMap.coordinatesOnMap(targetCoordinates))
             return false;
-        Tile destinationTile = gameMap.getTile(newX, newY);
-        Unit currentUnit = gameMap.getUnit(oldX, oldY);
+        Tile destinationTile = gameMap.getTile(targetCoordinates);
+        Unit currentUnit = gameMap.getUnit(originCoordinates);
 
         if (!destinationTile.isTraversable())
             return false;
 
-        if (tileIsOutOfRange(oldX, oldY, newX, newY, currentUnit.getRemainingMoves()))
+        if (tileIsOutOfRange(originCoordinates, targetCoordinates, currentUnit.getRemainingMoves()))
             return false;
 
         if (tileHasEnemyBuilding(currentUnit, destinationTile))
@@ -163,22 +160,22 @@ class UnitMovementHandler {
         return destinationTile.hasBuilding() && destinationTile.getOwner() != currentUnit.getOwner();
     }
 
-    public static boolean tileIsOutOfRange(int oldX, int oldY, int newX, int newY, int range) {
-        int yDistance = Math.abs(oldY - newY); //distance moved on y axis
-        int xDistance = Math.abs(oldX - newX); //distance moved on x axis
+    public static boolean tileIsOutOfRange(Coordinates originCoordinates, Coordinates targetCoordinates, int range) {
+        int yDistance = Math.abs(originCoordinates.y - targetCoordinates.y); //distance moved on y axis
+        int xDistance = Math.abs(originCoordinates.x - targetCoordinates.x); //distance moved on x axis
         return range - yDistance - xDistance < 0;
     }
 
-    boolean moveUnit(int oldX, int oldY, int newX, int newY) {
-        if (!isValidMove(oldX, oldY, newX, newY))
+    boolean moveUnit(Coordinates originCoordinates, Coordinates targetCoordinates) {
+        if (!isValidMove(originCoordinates, targetCoordinates))
             return false;
 
-        Unit unitBeingMoved = gameMap.getUnit(oldX, oldY);
-        int yDistance = Math.abs(oldY - newY); //distance moved on y axis
-        int xDistance = Math.abs(oldX - newX); // distance moved on x axis
+        Unit unitBeingMoved = gameMap.getUnit(originCoordinates);
+        int yDistance = Math.abs(originCoordinates.y - targetCoordinates.y); //distance moved on y axis
+        int xDistance = Math.abs(originCoordinates.x - targetCoordinates.x); // distance moved on x axis
         int remainingMoves = unitBeingMoved.getRemainingMoves() - yDistance - xDistance;
         unitBeingMoved.setRemainingMoves(remainingMoves);
-        gameMap.moveUnit(oldX, oldY, newX, newY);
+        gameMap.moveUnit(originCoordinates, targetCoordinates);
         return true;
     }
 }
@@ -278,20 +275,17 @@ class PlayerResourceHandler {
     }
 }
 
-class BuildingAndUnitCreator {
+class UnitCreator {
     private Map gameMap;
     private Player currentPlayer;
 
-    BuildingAndUnitCreator(Map gameMap) {
+    UnitCreator(Map gameMap) {
         this.gameMap = gameMap;
     }
 
-    void createUnit(ButtonData data, Player currentPlayer) {
+    void createUnit(Coordinates coordinates, Constructable unitType, Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        Constructable unitType = data.getConstructable();
 
-        int x = data.getCurrentX();
-        int y = data.getCurrentY();
         Unit newUnit;
         try {
             newUnit = UnitFactory.buildUnit(unitType, currentPlayer);
@@ -300,32 +294,38 @@ class BuildingAndUnitCreator {
             return;
         }
 
-        if (isTileAvailable(x + 1, y)) {
-            gameMap.setUnit(x + 1, y, newUnit);
-        } else if (isTileAvailable(x - 1, y)) {
-            gameMap.setUnit(x - 1, y, newUnit);
-        } else if (isTileAvailable(x, y + 1)) {
-            gameMap.setUnit(x, y + 1, newUnit);
-        } else if (isTileAvailable(x, y - 1)) {
-            gameMap.setUnit(x, y - 1, newUnit);
-        } else {
-            System.out.println("nowhere to spawn a " + unitType);
+        coordinates = getUnitSpawnCoordinates(coordinates);
+        if (coordinates == null)
             return;
-        }
+
+        gameMap.setUnit(coordinates, newUnit);
         currentPlayer.addUnit(newUnit);
         PlayerResourceHandler.calculateResources(currentPlayer);
     }
 
-    private boolean isTileAvailable(int x, int y) {
-        Tile tile = gameMap.getTile(x, y);
-        return !tile.hasUnit() && tile.isTraversable() && tile.getOwner() == currentPlayer;
+    private Coordinates getUnitSpawnCoordinates(Coordinates coordinates) {
+        Coordinates newCoordinates = new Coordinates(coordinates.x + 1, coordinates.y);
+        if (isTileAvailable(newCoordinates))
+            return newCoordinates;
+
+        newCoordinates.setCoordinates(coordinates.x - 1, coordinates.y);
+        if (isTileAvailable(newCoordinates))
+            return newCoordinates;
+
+        newCoordinates.setCoordinates(coordinates.x, coordinates.y - 1);
+        if (isTileAvailable(newCoordinates))
+            return newCoordinates;
+
+        newCoordinates.setCoordinates(coordinates.x, coordinates.y + 1);
+        if (isTileAvailable(newCoordinates))
+            return newCoordinates;
+
+        System.out.println("nowhere to spawn a unit");
+        return null;
     }
 
-    void createBuilding(ButtonData data, Player currentPlayer) {
-        Constructable buildingType = data.getConstructable();
-        int x = data.getCurrentX();
-        int y = data.getCurrentY();
-
-        gameMap.constructAndSetBuildingTile(buildingType, x, y, currentPlayer);
+    private boolean isTileAvailable(Coordinates newCoordinates) {
+        Tile tile = gameMap.getTile(newCoordinates);
+        return !tile.hasUnit() && tile.isTraversable() && tile.getOwner() == currentPlayer;
     }
 }

@@ -1,6 +1,7 @@
 package main;
 
 import map.Constructable;
+import map.Coordinates;
 import map.Tile;
 
 import javax.swing.*;
@@ -14,8 +15,7 @@ public class GuiManager extends JFrame implements ActionListener {
     private BoardButton[][] boardButtons = new BoardButton[MAPSIZE + 1][MAPSIZE + 1];
     private ArrayList<UiButton> uiButtons = new ArrayList<>();
     private GameController gameController;
-    private int currentX;
-    private int currentY;
+    private Coordinates currentCoordinates = new Coordinates(0, 0);
     private Point origin;
     private UiTextManager uiTextManager;
     private boolean unitSelected = false;
@@ -78,9 +78,10 @@ public class GuiManager extends JFrame implements ActionListener {
     private void uiButtonAction(int ButtonNum) {
         Constructable constructable = uiButtons.get(ButtonNum).getConstructable();
 
-        ButtonData buttonData = new ButtonData(currentX, currentY, constructable);
+        Coordinates coordinates = new Coordinates(currentCoordinates.x, currentCoordinates.y);
 
-        gameController.buttonClicked(buttonData);
+        gameController.buttonClicked(coordinates, constructable);
+
         updateBoardButtonIconsAndBorders();
         uiTextManager.updateUI(gameController.getCurrentPlayer());
 
@@ -94,19 +95,20 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void updateBoardButtonIconsAndBorders() {
         final int UPDATE_AREA = 10;
-        int xHigh = Math.min(currentX + UPDATE_AREA, MAPSIZE);
-        int yHigh = Math.min(currentY + UPDATE_AREA, MAPSIZE);
-        int xLow = Math.max(currentX - UPDATE_AREA, 0);
-        int yLow = Math.max(currentY - UPDATE_AREA, 0);
+        int xHigh = Math.min(currentCoordinates.x + UPDATE_AREA, MAPSIZE);
+        int yHigh = Math.min(currentCoordinates.y + UPDATE_AREA, MAPSIZE);
+        int xLow = Math.max(currentCoordinates.x - UPDATE_AREA, 0);
+        int yLow = Math.max(currentCoordinates.y - UPDATE_AREA, 0);
 
         for (int x = xLow; x < xHigh; x++) {
             for (int y = yLow; y < yHigh; y++) {
                 BoardButton buttonBeingUpdated = boardButtons[x][y];
                 buttonBeingUpdated.setBorder(null);
+                Coordinates coordinates = new Coordinates(x, y);
 
-                Tile currentTile = gameController.getMap().getTile(x, y);
+                Tile currentTile = gameController.getMap().getTile(coordinates);
 
-                ImageIcon icon = gameController.getTileImage(x, y);
+                ImageIcon icon = gameController.getTileImage(coordinates);
                 buttonBeingUpdated.setIcon(icon);
 
                 setButtonBorders(currentTile, buttonBeingUpdated);
@@ -121,7 +123,7 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void setButtonText() {
-        ArrayList<Constructable> buttonsToBuild = gameController.getTileButtonList(unitSelected, currentX, currentY);
+        ArrayList<Constructable> buttonsToBuild = gameController.getTileButtonList(unitSelected, currentCoordinates);
         if (buttonsToBuild == null)
             return;
 
@@ -171,14 +173,13 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void createLargerBorder(Color borderColour, BoardButton buttonBeingUpdated) {
-        int x = buttonBeingUpdated.getXCoord();
-        int y = buttonBeingUpdated.getYCoord();
+        Coordinates coordinates = buttonBeingUpdated.getCoordinates();
 
         buttonBeingUpdated.setBorder(BorderFactory.createMatteBorder(
-                gameController.getMap().borderRequired(x, y, x, y - 1),
-                gameController.getMap().borderRequired(x, y, x - 1, y),
-                gameController.getMap().borderRequired(x, y, x, y + 1),
-                gameController.getMap().borderRequired(x, y, x + 1, y),
+                gameController.getMap().borderRequired(coordinates, coordinates.x, coordinates.y - 1),
+                gameController.getMap().borderRequired(coordinates, coordinates.x - 1, coordinates.y),
+                gameController.getMap().borderRequired(coordinates, coordinates.x, coordinates.y + 1),
+                gameController.getMap().borderRequired(coordinates, coordinates.x + 1, coordinates.y),
                 borderColour));
     }
 
@@ -193,9 +194,10 @@ public class GuiManager extends JFrame implements ActionListener {
         for (int x = 0; x <= MAPSIZE; x++) {
             yPosition = START_POSITION;
             for (int y = 0; y <= MAPSIZE; y++) {
-                BoardButton newBoardButton = new BoardButton(x, y);
+                Coordinates coordinates = new Coordinates(x, y);
+                BoardButton newBoardButton = new BoardButton(coordinates);
                 boardButtons[x][y] = newBoardButton;
-                Tile currentTile = gameController.getMap().getTile(x, y);
+                Tile currentTile = gameController.getMap().getTile(coordinates);
 
                 newBoardButton.addMouseListener(new MouseListener() {
                     @Override
@@ -261,21 +263,20 @@ public class GuiManager extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent arg0) {
         BoardButton button = (BoardButton) arg0.getSource();
-        int buttonXCoord = button.getXCoord();
-        int buttonYCoord = button.getYCoord();
-        Tile tileClicked = gameController.getMap().getTile(buttonXCoord, buttonYCoord);
+        Coordinates buttonCoordinates = button.getCoordinates();
+        Tile tileClicked = gameController.getMap().getTile(buttonCoordinates);
 
         resetUIColours();
         uiTextManager.updateInformationText(tileClicked);
 
         if (unitSelected) {
-            if (currentX == buttonXCoord && currentY == buttonYCoord) {
+            if (currentCoordinates.x == buttonCoordinates.x && currentCoordinates.y == buttonCoordinates.y) {
                 deselectUnit();
             } else {
-                performUnitMovement(arg0, buttonXCoord, buttonYCoord);
+                performUnitMovement(arg0, buttonCoordinates);
             }
         } else {
-            performTileAction(buttonXCoord, buttonYCoord, tileClicked);
+            performTileAction(buttonCoordinates, tileClicked);
         }
     }
 
@@ -292,22 +293,21 @@ public class GuiManager extends JFrame implements ActionListener {
         hideUIButtons();
     }
 
-    private void performUnitMovement(ActionEvent arg0, int buttonXCoord, int buttonYCoord) {
-        if(gameController.attackIsPossible(currentX, currentY, buttonXCoord, buttonYCoord)){
-            gameController.performAttack(currentX, currentY, buttonXCoord, buttonYCoord);
+    private void performUnitMovement(ActionEvent arg0, Coordinates coordinates) {
+        if (gameController.attackIsPossible(currentCoordinates, coordinates)) {
+            gameController.performAttack(currentCoordinates, coordinates);
             updateBoardButtonIconsAndBorders();
             unitSelected = false;
-        }else if (gameController.moveUnit(currentX, currentY, buttonXCoord, buttonYCoord)) {
-            boardButtons[currentX][currentY].setIcon(gameController.getTileImage(buttonXCoord, buttonYCoord));
+        } else if (gameController.moveUnit(currentCoordinates, coordinates)) {
+            boardButtons[currentCoordinates.x][currentCoordinates.y].setIcon(gameController.getTileImage(coordinates));
             unitSelected = false;
             updateBoardButtonIconsAndBorders();
             actionPerformed(arg0);
         }
     }
 
-    private void performTileAction(int buttonXCoord, int buttonYCoord, Tile tileClicked) {
-        currentX = buttonXCoord;
-        currentY = buttonYCoord;
+    private void performTileAction(Coordinates coordinates, Tile tileClicked) {
+        currentCoordinates.setCoordinates(coordinates.x, coordinates.y);
 
         hideUIButtons();
 
@@ -324,12 +324,12 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void highlightTiles(int maxUnitMoves) {
         final int BORDER_THICKNESS = 2;
-        for (int endX = currentX - maxUnitMoves; endX <= currentX + maxUnitMoves; endX++) {
-            for (int endY = currentY - maxUnitMoves; endY <= currentY + maxUnitMoves; endY++) {
-                if (gameController.isValidMove(currentX, currentY, endX, endY)) {
+        for (int endX = currentCoordinates.x - maxUnitMoves; endX <= currentCoordinates.x + maxUnitMoves; endX++) {
+            for (int endY = currentCoordinates.y - maxUnitMoves; endY <= currentCoordinates.y + maxUnitMoves; endY++) {
+                if (gameController.isValidMove(currentCoordinates, new Coordinates(endX, endY))) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.white, BORDER_THICKNESS));
                 }
-                if (gameController.attackIsPossible(currentX, currentY, endX, endY)) {
+                if (gameController.attackIsPossible(currentCoordinates, new Coordinates(endX, endY))) {
                     boardButtons[endX][endY].setBorder(BorderFactory.createLineBorder(Color.red, BORDER_THICKNESS));
                 }
             }
