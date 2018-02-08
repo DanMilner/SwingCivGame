@@ -30,20 +30,20 @@ class RoadManager {
     }
 
     private void calculateRoadConnections(Tile origin) {
-        int x = origin.xCoord;
-        int y = origin.yCoord;
+        Coordinates originCoordinates = origin.getCoordinates();
         origin.getBuilding().setVisited(true);
 
         for (Tile road : roads) {
-            checkConnection(road, x, y - 1); //north
-            checkConnection(road, x, y + 1); //south
-            checkConnection(road, x + 1, y); //east
-            checkConnection(road, x - 1, y); //west
+            checkConnection(road, originCoordinates.x, originCoordinates.y - 1); //north
+            checkConnection(road, originCoordinates.x, originCoordinates.y + 1); //south
+            checkConnection(road, originCoordinates.x + 1, originCoordinates.y); //east
+            checkConnection(road, originCoordinates.x - 1, originCoordinates.y); //west
         }
     }
 
     private void checkConnection(Tile road, int x, int y) {
-        if (road.xCoord == x && road.yCoord == y) {
+        Coordinates roadCoordinates = road.getCoordinates();
+        if (roadCoordinates.x == x && roadCoordinates.y == y) {
             road.getBuilding().setHasCityConnection(true);
             if (!road.getBuilding().isVisited()) {
                 calculateRoadConnections(road);
@@ -52,12 +52,15 @@ class RoadManager {
     }
 
     private boolean roadAdjacent(int x, int y) {
+        Coordinates coordinates;
         for (Tile road : roads) {
-            if (road.xCoord == x && road.yCoord == y)
+            coordinates = road.getCoordinates();
+            if (coordinates.x == x && coordinates.y == y)
                 return true;
         }
         for (Tile city : cities) {
-            if (city.xCoord == x && city.yCoord == y)
+            coordinates = city.getCoordinates();
+            if (coordinates.x == x && coordinates.y == y)
                 return true;
         }
         return false;
@@ -72,12 +75,11 @@ class RoadManager {
     }
 
     public ImageIcon getRoadImage(Tile roadTile) {
-        int x = roadTile.xCoord;
-        int y = roadTile.yCoord;
-        boolean North = roadAdjacent(x, y - 1); //north
-        boolean South = roadAdjacent(x, y + 1); //south
-        boolean East = roadAdjacent(x + 1, y); //east
-        boolean West = roadAdjacent(x - 1, y); //west
+        Coordinates roadTileCoordinates = roadTile.getCoordinates();
+        boolean North = roadAdjacent(roadTileCoordinates.x, roadTileCoordinates.y - 1); //north
+        boolean South = roadAdjacent(roadTileCoordinates.x, roadTileCoordinates.y + 1); //south
+        boolean East = roadAdjacent(roadTileCoordinates.x + 1, roadTileCoordinates.y); //east
+        boolean West = roadAdjacent(roadTileCoordinates.x - 1, roadTileCoordinates.y); //west
 
         return roadTile.getBuilding().getImage(North, South, East, West);
     }

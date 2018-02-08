@@ -9,17 +9,14 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class Tile {
-    // Instance variables.
-    int xCoord;
-    int yCoord;
     private Player owner;
     private Unit unit;
     private Resource resource;
     private Building building;
+    private Coordinates coordinates;
 
-    Tile(int xCoord, int yCoord, Player owner) {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
+    Tile(Coordinates coordinates, Player owner) {
+        this.coordinates = coordinates;
         this.owner = owner;
         resource = null;
         building = null;
@@ -33,6 +30,10 @@ public class Tile {
 
     public Building getBuilding() {
         return building;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 
     public boolean hasRoad() {

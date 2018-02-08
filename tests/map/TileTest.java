@@ -23,7 +23,7 @@ public class TileTest {
     @Before
     public void setUp() {
         player = new Player("Daniel", Color.yellow);
-        tile = new Tile(1, 1, player);
+        tile = new Tile(new Coordinates(1,1), player);
     }
 
     @Test

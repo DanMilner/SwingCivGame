@@ -27,7 +27,8 @@ public class ResourceYieldCalculatorTest {
 
         for (int i = 0; i < currentMap.length; i++) {
             for (int j = 0; j < currentMap.length; j++) {
-                currentMap[i][j] = new Tile(i, j, player);
+                Coordinates coordinates = new Coordinates(i,j);
+                currentMap[i][j] = new Tile(coordinates, player);
             }
         }
     }
