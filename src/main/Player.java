@@ -77,8 +77,7 @@ public class Player {
         ResourceIterator resourceIterator = new ResourceIterator(deadUnit);
         while (resourceIterator.hasNext()) {
             ResourceTypes resourceType = resourceIterator.getType();
-            int value = resourceIterator.getValue();
-            resources.put(resourceType, value);
+            setResource(resourceType, getResource(resourceType) + resourceIterator.getValue());
         }
         units.remove(deadUnit);
     }
@@ -89,15 +88,17 @@ public class Player {
             setResource(resourceIterator.getType(), resourceIterator.getValue());
         }
 
-        int multiplier = destroyedBuilding.getHasCityConnection() ? 1 : 2;
+        if (destroyedBuilding.isResourceHarvester()) {
+            int multiplier = destroyedBuilding.getHasCityConnection() ? 1 : 2;
 
-        resourceIterator = new ResourceIterator(destroyedBuilding, false);
-        while (resourceIterator.hasNext()) {
-            ResourceTypes resourceType = resourceIterator.getType();
-            setResource(resourceType, getResource(resourceType) - resourceIterator.getValue() * multiplier);
+            resourceIterator = new ResourceIterator(destroyedBuilding, false);
+            while (resourceIterator.hasNext()) {
+                ResourceTypes resourceType = resourceIterator.getType();
+                setResource(resourceType, getResource(resourceType) - resourceIterator.getValue() * multiplier);
+            }
+            destroyedBuilding.releaseClaimedTiles();
         }
 
-        destroyedBuilding.releaseClaimedTiles();
         buildings.remove(destroyedBuilding);
     }
 }
