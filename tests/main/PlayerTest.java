@@ -73,7 +73,6 @@ public class PlayerTest {
         ResourceIterator resourceIterator = new ResourceIterator(unit);
         while (resourceIterator.hasNext()) {
             assertEquals(resourceIterator.getValue(), player.getResource(resourceIterator.getType()));
-
         }
     }
 }

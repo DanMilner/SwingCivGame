@@ -9,7 +9,6 @@ import map.units.Unit;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class GameController {
     private Map gameMap;
@@ -21,18 +20,14 @@ public class GameController {
     //temporary until a menu GUI is made
     public static final int MAPSIZE = 40;
 
-    GameController() {
+    GameController(ArrayList<PlayerData> playersToCreate) {
         gameMap = new Map(false, MAPSIZE);
         unitCreator = new UnitCreator(gameMap);
         playerHandler = new PlayerHandler();
         unitMovementHandler = new UnitMovementHandler(gameMap);
         attackHandler = new AttackHandler(gameMap);
 
-        playerHandler.addPlayer("Daniel");
-        playerHandler.addPlayer("Alastair");
-        // playerHandler.addPlayer("James");
-
-        playerHandler.setUpPlayers(gameMap);
+        playerHandler.setUpPlayers(gameMap, playersToCreate);
     }
 
     public Map getMap() {
@@ -188,23 +183,17 @@ class PlayerHandler {
         players = new ArrayList<>();
     }
 
-    public void addPlayer(String playerName) {
-        Color playerColour = createNewPlayerColour();
-        Player newPlayer = new Player(playerName, playerColour);
+    private void addPlayer(String playerName, Color color) {
+        Player newPlayer = new Player(playerName, color);
 
         players.add(newPlayer);
     }
 
-    private Color createNewPlayerColour() {
-        Random rand = new Random();
-        float r = rand.nextFloat();
-        float g = rand.nextFloat();
-        float b = rand.nextFloat();
+    public void setUpPlayers(Map gameMap, ArrayList<PlayerData> playersToCreate) {
+        for (PlayerData player : playersToCreate) {
+            addPlayer(player.getPlayerName(), player.getColor());
+        }
 
-        return new Color(r, g, b);
-    }
-
-    public void setUpPlayers(Map gameMap) {
         currentPlayer = players.get(0);
 
         for (Player player : players) {

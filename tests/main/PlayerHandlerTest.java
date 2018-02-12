@@ -4,6 +4,9 @@ import map.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -19,23 +22,28 @@ public class PlayerHandlerTest {
 
     @Test
     public void addPlayerTest() {
+        ArrayList<PlayerData> playersToCreate = new ArrayList<>();
+
         String playerName = "Daniel";
-        playerHandler.addPlayer(playerName);
-        playerHandler.setUpPlayers(gameMap);
+        playersToCreate.add(new PlayerData("Daniel", Color.red));
+        playerHandler.setUpPlayers(gameMap, playersToCreate);
 
         assertTrue(playerHandler.getCurrentPlayer().getName().equals(playerName));
     }
 
     @Test
     public void setUpPlayersTest() {
-        String[] players = {"Daniel", "Joe", "Jane", "Al", "Mary"};
-        for (String playerName : players) {
-            playerHandler.addPlayer(playerName);
-        }
+        ArrayList<PlayerData> playersToCreate = new ArrayList<>();
+        playersToCreate.add(new PlayerData("Daniel", Color.red));
+        playersToCreate.add(new PlayerData("A", Color.green));
+        playersToCreate.add(new PlayerData("B", Color.yellow));
+        playersToCreate.add(new PlayerData("C", Color.black));
+        playersToCreate.add(new PlayerData("D", Color.blue));
 
-        playerHandler.setUpPlayers(gameMap);
 
-        for (String ignored : players) {
+        playerHandler.setUpPlayers(gameMap,playersToCreate);
+
+        for (PlayerData ignored : playersToCreate) {
             assertFalse(playerHandler.getCurrentPlayer().getBuildings().isEmpty());
             assertTrue(playerHandler.getCurrentPlayer().getUnits().isEmpty());
             assertTrue(playerHandler.getCurrentPlayer().getColour() != null);
@@ -45,10 +53,11 @@ public class PlayerHandlerTest {
 
     @Test
     public void incrementCurrentPlayerTest() {
-        playerHandler.addPlayer("Daniel");
-        playerHandler.addPlayer("Alastair");
+        ArrayList<PlayerData> playersToCreate = new ArrayList<>();
+        playersToCreate.add(new PlayerData("Daniel", Color.red));
+        playersToCreate.add(new PlayerData("Alastair", Color.green));
 
-        playerHandler.setUpPlayers(gameMap);
+        playerHandler.setUpPlayers(gameMap, playersToCreate);
 
         assertTrue(playerHandler.getCurrentPlayer().getName().equals("Daniel"));
         playerHandler.incrementCurrentPlayer();

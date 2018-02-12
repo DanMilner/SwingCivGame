@@ -147,7 +147,6 @@ public class Map {
     }
 
     public ArrayList<Constructable> getTileButtonList(boolean unitSelected, Coordinates coordinates) {
-        System.out.println(coordinates.x + " " + coordinates.y);
         return currentMap[coordinates.x][coordinates.y].getButtonList(unitSelected);
     }
 
