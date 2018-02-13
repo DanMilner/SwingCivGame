@@ -17,7 +17,9 @@ public class PlayerHandlerTest {
     @Before
     public void setUp() {
         playerHandler = new PlayerHandler();
-        gameMap = new Map(true, 30);
+        MapData mapData = new MapData();
+        mapData.setMapData(1,1,1,1,30);
+        gameMap = new Map(true, mapData);
     }
 
     @Test

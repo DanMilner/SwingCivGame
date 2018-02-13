@@ -21,7 +21,9 @@ public class BuildingAndUnitCreatorTest {
     @Before
     public void setUp() {
         player = new Player("Daniel", Color.yellow);
-        gameMap = new Map(true, 7);
+        MapData mapData = new MapData();
+        mapData.setMapData(1, 1, 1, 1, 7);
+        gameMap = new Map(true, mapData);
         unitCreator = new UnitCreator(gameMap);
     }
 

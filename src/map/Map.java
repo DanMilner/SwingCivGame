@@ -1,6 +1,7 @@
 package map;
 
 import exceptions.TypeNotFound;
+import main.MapData;
 import main.Player;
 import main.ResourceIterator;
 import map.buildings.Building;
@@ -11,19 +12,20 @@ import map.units.Unit;
 import javax.swing.*;
 import java.util.ArrayList;
 
-import static main.GameController.MAPSIZE;
-
 public class Map {
     private final int MAPSIZE;
     private Tile[][] currentMap;
     private RoadManager roadManager;
     private MapBuilder mapBuilder;
+    private TileOwnerHandler tileOwnerHandler;
 
-    public Map(Boolean isTestMap, int MAPSIZE) {
-        this.MAPSIZE = MAPSIZE;
+    public Map(Boolean isTestMap, MapData mapData) {
+        this.MAPSIZE = mapData.getMapsize();
         currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
-        mapBuilder = new MapBuilder(currentMap, MAPSIZE);
+        mapBuilder = new MapBuilder(currentMap, mapData);
         mapBuilder.setUpMap();
+
+        tileOwnerHandler = new TileOwnerHandler(MAPSIZE);
 
         if (!isTestMap)
             mapBuilder.setUpTerrain();
@@ -41,7 +43,7 @@ public class Map {
     }
 
     public int borderRequired(Coordinates coordinates, int adjacentX, int adjacentY) {
-        return TileOwnerHandler.borderRequired(currentMap, coordinates, adjacentX, adjacentY);
+        return tileOwnerHandler.borderRequired(currentMap, coordinates, adjacentX, adjacentY);
     }
 
     public Tile getTile(Coordinates coordinates) {
@@ -119,7 +121,7 @@ public class Map {
             return;
         }
 
-        TileOwnerHandler.setTileOwner(currentMap, newBuilding, coordinates, owner);
+        tileOwnerHandler.setTileOwner(currentMap, newBuilding, coordinates, owner);
 
         currentMap[coordinates.x][coordinates.y].setBuilding(newBuilding);
         roadManager.addConnectableTile(currentMap[coordinates.x][coordinates.y]);
@@ -159,7 +161,13 @@ public class Map {
 }
 
 class TileOwnerHandler {
-    static void setTileOwner(Tile[][] currentMap, Building newBuilding, Coordinates coordinates, Player owner) {
+    int MAPSIZE;
+
+    TileOwnerHandler(int MAPSIZE) {
+        this.MAPSIZE = MAPSIZE;
+    }
+
+    public void setTileOwner(Tile[][] currentMap, Building newBuilding, Coordinates coordinates, Player owner) {
         int borderSize = newBuilding.getBorderSize();
         int startX = coordinates.x - borderSize;
         int startY = coordinates.y - borderSize;
@@ -176,7 +184,7 @@ class TileOwnerHandler {
         }
     }
 
-    static int borderRequired(Tile[][] currentMap, Coordinates coordinates, int adjacentX, int adjacentY) {
+    public int borderRequired(Tile[][] currentMap, Coordinates coordinates, int adjacentX, int adjacentY) {
         final int BORDER_REQUIRED = 3;
         final int BORDER_NOT_REQUIRED = 0;
 
@@ -190,7 +198,7 @@ class TileOwnerHandler {
         }
     }
 
-    private static boolean coordinatesOnMap(int x, int y) {
+    private boolean coordinatesOnMap(int x, int y) {
         return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 }
@@ -241,7 +249,7 @@ class ConstructionPossible {
 
         for (int x = coordinates.x - DOCK_SIZE; x <= coordinates.x + DOCK_SIZE; x++) {
             for (int y = coordinates.y - DOCK_SIZE; y <= coordinates.y + DOCK_SIZE; y++) {
-                if (x <= MAPSIZE && x >= 0 && y <= MAPSIZE && y >= 0) {
+                if (x <= currentMap.length && x >= 0 && y <= currentMap.length && y >= 0) {
                     if (currentMap[x][y].getResource().getResourceType() == ResourceTypes.WATER) {
                         return true;
                     }

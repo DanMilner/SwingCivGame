@@ -1,5 +1,6 @@
 package map;
 
+import main.MapData;
 import main.Player;
 import main.ResourceIterator;
 import map.buildings.Mine;
@@ -24,7 +25,9 @@ public class MapTest {
 
     @Before
     public void setUp() {
-        gameMap = new Map(true, 10);
+        MapData mapData = new MapData();
+        mapData.setMapData(1,1,1,1,10);
+        gameMap = new Map(true, mapData);
         player = new Player("Daniel", Color.yellow);
     }
 

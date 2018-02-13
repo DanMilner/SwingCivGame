@@ -13,9 +13,10 @@ import java.util.ArrayList;
 
 public class Main extends Application {
     private ArrayList<PlayerRowComponents> playerRowComponents;
+    private MapData mapData;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getClassLoader().getResource("main/menu/Menu.fxml"));
         Parent root = fxmlLoader.load();
@@ -26,10 +27,11 @@ public class Main extends Application {
         Controller controller = fxmlLoader.getController();
         primaryStage.show();
         playerRowComponents = controller.getPlayers();
+        mapData = controller.getMapData();
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         ArrayList<PlayerData> playersToCreate = new ArrayList<>();
         PlayerData playerData;
 
@@ -38,8 +40,8 @@ public class Main extends Application {
             playersToCreate.add(playerData);
         }
 
-        GameController gameController = new GameController(playersToCreate);
-        SwingUtilities.invokeLater(() -> new GuiManager(gameController));
+        GameController gameController = new GameController(playersToCreate, mapData);
+        SwingUtilities.invokeLater(() -> new GuiManager(gameController, mapData.getMapsize()));
     }
 
     public static void main(String[] args) {

@@ -19,8 +19,9 @@ public class UnitMovementHandlerTest {
 
     @Before
     public void SetUp() {
-        final int MAPSIZE = 20;
-        gameMap = new Map(true, MAPSIZE);
+        MapData mapData = new MapData();
+        mapData.setMapData(10, 10, 10, 10, 20);
+        gameMap = new Map(true, mapData);
         unitMovementHandler = new UnitMovementHandler(gameMap);
         Unit newUnit = new Builder(null);
         gameMap.setUnit(new Coordinates(5, 5), newUnit);

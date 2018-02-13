@@ -17,11 +17,8 @@ public class GameController {
     private UnitMovementHandler unitMovementHandler;
     private AttackHandler attackHandler;
 
-    //temporary until a menu GUI is made
-    public static final int MAPSIZE = 40;
-
-    GameController(ArrayList<PlayerData> playersToCreate) {
-        gameMap = new Map(false, MAPSIZE);
+    GameController(ArrayList<PlayerData> playersToCreate, MapData mapData) {
+        gameMap = new Map(false, mapData);
         unitCreator = new UnitCreator(gameMap);
         playerHandler = new PlayerHandler();
         unitMovementHandler = new UnitMovementHandler(gameMap);

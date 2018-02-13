@@ -11,17 +11,23 @@ import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class GuiManager extends JFrame implements ActionListener {
-    private static final int MAPSIZE = GameController.MAPSIZE;
-    private BoardButton[][] boardButtons = new BoardButton[MAPSIZE + 1][MAPSIZE + 1];
-    private ArrayList<UiButton> uiButtons = new ArrayList<>();
+    private final int MAPSIZE;
+    private BoardButton[][] boardButtons;
+    private ArrayList<UiButton> uiButtons;
     private GameController gameController;
-    private Coordinates currentCoordinates = new Coordinates(0, 0);
+    private Coordinates currentCoordinates;
     private Point origin;
     private UiTextManager uiTextManager;
-    private boolean unitSelected = false;
+    private boolean unitSelected;
 
-    GuiManager(GameController gameController) {
+    GuiManager(GameController gameController, int MAPSIZE) {
+        this.MAPSIZE = MAPSIZE;
         this.gameController = gameController;
+        boardButtons = new BoardButton[MAPSIZE + 1][MAPSIZE + 1];
+        uiButtons = new ArrayList<>();
+        currentCoordinates = new Coordinates(0, 0);
+        unitSelected = false;
+
         BoardPanel boardPanel = new BoardPanel(MAPSIZE);
         UiPanel uiPanel = new UiPanel();
         uiTextManager = new UiTextManager(uiPanel);

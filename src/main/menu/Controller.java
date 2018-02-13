@@ -7,6 +7,8 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import main.MapData;
 
 import java.util.ArrayList;
 
@@ -38,6 +40,7 @@ public class Controller {
     private Button addPlayerButton;
 
     private ArrayList<PlayerRowComponents> playerRowComponents;
+    private MapData mapData;
 
     public void initialize() {
         treeSlider.valueProperty().addListener((ov, old_val, new_val) -> treeValue.setText(Integer.toString(new_val.intValue())));
@@ -53,6 +56,19 @@ public class Controller {
         mapsizeValue.textProperty().addListener((ov, old_val, new_val) -> mapsizeSlider.setValue(Double.parseDouble(new_val)));
 
         playerRowComponents = new ArrayList<>();
+        mapData = new MapData();
+
+        addDefaultPlayers();
+    }
+
+    private void addDefaultPlayers() {
+        addPlayer();
+        addPlayer();
+
+        playerRowComponents.get(0).getNameTextField().setText("Daniel");
+        playerRowComponents.get(0).getColorPicker().setValue(Color.RED);
+        playerRowComponents.get(1).getNameTextField().setText("Alastair");
+        playerRowComponents.get(1).getColorPicker().setValue(Color.BLUE);
     }
 
     public void addPlayer() {
@@ -116,17 +132,21 @@ public class Controller {
     }
 
     public void startGame() {
-        if(!checkSettingsAreValid())
+        if (!checkSettingsAreValid())
             return;
+
+        mapData.setMapData(treeSlider.getValue(), mountainSlider.getValue(),
+                waterSlider.getValue(), resourcesSlider.getValue(), mapsizeSlider.getValue());
+
         Platform.exit();
     }
 
     private Boolean checkSettingsAreValid() {
-        if(playerRowComponents.isEmpty())
+        if (playerRowComponents.isEmpty())
             return false;
 
-        for (PlayerRowComponents row:playerRowComponents) {
-            if(row.getPlayerNameString().equals(""))
+        for (PlayerRowComponents row : playerRowComponents) {
+            if (row.getPlayerNameString().equals(""))
                 return false;
         }
         return true;
@@ -134,5 +154,9 @@ public class Controller {
 
     public ArrayList<PlayerRowComponents> getPlayers() {
         return playerRowComponents;
+    }
+
+    public MapData getMapData() {
+        return mapData;
     }
 }
