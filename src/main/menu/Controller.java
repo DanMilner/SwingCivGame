@@ -2,10 +2,7 @@ package main.menu;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import main.MapData;
@@ -38,6 +35,8 @@ public class Controller {
     private Slider mapsizeSlider;
     @FXML
     private Button addPlayerButton;
+    @FXML
+    private Label errorLabel;
 
     private ArrayList<PlayerRowComponents> playerRowComponents;
     private MapData mapData;
@@ -142,12 +141,18 @@ public class Controller {
     }
 
     private Boolean checkSettingsAreValid() {
-        if (playerRowComponents.isEmpty())
+        if (playerRowComponents.isEmpty()){
+            errorLabel.setVisible(true);
+            errorLabel.setText("At least one player is needed for a game to start!");
             return false;
+        }
 
         for (PlayerRowComponents row : playerRowComponents) {
-            if (row.getPlayerNameString().equals(""))
+            if (row.getPlayerNameString().equals("")){
+                errorLabel.setVisible(true);
+                errorLabel.setText("All players must have a name for a game to start!");
                 return false;
+            }
         }
         return true;
     }
