@@ -66,7 +66,11 @@ public class PlayerTest {
     @Test
     public void refundUnitCostTest() {
         Unit unit = new Catapult(player);
-
+        player.setResource(ResourceTypes.STONE, 0);
+        player.setResource(ResourceTypes.WOOD, 0);
+        player.setResource(ResourceTypes.IRON, 0);
+        player.setResource(ResourceTypes.COPPER, 0);
+        player.setResource(ResourceTypes.FOOD, 0);
         player.addUnit(unit);
         player.refundUnitCost(unit);
 

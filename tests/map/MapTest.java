@@ -71,12 +71,13 @@ public class MapTest {
     public void killUnitAndRefundCostTest() {
         Unit builder = new Builder(player);
         player.addUnit(builder);
+        player.setResource(ResourceTypes.FOOD, 10);
         gameMap.setUnit(new Coordinates(5, 5), builder);
         gameMap.constructAndSetBuildingTile(Constructable.MINE, new Coordinates(5, 5), player);
 
         ResourceIterator resourceIterator = new ResourceIterator(builder);
         while (resourceIterator.hasNext()) {
-            assertTrue(player.getResource(resourceIterator.getType()) == resourceIterator.getValue());
+            assertTrue(player.getResource(resourceIterator.getType()) == resourceIterator.getValue() + 10);
         }
         assertFalse(gameMap.getTile(new Coordinates(5, 5)).hasUnit());
     }
