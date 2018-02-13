@@ -116,7 +116,20 @@ public class Controller {
     }
 
     public void startGame() {
+        if(!checkSettingsAreValid())
+            return;
         Platform.exit();
+    }
+
+    private Boolean checkSettingsAreValid() {
+        if(playerRowComponents.isEmpty())
+            return false;
+
+        for (PlayerRowComponents row:playerRowComponents) {
+            if(row.getPlayerNameString().equals(""))
+                return false;
+        }
+        return true;
     }
 
     public ArrayList<PlayerRowComponents> getPlayers() {
