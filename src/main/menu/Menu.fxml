@@ -52,6 +52,19 @@
                         <TextField fx:id="waterValue" layoutX="387.0" layoutY="168.0" prefHeight="25.0" prefWidth="40.0" text="100" />
                         <TextField fx:id="resourcesValue" layoutX="387.0" layoutY="225.0" prefHeight="25.0" prefWidth="40.0" text="100" />
                         <TextField fx:id="mapsizeValue" layoutX="387.0" layoutY="286.0" prefHeight="25.0" prefWidth="40.0" text="40" />
+                  <Label layoutX="39.0" layoutY="340.0" prefHeight="35.0" prefWidth="133.0" text="Deserts">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Slider fx:id="desertSlider" layoutX="217.0" layoutY="351.0" max="500.0" value="100.0" />
+                  <TextField fx:id="desertValue" layoutX="387.0" layoutY="346.0" prefHeight="25.0" prefWidth="40.0" text="100" />
+                  <Label layoutX="39.0" layoutY="397.0" prefHeight="35.0" prefWidth="133.0" text="Arctic">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="arcticRegions" layoutX="221.0" layoutY="406.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="133.0" selected="true" text="Add arctic regions" />
                     </children>
                 </Pane>
                 <Label layoutX="50.0" layoutY="60.0" text="Name">

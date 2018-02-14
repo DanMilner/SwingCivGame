@@ -20,7 +20,7 @@ public class UnitMovementHandlerTest {
     @Before
     public void SetUp() {
         MapData mapData = new MapData();
-        mapData.setMapData(10, 10, 10, 10, 20);
+        mapData.setMapData(10, 10, 10, 10, 20, 10, true);
         gameMap = new Map(true, mapData);
         unitMovementHandler = new UnitMovementHandler(gameMap);
         Unit newUnit = new Builder(null);

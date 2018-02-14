@@ -22,7 +22,7 @@ public class BuildingAndUnitCreatorTest {
     public void setUp() {
         player = new Player("Daniel", Color.yellow);
         MapData mapData = new MapData();
-        mapData.setMapData(1, 1, 1, 1, 7);
+        mapData.setMapData(1, 1, 1, 1, 7, 1, true);
         gameMap = new Map(true, mapData);
         unitCreator = new UnitCreator(gameMap);
     }

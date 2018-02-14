@@ -26,7 +26,7 @@ public class MapTest {
     @Before
     public void setUp() {
         MapData mapData = new MapData();
-        mapData.setMapData(1,1,1,1,10);
+        mapData.setMapData(1,1,1,1,10, 1, true);
         gameMap = new Map(true, mapData);
         player = new Player("Daniel", Color.yellow);
     }

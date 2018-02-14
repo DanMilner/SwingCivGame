@@ -24,6 +24,8 @@ public class Controller {
     @FXML
     private TextField mapsizeValue;
     @FXML
+    private TextField desertValue;
+    @FXML
     private Slider treeSlider;
     @FXML
     private Slider mountainSlider;
@@ -34,9 +36,14 @@ public class Controller {
     @FXML
     private Slider mapsizeSlider;
     @FXML
+    private Slider desertSlider;
+    @FXML
+    private CheckBox arcticRegions;
+    @FXML
     private Button addPlayerButton;
     @FXML
     private Label errorLabel;
+
 
     private ArrayList<PlayerRowComponents> playerRowComponents;
     private MapData mapData;
@@ -47,12 +54,15 @@ public class Controller {
         waterSlider.valueProperty().addListener((ov, old_val, new_val) -> waterValue.setText(Integer.toString(new_val.intValue())));
         resourcesSlider.valueProperty().addListener((ov, old_val, new_val) -> resourcesValue.setText(Integer.toString(new_val.intValue())));
         mapsizeSlider.valueProperty().addListener((ov, old_val, new_val) -> mapsizeValue.setText(Integer.toString(new_val.intValue())));
+        desertSlider.valueProperty().addListener((ov, old_val, new_val) -> desertValue.setText(Integer.toString(new_val.intValue())));
+
 
         treeValue.textProperty().addListener((ov, old_val, new_val) -> treeSlider.setValue(Double.parseDouble(new_val)));
         mountainValue.textProperty().addListener((ov, old_val, new_val) -> mountainSlider.setValue(Double.parseDouble(new_val)));
         waterValue.textProperty().addListener((ov, old_val, new_val) -> waterSlider.setValue(Double.parseDouble(new_val)));
         resourcesValue.textProperty().addListener((ov, old_val, new_val) -> resourcesSlider.setValue(Double.parseDouble(new_val)));
         mapsizeValue.textProperty().addListener((ov, old_val, new_val) -> mapsizeSlider.setValue(Double.parseDouble(new_val)));
+        desertValue.textProperty().addListener((ov, old_val, new_val) -> desertSlider.setValue(Double.parseDouble(new_val)));
 
         playerRowComponents = new ArrayList<>();
         mapData = new MapData();
@@ -134,8 +144,8 @@ public class Controller {
         if (!checkSettingsAreValid())
             return;
 
-        mapData.setMapData(treeSlider.getValue(), mountainSlider.getValue(),
-                waterSlider.getValue(), resourcesSlider.getValue(), mapsizeSlider.getValue());
+        mapData.setMapData(treeSlider.getValue(), mountainSlider.getValue(), waterSlider.getValue(),
+                resourcesSlider.getValue(), mapsizeSlider.getValue(), desertSlider.getValue(), arcticRegions.isSelected());
 
         Platform.exit();
     }

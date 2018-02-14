@@ -9,7 +9,7 @@ import java.util.Random;
 
 class RandomValues {
     private int amount;
-    private int intensity;
+    private Double intensity;
     private Random random;
 
     RandomValues() {
@@ -24,12 +24,13 @@ class RandomValues {
         return amount;
     }
 
-    public void setIntensity(int min, int max) {
-        this.intensity = random.nextInt(max - min + 1) + min;
+    public void setIntensity(int min, int max, double multiplier) {
+        multiplier = multiplier / 100;
+        this.intensity = (random.nextInt(max - min + 1) + min) * multiplier;
     }
 
     public int getIntensity() {
-        return intensity;
+        return intensity.intValue();
     }
 
     public Coordinates getRandomCoordinates(int mapsize) {
@@ -88,47 +89,53 @@ class MapBuilder {
     public void setUpTerrain() {
         //add trees
         randomValues.setAmount(MAPSIZE * 2, MAPSIZE * 3);
-        randomValues.setIntensity(3, 10);
-        addResource(ResourceTypes.WOOD, mapData.getTrees());
+        randomValues.setIntensity(3, 10, mapData.getTrees());
+        addResource(ResourceTypes.WOOD);
 
-        addSnow();
-
-        addSand();
-
-        //add Water
-        randomValues.setAmount(MAPSIZE / 10, MAPSIZE / 5);
-        randomValues.setIntensity(MAPSIZE / 2, MAPSIZE * 2);
-        addWater(mapData.getWater());
+        if(mapData.isArcticRegions())
+            addSnow();
 
         //add Mountains
         randomValues.setAmount(MAPSIZE / 10, MAPSIZE / 6);
-        randomValues.setIntensity(MAPSIZE, MAPSIZE * 2);
-        addResource(ResourceTypes.STONE, mapData.getMountains());
+        randomValues.setIntensity(MAPSIZE, MAPSIZE * 2, mapData.getMountains());
+        addResource(ResourceTypes.STONE);
 
         //add Iron
         randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
-        randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(ResourceTypes.IRON, mapData.getResources());
+        randomValues.setIntensity(5, MAPSIZE / 6, mapData.getResources());
+        addResource(ResourceTypes.IRON);
 
         //add Gold
         randomValues.setAmount(MAPSIZE / 8, MAPSIZE / 5);
-        randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(ResourceTypes.GOLD, mapData.getResources());
+        randomValues.setIntensity(5, MAPSIZE / 6, mapData.getResources());
+        addResource(ResourceTypes.GOLD);
 
         //add Copper
         randomValues.setAmount(MAPSIZE / 7, MAPSIZE / 5);
-        randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(ResourceTypes.COPPER, mapData.getResources());
+        randomValues.setIntensity(5, MAPSIZE / 6, mapData.getResources());
+        addResource(ResourceTypes.COPPER);
 
         //add Coal
         randomValues.setAmount(MAPSIZE / 3, MAPSIZE / 2);
-        randomValues.setIntensity(5, MAPSIZE / 6);
-        addResource(ResourceTypes.COAL, mapData.getResources());
+        randomValues.setIntensity(5, MAPSIZE / 6, mapData.getResources());
+        addResource(ResourceTypes.COAL);
 
         //add Diamonds
         randomValues.setAmount(MAPSIZE / 6, MAPSIZE / 4);
-        randomValues.setIntensity(2, 6);
-        addResource(ResourceTypes.DIAMONDS, mapData.getResources());
+        randomValues.setIntensity(2, 6, mapData.getResources());
+        addResource(ResourceTypes.DIAMONDS);
+
+        if (mapData.getDeserts() != 0) {
+            randomValues.setAmount(1, 3);
+            randomValues.setIntensity(MAPSIZE, MAPSIZE, mapData.getDeserts());
+            addSand();
+        }
+
+        if(mapData.getWater() != 0){
+            randomValues.setAmount(MAPSIZE / 10, MAPSIZE / 5);
+            randomValues.setIntensity(MAPSIZE / 2, MAPSIZE * 2, mapData.getWater());
+            addWater();
+        }
     }
 
     public Coordinates generateNewCityCoordinates() {
@@ -172,11 +179,13 @@ class MapBuilder {
     }
 
     private void addSand() {
+        Coordinates coordinates;
         int quarterMapSize = MAPSIZE / 4;
-        randomValues.setIntensity(MAPSIZE * 2, MAPSIZE * 4);
-        Coordinates coordinates = new Coordinates(randomValues.getRandomCoordinate(1, MAPSIZE),
-                randomValues.getRandomCoordinate(quarterMapSize, MAPSIZE - quarterMapSize));
-        generateTilesInBodies(coordinates, ResourceTypes.SAND);
+        for (int i = 0; i < randomValues.getAmount(); i++) {
+            coordinates = new Coordinates(randomValues.getRandomCoordinate(1, MAPSIZE),
+                    randomValues.getRandomCoordinate(quarterMapSize, MAPSIZE - quarterMapSize));
+            generateTilesInBodies(coordinates, ResourceTypes.SAND);
+        }
     }
 
     private void addSnow() {
@@ -195,12 +204,9 @@ class MapBuilder {
         }
     }
 
-    private void addResource(ResourceTypes resourceType, double multiplier) {
+    private void addResource(ResourceTypes resourceType) {
         Coordinates randomCoordinates;
-        multiplier = multiplier / 100;
-        Double amount = randomValues.getAmount() * multiplier;
-
-        for (int y = 0; y < amount.intValue(); y++) {
+        for (int y = 0; y < randomValues.getAmount(); y++) {
             do {
                 randomCoordinates = randomValues.getRandomCoordinates(MAPSIZE);
             }
@@ -214,11 +220,9 @@ class MapBuilder {
         }
     }
 
-    private void addWater(double multiplier) {
+    private void addWater() {
         Coordinates coordinates;
-        multiplier = multiplier / 100;
-        Double amount = randomValues.getAmount() * multiplier;
-        for (int i = 0; i < amount.intValue(); i++) {
+        for (int i = 0; i < randomValues.getAmount(); i++) {
             coordinates = randomValues.getRandomCoordinates(MAPSIZE);
             generateTilesInBodies(coordinates, ResourceTypes.WATER);
         }
