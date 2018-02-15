@@ -4,9 +4,13 @@ import map.Constructable;
 import map.Coordinates;
 import map.Tile;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
@@ -28,7 +32,7 @@ public class GuiManager extends JFrame implements ActionListener {
         currentCoordinates = new Coordinates(0, 0);
         unitSelected = false;
 
-        BoardPanel boardPanel = new BoardPanel(MAPSIZE);
+        BoardPanel boardPanel = new BoardPanel(MAPSIZE + 1);
         UiPanel uiPanel = new UiPanel();
         uiTextManager = new UiTextManager(uiPanel);
 
@@ -101,8 +105,8 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void updateBoardButtonIconsAndBorders() {
         final int UPDATE_AREA = 10;
-        int xHigh = Math.min(currentCoordinates.x + UPDATE_AREA, MAPSIZE);
-        int yHigh = Math.min(currentCoordinates.y + UPDATE_AREA, MAPSIZE);
+        int xHigh = Math.min(currentCoordinates.x + UPDATE_AREA, MAPSIZE+1);
+        int yHigh = Math.min(currentCoordinates.y + UPDATE_AREA, MAPSIZE+1);
         int xLow = Math.max(currentCoordinates.x - UPDATE_AREA, 0);
         int yLow = Math.max(currentCoordinates.y - UPDATE_AREA, 0);
 
@@ -248,7 +252,6 @@ public class GuiManager extends JFrame implements ActionListener {
 
                     @Override
                     public void mouseMoved(MouseEvent e) {
-
                     }
                 });
                 newBoardButton.setBounds(xPosition, yPosition, BUTTON_SIZE, BUTTON_SIZE);
@@ -261,15 +264,24 @@ public class GuiManager extends JFrame implements ActionListener {
                     createLargerBorder(currentTile.getOwner().getColour(), newBoardButton);
                 }
                 yPosition = yPosition + BUTTON_SIZE; //increment y for next tile
-                boardPanel.add(newBoardButton, BorderLayout.CENTER);
+                boardPanel.add(newBoardButton);
             }
             xPosition = xPosition + BUTTON_SIZE; //increment x for next tile
+        }
+
+        try {
+            BufferedImage myPicture = ImageIO.read(new File("textures\\backgrounds\\menuBackground.jpg"));
+            JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+            boardPanel.add(picLabel);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void actionPerformed(ActionEvent arg0) {
         BoardButton button = (BoardButton) arg0.getSource();
         Coordinates buttonCoordinates = button.getCoordinates();
+
         Tile tileClicked = gameController.getMap().getTile(buttonCoordinates);
 
         resetUIColours();
@@ -352,7 +364,7 @@ class FrameHandler {
         JFrame frame = new JFrame("Civ like gameController");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(scrollPane);
         frame.add(uiPanel, BorderLayout.SOUTH);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
