@@ -28,13 +28,13 @@ class RandomValues {
     }
 
     public Coordinates getRandomCoordinates(int min, int max) {
-        int x = random.nextInt(max - min + 1) + min;
-        int y = random.nextInt(max - min + 1) + min;
+        int x = random.nextInt(max - min) + min;
+        int y = random.nextInt(max - min) + min;
         return new Coordinates(x, y);
     }
 
     public int getRandomCoordinate(int min, int max) {
-        return random.nextInt(max - min + 1) + min;
+        return random.nextInt(max - min) + min;
     }
 
     public Coordinates getRandomDirection(Coordinates coordinates) {
@@ -169,13 +169,13 @@ class MapBuilder {
     private void addSnow() {
         int rowsOfSnow = MAPSIZE / 20;
 
-        for (int y = 0; y <= rowsOfSnow; y++) {
+        for (int y = 0; y < rowsOfSnow; y++) {
             for (int x = 0; x < MAPSIZE; x++) {
                 constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
             }
         }
 
-        for (int y = MAPSIZE-1; y > MAPSIZE - rowsOfSnow; y--) {
+        for (int y = MAPSIZE-1; y >= MAPSIZE - rowsOfSnow; y--) {
             for (int x = 0; x < MAPSIZE; x++) {
                 constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
             }
@@ -217,7 +217,7 @@ class MapBuilder {
     private void addLand(int totalLandTiles) {
         Coordinates coordinates;
         while (totalLandTiles > 0) {
-            randomValues.setIntensity(MAPSIZE * 5, MAPSIZE * 10);
+            randomValues.setIntensity(MAPSIZE * 2, MAPSIZE * 10);
             coordinates = randomValues.getRandomCoordinates(MAPSIZE);
             generateTilesInBodies(coordinates, ResourceTypes.GRASS, totalLandTiles);
             totalLandTiles -= randomValues.getIntensity();
