@@ -21,7 +21,7 @@ public class Map {
 
     public Map(Boolean isTestMap, MapData mapData) {
         this.MAPSIZE = mapData.getMapsize();
-        currentMap = new Tile[MAPSIZE + 1][MAPSIZE + 1];
+        currentMap = new Tile[MAPSIZE+1][MAPSIZE + 1];
         mapBuilder = new MapBuilder(currentMap, mapData);
         mapBuilder.setUpMap();
 
