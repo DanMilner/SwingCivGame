@@ -5,59 +5,15 @@ import main.MapData;
 import map.resources.Resource;
 import map.resources.ResourceTypes;
 
+import java.util.ArrayList;
 import java.util.Random;
-
-class RandomValues {
-    private int intensity;
-    private Random random;
-
-    RandomValues() {
-        random = new Random();
-    }
-
-    public void setIntensity(int min, int max) {
-        this.intensity = random.nextInt(max - min + 1) + min;
-    }
-
-    public int getIntensity() {
-        return intensity;
-    }
-
-    public Coordinates getRandomCoordinates(int mapsize) {
-        return new Coordinates(random.nextInt(mapsize), random.nextInt(mapsize));
-    }
-
-    public Coordinates getRandomCoordinates(int min, int max) {
-        int x = random.nextInt(max - min) + min;
-        int y = random.nextInt(max - min) + min;
-        return new Coordinates(x, y);
-    }
-
-    public int getRandomCoordinate(int min, int max) {
-        return random.nextInt(max - min) + min;
-    }
-
-    public Coordinates getRandomDirection(Coordinates coordinates) {
-        int direction = random.nextInt(5) + 1;
-
-        if (direction == 1) { //North
-            coordinates.setCoordinates(coordinates.x, coordinates.y + 1);
-        } else if (direction == 2) { //South
-            coordinates.setCoordinates(coordinates.x, coordinates.y - 1);
-        } else if (direction == 3) { //East
-            coordinates.setCoordinates(coordinates.x + 1, coordinates.y);
-        } else if (direction == 4) { //West
-            coordinates.setCoordinates(coordinates.x - 1, coordinates.y);
-        }
-        return coordinates;
-    }
-}
 
 class MapBuilder {
     private Tile[][] map;
     private final int MAPSIZE;
     private RandomValues randomValues;
     private MapData mapData;
+    private ArrayList<Tile> grassTiles;
 
     MapBuilder(Tile[][] currentMap, MapData mapData) {
         this.map = currentMap;
@@ -77,7 +33,7 @@ class MapBuilder {
     }
 
     public void setUpTerrain() {
-        int totalNumberOfTiles = (MAPSIZE ) * (MAPSIZE );
+        int totalNumberOfTiles = (MAPSIZE) * (MAPSIZE);
 
         Double waterAmount = 0.30;
         waterAmount *= mapData.getWater() / 100;
@@ -102,25 +58,150 @@ class MapBuilder {
         if (mapData.getDeserts() != 0)
             addSand(Math.round(sandAmount.floatValue()));
 
-        addResource(ResourceTypes.WOOD, Math.round(treesAmount.floatValue()));
+        addResource(ResourceTypes.STONE, Math.round(mountainsAmount.floatValue()), 5, 15);
+        addResource(ResourceTypes.IRON, Math.round(resourcesAmount.floatValue() * 0.40f), 3, 6);
+        addResource(ResourceTypes.GOLD, Math.round(resourcesAmount.floatValue() * 0.15f), 2, 4);
+        addResource(ResourceTypes.COPPER, Math.round(resourcesAmount.floatValue() * 0.25f), 3, 6);
+        addResource(ResourceTypes.COAL, Math.round(resourcesAmount.floatValue() * 0.15f), 5, 10);
+        addResource(ResourceTypes.DIAMONDS, Math.round(resourcesAmount.floatValue() * 0.05f), 1, 3);
+        addResource(ResourceTypes.WOOD, Math.round(treesAmount.floatValue()), 1, 5);
+    }
 
-        addResource(ResourceTypes.STONE, Math.round(mountainsAmount.floatValue()));
+    private void addLand(int totalLandTiles) {
+        Coordinates coordinates;
+        grassTiles = new ArrayList<>();
+        while (totalLandTiles > 0) {
+            randomValues.setIntensity(MAPSIZE * 2, MAPSIZE * 10);
+            coordinates = randomValues.getRandomCoordinates(MAPSIZE);
+            generateTilesInBodies(coordinates, ResourceTypes.GRASS, totalLandTiles);
+            totalLandTiles -= randomValues.getIntensity();
+        }
+    }
 
-        addResource(ResourceTypes.IRON, Math.round(resourcesAmount.floatValue() * 0.40f));
-        addResource(ResourceTypes.GOLD, Math.round(resourcesAmount.floatValue() * 0.15f));
-        addResource(ResourceTypes.COPPER, Math.round(resourcesAmount.floatValue() * 0.25f));
-        addResource(ResourceTypes.COAL, Math.round(resourcesAmount.floatValue() * 0.15f));
-        addResource(ResourceTypes.DIAMONDS, Math.round(resourcesAmount.floatValue() * 0.05f));
+    private void addSand(int totalLandTiles) {
+        int quarterMapSize = MAPSIZE / 4;
+        Coordinates originCoordinates;
+        do {
+            originCoordinates = getRandomGrassTileCoordinates();
+        }
+        while (originCoordinates.y <= quarterMapSize || originCoordinates.y >= (MAPSIZE - quarterMapSize));
+        grassTiles.remove(map[originCoordinates.x][originCoordinates.y]);
+
+        generateTilesInBodies(originCoordinates, ResourceTypes.SAND, totalLandTiles);
+    }
+
+    private void addSnow() {
+        int rowsOfSnow = MAPSIZE / 20;
+
+        for (int y = 0; y < rowsOfSnow; y++) {
+            for (int x = 0; x < MAPSIZE; x++) {
+                if(grassTiles.contains(map[x][y]))
+                    grassTiles.remove(map[x][y]);
+                constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
+            }
+        }
+
+        for (int y = MAPSIZE - 1; y >= MAPSIZE - rowsOfSnow; y--) {
+            for (int x = 0; x < MAPSIZE; x++) {
+                if(grassTiles.contains(map[x][y]))
+                    grassTiles.remove(map[x][y]);
+                constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
+            }
+        }
+    }
+
+    private void addResource(ResourceTypes resourceType, int amountOfTiles, int min, int max) {
+        Coordinates originCoordinates;
+        while (amountOfTiles > 0) {
+            originCoordinates = getRandomGrassTileCoordinates();
+            randomValues.setIntensity(min, max);
+            amountOfTiles -= generateTilesInDirections(originCoordinates, resourceType, amountOfTiles);
+        }
+    }
+
+    private void generateTilesInBodies(Coordinates originCoordinates, ResourceTypes resourceType, int totalTiles) {
+        int numberOfTilesGenerated = 0;
+        Coordinates coordinates = new Coordinates(originCoordinates.x, originCoordinates.y);
+        do {
+            coordinates = randomValues.getRandomDirection(coordinates);
+            if (!coordinatesOnMap(coordinates)) {
+                coordinates.setCoordinates(originCoordinates.x, originCoordinates.y);
+                continue;
+            }
+
+            if (map[coordinates.x][coordinates.y].getResource().getResourceType() != resourceType) {
+                constructResourceTile(resourceType, coordinates);
+                coordinates.setCoordinates(originCoordinates.x, originCoordinates.y);
+                numberOfTilesGenerated++;
+                totalTiles--;
+            }
+        } while (numberOfTilesGenerated < randomValues.getIntensity() && totalTiles > 0);
+    }
+
+    private int generateTilesInDirections(Coordinates coordinates, ResourceTypes resourceType, int totalToBeGenerated) {
+        int numberOfTilesGenerated = 0;
+        int infiniteLoopPrevention = 0;
+        ResourceTypes tempType;
+
+        Coordinates previousCoordinates = new Coordinates(coordinates.x,coordinates.y);
+        do {
+            coordinates = randomValues.getRandomDirection(coordinates);
+            if (!coordinatesOnMap(coordinates)) {
+                coordinates.setCoordinates(previousCoordinates.x, previousCoordinates.y);
+                continue;
+            }
+
+            tempType = map[coordinates.x][coordinates.y].getResource().getResourceType();
+            if (tempType == ResourceTypes.GRASS) {
+                constructResourceTile(resourceType, coordinates);
+                grassTiles.remove(map[coordinates.x][coordinates.y]);
+                totalToBeGenerated--;
+                numberOfTilesGenerated++;
+                infiniteLoopPrevention = 0;
+                previousCoordinates.setCoordinates(coordinates.x, coordinates.y);
+            } else if (tempType != resourceType) {
+                coordinates.setCoordinates(previousCoordinates.x, previousCoordinates.y);
+            }
+            infiniteLoopPrevention++;
+
+            if (infiniteLoopPrevention == 20) {
+                return numberOfTilesGenerated;
+            }
+
+        } while (numberOfTilesGenerated < randomValues.getIntensity() && totalToBeGenerated > 0);
+        return numberOfTilesGenerated;
+    }
+
+    private boolean coordinatesOnMap(Coordinates coordinates) {
+        return coordinates.x >= 0 && coordinates.x < MAPSIZE && coordinates.y >= 0 && coordinates.y < MAPSIZE;
+    }
+
+    private void constructResourceTile(ResourceTypes resourceType, Coordinates coordinates) {
+        try {
+            Resource newResource = TileFactory.buildResourceTile(resourceType);
+            map[coordinates.x][coordinates.y].setResource(newResource);
+            if (resourceType == ResourceTypes.GRASS)
+                grassTiles.add(map[coordinates.x][coordinates.y]);
+        } catch (TypeNotFound typeNotFound) {
+            typeNotFound.printStackTrace();
+        }
+    }
+
+    private Coordinates getRandomGrassTileCoordinates() {
+        int index = randomValues.randomInt(grassTiles.size());
+        Coordinates coordinates = grassTiles.get(index).getCoordinates();
+        grassTiles.remove(index);
+        return new Coordinates(coordinates.x, coordinates.y);
     }
 
     public Coordinates generateNewCityCoordinates() {
         final int CITY_BORDER_SIZE = 3;
         Coordinates coordinates;
-        Resource currentTileResource;
         do {
-            coordinates = randomValues.getRandomCoordinates(CITY_BORDER_SIZE, MAPSIZE - CITY_BORDER_SIZE);
-            currentTileResource = map[coordinates.x][coordinates.y].getResource();
-            if (!currentTileResource.isTraversable())
+            coordinates = getRandomGrassTileCoordinates();
+            if (coordinates.y <= CITY_BORDER_SIZE || coordinates.y >= MAPSIZE - CITY_BORDER_SIZE)
+                continue;
+            if (coordinates.x <= CITY_BORDER_SIZE || coordinates.x >= MAPSIZE - CITY_BORDER_SIZE)
                 continue;
 
             Boolean cityHasBeenPlaced = true;
@@ -132,108 +213,47 @@ class MapBuilder {
                 }
             }
             if (cityHasBeenPlaced)
-                return new Coordinates(coordinates.x, coordinates.y);
+                return coordinates;
         } while (true);
     }
+}
 
-    private void generateTilesInBodies(Coordinates originCoordinates, ResourceTypes resourceType, int totalTiles) {
-        int numberOfTilesGenerated = 0;
-        Coordinates coordinates = new Coordinates(originCoordinates.x, originCoordinates.y);
-        do {
-            coordinates = randomValues.getRandomDirection(coordinates);
-            if (coordinatesOnMap(coordinates)) {
-                if (map[coordinates.x][coordinates.y].getResource().getResourceType() != resourceType) {
-                    constructResourceTile(resourceType, coordinates);
-                    coordinates.setCoordinates(originCoordinates.x, originCoordinates.y);
-                    numberOfTilesGenerated++;
-                    totalTiles--;
-                }
-            } else {
-                coordinates.setCoordinates(originCoordinates.x, originCoordinates.y);
-            }
-        } while (numberOfTilesGenerated < randomValues.getIntensity() && totalTiles > 0);
+class RandomValues {
+    private int intensity;
+    private Random random;
+
+    RandomValues() {
+        random = new Random();
     }
 
-    private void addSand(int totalLandTiles) {
-        Coordinates randomCoordinates;
-        int quarterMapSize = MAPSIZE / 4;
-        do {
-            randomCoordinates = new Coordinates(randomValues.getRandomCoordinate(1, MAPSIZE),
-                    randomValues.getRandomCoordinate(quarterMapSize, MAPSIZE - quarterMapSize));
+    public void setIntensity(int min, int max) {
+        this.intensity = random.nextInt(max - min + 1) + min;
+    }
+
+    public int getIntensity() {
+        return intensity;
+    }
+
+    public int randomInt(int bound) {
+        return random.nextInt(bound);
+    }
+
+    public Coordinates getRandomCoordinates(int mapsize) {
+        return new Coordinates(random.nextInt(mapsize), random.nextInt(mapsize));
+    }
+
+    public Coordinates getRandomDirection(Coordinates coordinates) {
+        int direction = random.nextInt(5) + 1;
+
+        if (direction == 1) { //North
+            coordinates.setCoordinates(coordinates.x, coordinates.y + 1);
+        } else if (direction == 2) { //South
+            coordinates.setCoordinates(coordinates.x, coordinates.y - 1);
+        } else if (direction == 3) { //East
+            coordinates.setCoordinates(coordinates.x + 1, coordinates.y);
+        } else if (direction == 4) { //West
+            coordinates.setCoordinates(coordinates.x - 1, coordinates.y);
         }
-        while (map[randomCoordinates.x][randomCoordinates.y].getResource().getResourceType() != ResourceTypes.GRASS);
-
-        generateTilesInBodies(randomCoordinates, ResourceTypes.SAND, totalLandTiles);
-    }
-
-    private void addSnow() {
-        int rowsOfSnow = MAPSIZE / 20;
-
-        for (int y = 0; y < rowsOfSnow; y++) {
-            for (int x = 0; x < MAPSIZE; x++) {
-                constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
-            }
-        }
-
-        for (int y = MAPSIZE-1; y >= MAPSIZE - rowsOfSnow; y--) {
-            for (int x = 0; x < MAPSIZE; x++) {
-                constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
-            }
-        }
-    }
-
-    private void addResource(ResourceTypes resourceType, int amountOfTiles) {
-        Coordinates randomCoordinates;
-        while (amountOfTiles > 0) {
-            do {
-                randomCoordinates = randomValues.getRandomCoordinates(MAPSIZE);
-            }
-            while (map[randomCoordinates.x][randomCoordinates.y].getResource().getResourceType() == ResourceTypes.WATER);
-            randomValues.setIntensity(1, 20);
-            amountOfTiles -= generateTilesInDirections(randomCoordinates, resourceType, amountOfTiles);
-        }
-    }
-
-    private int generateTilesInDirections(Coordinates randomCoordinates, ResourceTypes resourceType, int amountOfTiles) {
-        int numberOfTilesGenerated = 0;
-        int loopPrevention = 0;
-        do {
-            randomCoordinates = randomValues.getRandomDirection(randomCoordinates);
-            if (coordinatesOnMap(randomCoordinates)) {
-                if (map[randomCoordinates.x][randomCoordinates.y].getResource().getResourceType() == ResourceTypes.GRASS) {
-                    constructResourceTile(resourceType, randomCoordinates);
-                    amountOfTiles--;
-                    numberOfTilesGenerated++;
-                } else {
-                    loopPrevention++;
-                }
-                if (loopPrevention == 10)
-                    return numberOfTilesGenerated;
-            }
-        } while (numberOfTilesGenerated < randomValues.getIntensity() && amountOfTiles > 0);
-        return numberOfTilesGenerated;
-    }
-
-    private void addLand(int totalLandTiles) {
-        Coordinates coordinates;
-        while (totalLandTiles > 0) {
-            randomValues.setIntensity(MAPSIZE * 2, MAPSIZE * 10);
-            coordinates = randomValues.getRandomCoordinates(MAPSIZE);
-            generateTilesInBodies(coordinates, ResourceTypes.GRASS, totalLandTiles);
-            totalLandTiles -= randomValues.getIntensity();
-        }
-    }
-
-    private boolean coordinatesOnMap(Coordinates coordinates) {
-        return coordinates.x >= 0 && coordinates.x < MAPSIZE && coordinates.y >= 0 && coordinates.y < MAPSIZE;
-    }
-
-    private void constructResourceTile(ResourceTypes resourceType, Coordinates coordinates) {
-        try {
-            Resource newResource = TileFactory.buildResourceTile(resourceType);
-            map[coordinates.x][coordinates.y].setResource(newResource);
-        } catch (TypeNotFound typeNotFound) {
-            typeNotFound.printStackTrace();
-        }
+        return coordinates;
     }
 }
