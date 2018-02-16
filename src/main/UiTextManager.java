@@ -1,12 +1,13 @@
 package main;
 
+import map.Coordinates;
 import map.Tile;
 import map.resources.ResourceTypes;
 
 import javax.swing.*;
 
 class UiTextManager {
-    private JLabel[] UIComponents = new JLabel[20];
+    private JLabel[] UIComponents = new JLabel[21];
 
     UiTextManager(JPanel panelUIContent) {
         panelUIContent.setLayout(null);
@@ -17,10 +18,11 @@ class UiTextManager {
             UIComponents[i].setVisible(true);
         }
 
-        UIComponents[0].setBounds(100, 25, 100, 20);
-        UIComponents[1].setBounds(100, 45, 250, 20);
-        UIComponents[2].setBounds(100, 65, 250, 20);
-        UIComponents[3].setBounds(100, 85, 250, 20);
+        UIComponents[0].setBounds(100, 20, 100, 20);
+        UIComponents[1].setBounds(100, 40, 250, 20);
+        UIComponents[2].setBounds(100, 60, 250, 20);
+        UIComponents[3].setBounds(100, 80, 250, 20);
+        UIComponents[20].setBounds(100, 100, 100, 20);
 
         UIComponents[4].setBounds(1430, 25, 250, 20);
         UIComponents[5].setBounds(1370, 10, 50, 50);
@@ -95,6 +97,7 @@ class UiTextManager {
         updateTileType(tileType);
         updateUnitOrBuildingHealth(currentHealth, maxHealth);
         updateTerritoryOwnership(tileClicked.getOwner());
+        updateTileCoordinates(tileClicked.getCoordinates());
     }
 
     private void updateTerritoryOwnership(Player tileOwner) {
@@ -108,6 +111,11 @@ class UiTextManager {
     private void updateTileType(String tileType) {
         final int TILE_TYPE_INDEX = 2;
         UIComponents[TILE_TYPE_INDEX].setText(tileType);
+    }
+
+    private void updateTileCoordinates(Coordinates coordinates){
+        final int TILE_TYPE_INDEX = 20;
+        UIComponents[TILE_TYPE_INDEX].setText("x: " + coordinates.x + " y:" + coordinates.y);
     }
 
     private void updateUnitOrBuildingHealth(int currentHealth, int maxHealth) {
