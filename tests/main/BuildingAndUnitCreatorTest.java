@@ -22,16 +22,15 @@ public class BuildingAndUnitCreatorTest {
     public void setUp() {
         player = new Player("Daniel", Color.yellow);
         MapData mapData = new MapData();
-        mapData.setMapData(1, 1, 1, 1, 7, 1, true);
-        gameMap = new Map(true, mapData);
+        mapData.setMapData(0, 0, 0, 0, 7, 0, false);
+        gameMap = new Map(mapData);
         unitCreator = new UnitCreator(gameMap);
     }
 
     @Test
     public void createUnitTest() {
         gameMap.spawnCity(player);
-
-        unitCreator.createUnit(new Coordinates(3, 3), Constructable.BUILDER, player);
+        unitCreator.createUnit(new Coordinates(5, 5), Constructable.BUILDER, player);
         ArrayList<Unit> playerUnits = player.getUnits();
 
         Assert.assertTrue(playerUnits.get(0).getType().equals(Constructable.BUILDER));

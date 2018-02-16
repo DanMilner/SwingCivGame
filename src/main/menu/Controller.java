@@ -145,7 +145,7 @@ public class Controller {
             return;
 
         mapData.setMapData(treeSlider.getValue(), mountainSlider.getValue(), waterSlider.getValue(),
-                resourcesSlider.getValue(), mapsizeSlider.getValue() - 1, desertSlider.getValue(), arcticRegions.isSelected());
+                resourcesSlider.getValue(), mapsizeSlider.getValue(), desertSlider.getValue(), arcticRegions.isSelected());
 
         Platform.exit();
     }

@@ -67,8 +67,8 @@ class MapBuilder {
     }
 
     public void setUpMap() {
-        for (int x = 0; x <= MAPSIZE; x++) {
-            for (int y = 0; y <= MAPSIZE; y++) {
+        for (int x = 0; x < MAPSIZE; x++) {
+            for (int y = 0; y < MAPSIZE; y++) {
                 Coordinates coordinates = new Coordinates(x, y);
                 map[x][y] = new Tile(coordinates, null);
                 constructResourceTile(ResourceTypes.WATER, coordinates);
@@ -77,7 +77,7 @@ class MapBuilder {
     }
 
     public void setUpTerrain() {
-        int totalNumberOfTiles = (MAPSIZE + 1) * (MAPSIZE + 1);
+        int totalNumberOfTiles = (MAPSIZE ) * (MAPSIZE );
 
         Double waterAmount = 0.30;
         waterAmount *= mapData.getWater() / 100;
@@ -170,13 +170,13 @@ class MapBuilder {
         int rowsOfSnow = MAPSIZE / 20;
 
         for (int y = 0; y <= rowsOfSnow; y++) {
-            for (int x = 0; x <= MAPSIZE; x++) {
+            for (int x = 0; x < MAPSIZE; x++) {
                 constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
             }
         }
 
-        for (int y = MAPSIZE; y >= MAPSIZE - rowsOfSnow; y--) {
-            for (int x = 0; x <= MAPSIZE; x++) {
+        for (int y = MAPSIZE-1; y > MAPSIZE - rowsOfSnow; y--) {
+            for (int x = 0; x < MAPSIZE; x++) {
                 constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
             }
         }
@@ -212,7 +212,6 @@ class MapBuilder {
             }
         } while (numberOfTilesGenerated < randomValues.getIntensity() && amountOfTiles > 0);
         return numberOfTilesGenerated;
-//        System.out.println(numberOfTilesGenerated + " " + randomValues.getIntensity() + " " + amountOfTiles);
     }
 
     private void addLand(int totalLandTiles) {
@@ -226,7 +225,7 @@ class MapBuilder {
     }
 
     private boolean coordinatesOnMap(Coordinates coordinates) {
-        return coordinates.x >= 0 && coordinates.x <= MAPSIZE && coordinates.y >= 0 && coordinates.y <= MAPSIZE;
+        return coordinates.x >= 0 && coordinates.x < MAPSIZE && coordinates.y >= 0 && coordinates.y < MAPSIZE;
     }
 
     private void constructResourceTile(ResourceTypes resourceType, Coordinates coordinates) {

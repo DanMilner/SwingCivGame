@@ -19,16 +19,14 @@ public class Map {
     private MapBuilder mapBuilder;
     private TileOwnerHandler tileOwnerHandler;
 
-    public Map(Boolean isTestMap, MapData mapData) {
+    public Map(MapData mapData) {
         this.MAPSIZE = mapData.getMapsize();
-        currentMap = new Tile[MAPSIZE+1][MAPSIZE + 1];
+        currentMap = new Tile[MAPSIZE][MAPSIZE];
         mapBuilder = new MapBuilder(currentMap, mapData);
         mapBuilder.setUpMap();
+        mapBuilder.setUpTerrain();
 
-        tileOwnerHandler = new TileOwnerHandler(MAPSIZE);
-
-        if (!isTestMap)
-            mapBuilder.setUpTerrain();
+        tileOwnerHandler = new TileOwnerHandler(this);
 
         roadManager = new RoadManager();
     }
@@ -38,12 +36,12 @@ public class Map {
         constructAndSetBuildingTile(Constructable.CITY, coordinates, owner);
     }
 
-    public boolean coordinatesOnMap(Coordinates coordinates) {
-        return coordinates.x >= 0 && coordinates.x <= MAPSIZE && coordinates.y >= 0 && coordinates.y <= MAPSIZE;
+    public int borderRequired(Coordinates coordinates, Coordinates adjacentCoordinates) {
+        return tileOwnerHandler.borderRequired(coordinates, adjacentCoordinates);
     }
 
-    public int borderRequired(Coordinates coordinates, int adjacentX, int adjacentY) {
-        return tileOwnerHandler.borderRequired(currentMap, coordinates, adjacentX, adjacentY);
+    public boolean coordinatesOnMap(Coordinates coordinates) {
+        return coordinates.x >= 0 && coordinates.x < MAPSIZE && coordinates.y >= 0 && coordinates.y < MAPSIZE;
     }
 
     public Tile getTile(Coordinates coordinates) {
@@ -121,7 +119,7 @@ public class Map {
             return;
         }
 
-        tileOwnerHandler.setTileOwner(currentMap, newBuilding, coordinates, owner);
+        tileOwnerHandler.setTileOwner(newBuilding, coordinates, owner);
 
         currentMap[coordinates.x][coordinates.y].setBuilding(newBuilding);
         roadManager.addConnectableTile(currentMap[coordinates.x][coordinates.y]);
@@ -161,45 +159,43 @@ public class Map {
 }
 
 class TileOwnerHandler {
-    int MAPSIZE;
+    Map map;
 
-    TileOwnerHandler(int MAPSIZE) {
-        this.MAPSIZE = MAPSIZE;
+    TileOwnerHandler(Map map) {
+        this.map = map;
     }
 
-    public void setTileOwner(Tile[][] currentMap, Building newBuilding, Coordinates coordinates, Player owner) {
+    public void setTileOwner(Building newBuilding, Coordinates coordinates, Player owner) {
         int borderSize = newBuilding.getBorderSize();
         int startX = coordinates.x - borderSize;
         int startY = coordinates.y - borderSize;
         int endX = coordinates.x + borderSize;
         int endY = coordinates.y + borderSize;
+        Coordinates tempCoordinates = new Coordinates(0, 0);
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                if (coordinatesOnMap(x, y)) {
-                    if (!currentMap[x][y].hasOwner()) {
-                        currentMap[x][y].setOwner(owner);
+                tempCoordinates.setCoordinates(x, y);
+                if (map.coordinatesOnMap(tempCoordinates)) {
+                    if (!map.getTile(tempCoordinates).hasOwner()) {
+                        map.getTile(tempCoordinates).setOwner(owner);
                     }
                 }
             }
         }
     }
 
-    public int borderRequired(Tile[][] currentMap, Coordinates coordinates, int adjacentX, int adjacentY) {
+    public int borderRequired(Coordinates coordinates, Coordinates adjacentCoordinates) {
         final int BORDER_REQUIRED = 3;
         final int BORDER_NOT_REQUIRED = 0;
 
-        if (!coordinatesOnMap(adjacentX, adjacentY)) {
+        if (!map.coordinatesOnMap(adjacentCoordinates)) {
             return BORDER_REQUIRED;
         }
-        if (currentMap[coordinates.x][coordinates.y].getOwner() != currentMap[adjacentX][adjacentY].getOwner()) {
+        if (map.getTile(coordinates).getOwner() != map.getTile(adjacentCoordinates).getOwner()) {
             return BORDER_REQUIRED;
         } else {
             return BORDER_NOT_REQUIRED;
         }
-    }
-
-    private boolean coordinatesOnMap(int x, int y) {
-        return x >= 0 && x <= MAPSIZE && y >= 0 && y <= MAPSIZE;
     }
 }
 

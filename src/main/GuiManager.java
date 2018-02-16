@@ -27,12 +27,12 @@ public class GuiManager extends JFrame implements ActionListener {
     GuiManager(GameController gameController, int MAPSIZE) {
         this.MAPSIZE = MAPSIZE;
         this.gameController = gameController;
-        boardButtons = new BoardButton[MAPSIZE + 1][MAPSIZE + 1];
+        boardButtons = new BoardButton[MAPSIZE][MAPSIZE];
         uiButtons = new ArrayList<>();
         currentCoordinates = new Coordinates(0, 0);
         unitSelected = false;
 
-        BoardPanel boardPanel = new BoardPanel(MAPSIZE + 1);
+        BoardPanel boardPanel = new BoardPanel(MAPSIZE);
         UiPanel uiPanel = new UiPanel();
         uiTextManager = new UiTextManager(uiPanel);
 
@@ -105,8 +105,8 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void updateBoardButtonIconsAndBorders() {
         final int UPDATE_AREA = 10;
-        int xHigh = Math.min(currentCoordinates.x + UPDATE_AREA, MAPSIZE+1);
-        int yHigh = Math.min(currentCoordinates.y + UPDATE_AREA, MAPSIZE+1);
+        int xHigh = Math.min(currentCoordinates.x + UPDATE_AREA, MAPSIZE);
+        int yHigh = Math.min(currentCoordinates.y + UPDATE_AREA, MAPSIZE);
         int xLow = Math.max(currentCoordinates.x - UPDATE_AREA, 0);
         int yLow = Math.max(currentCoordinates.y - UPDATE_AREA, 0);
 
@@ -183,13 +183,13 @@ public class GuiManager extends JFrame implements ActionListener {
     }
 
     private void createLargerBorder(Color borderColour, BoardButton buttonBeingUpdated) {
-        Coordinates coordinates = buttonBeingUpdated.getCoordinates();
+        Coordinates coord = buttonBeingUpdated.getCoordinates();
 
         buttonBeingUpdated.setBorder(BorderFactory.createMatteBorder(
-                gameController.getMap().borderRequired(coordinates, coordinates.x, coordinates.y - 1),
-                gameController.getMap().borderRequired(coordinates, coordinates.x - 1, coordinates.y),
-                gameController.getMap().borderRequired(coordinates, coordinates.x, coordinates.y + 1),
-                gameController.getMap().borderRequired(coordinates, coordinates.x + 1, coordinates.y),
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x, coord.y - 1)),
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x - 1, coord.y)),
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x, coord.y + 1)),
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x + 1, coord.y)),
                 borderColour));
     }
 
@@ -201,9 +201,9 @@ public class GuiManager extends JFrame implements ActionListener {
         int yPosition;
 
         //create board elements;
-        for (int x = 0; x <= MAPSIZE; x++) {
+        for (int x = 0; x < MAPSIZE; x++) {
             yPosition = START_POSITION;
-            for (int y = 0; y <= MAPSIZE; y++) {
+            for (int y = 0; y < MAPSIZE; y++) {
                 Coordinates coordinates = new Coordinates(x, y);
                 BoardButton newBoardButton = new BoardButton(coordinates);
                 boardButtons[x][y] = newBoardButton;

@@ -18,7 +18,7 @@ public class GameController {
     private AttackHandler attackHandler;
 
     GameController(ArrayList<PlayerData> playersToCreate, MapData mapData) {
-        gameMap = new Map(false, mapData);
+        gameMap = new Map(mapData);
         unitCreator = new UnitCreator(gameMap);
         playerHandler = new PlayerHandler();
         unitMovementHandler = new UnitMovementHandler(gameMap);

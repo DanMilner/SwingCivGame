@@ -19,7 +19,7 @@ public class PlayerHandlerTest {
         playerHandler = new PlayerHandler();
         MapData mapData = new MapData();
         mapData.setMapData(1,1,1,1,30, 1, true);
-        gameMap = new Map(true, mapData);
+        gameMap = new Map(mapData);
     }
 
     @Test
