@@ -4,7 +4,6 @@ import map.Constructable;
 import map.resources.ResourceTypes;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Farm extends Building {
@@ -13,7 +12,7 @@ public class Farm extends Building {
         this.type = Constructable.FARM;
         this.resourceCost.put(ResourceTypes.WOOD, 5);
         this.resourceHarvestAmount = new HashMap<>();
-        this.claimedResourceTiles = new ArrayList<>();
+//        this.claimedResourceTiles = new ArrayList<>();
         this.resourceHarvestAmount.put(ResourceTypes.FOOD, 0);
 
         this.maxHealth = 150;

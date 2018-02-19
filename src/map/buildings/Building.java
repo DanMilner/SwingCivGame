@@ -1,8 +1,8 @@
 package map.buildings;
 
 import map.Constructable;
+import map.Tile;
 import map.resources.ResourceTypes;
-import map.resources.Resource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +18,8 @@ public abstract class Building {
     int currentHealth;
     boolean hasCityConnection = false;
     ArrayList<Constructable> buttonList;
+    ArrayList<Tile> claimedTiles = new ArrayList<>();
     Map<ResourceTypes, Integer> resourceHarvestAmount;
-    ArrayList<Resource> claimedResourceTiles;
     private boolean visited;
     public Constructable type;
 
@@ -96,9 +96,12 @@ public abstract class Building {
         return maxHealth;
     }
 
-    public void claimResourceTile(Resource resourceTile) {
-        claimedResourceTiles.add(resourceTile);
-        resourceTile.setInUse(true);
+    public void claimTile(Tile tile) {
+        claimedTiles.add(tile);
+    }
+
+    public ArrayList<Tile> getClaimedTiles(){
+        return claimedTiles;
     }
 
     public void reduceCurrentHealthBy(int attackDamage) {
@@ -106,9 +109,14 @@ public abstract class Building {
     }
 
     public void releaseClaimedTiles() {
-        for (Resource resource : claimedResourceTiles) {
-            resource.setInUse(false);
+        for (Tile tile : claimedTiles) {
+            tile.setNatureTile();
         }
+        claimedTiles = null;
+    }
+
+    public void releaseClaimedTile(Tile tile) {
+        claimedTiles.remove(tile);
     }
 
     public Map<ResourceTypes, Integer> getResourceCostMap() {

@@ -13,6 +13,7 @@ public class Tile {
     private Unit unit;
     private Resource resource;
     private Building building;
+    private Building claimedBy;
     private Coordinates coordinates;
 
     Tile(Coordinates coordinates, Player owner) {
@@ -21,8 +22,16 @@ public class Tile {
         resource = null;
         building = null;
         unit = null;
+        claimedBy = null;
     }
 
+    public void setClaimedBy(Building building){
+        this.claimedBy = building;
+    }
+
+    public Building getClaimedBy() {
+        return claimedBy;
+    }
 
     public Resource getResource() {
         return resource;
@@ -96,5 +105,15 @@ public class Tile {
         if (unitSelected)
             return unit.getButtonList();
         return building.getButtonList();
+    }
+
+    public void setNatureTile() {
+        getResource().setInUse(false);
+        setOwner(null);
+        setClaimedBy(null);
+    }
+
+    public boolean isClaimed() {
+        return claimedBy != null;
     }
 }

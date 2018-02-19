@@ -30,7 +30,14 @@ public class BuildingAndUnitCreatorTest {
     @Test
     public void createUnitTest() {
         gameMap.spawnCity(player);
-        unitCreator.createUnit(new Coordinates(5, 5), Constructable.BUILDER, player);
+        Coordinates coordinates = new Coordinates(5,5);
+        gameMap.getTile(coordinates).setOwner(player);
+        if(!gameMap.getTile(coordinates).hasBuilding()) {
+            unitCreator.createUnit(coordinates, Constructable.BUILDER, player);
+        }else{
+            coordinates.setCoordinates(4,4);
+            unitCreator.createUnit(coordinates, Constructable.BUILDER, player);
+        }
         ArrayList<Unit> playerUnits = player.getUnits();
 
         Assert.assertTrue(playerUnits.get(0).getType().equals(Constructable.BUILDER));

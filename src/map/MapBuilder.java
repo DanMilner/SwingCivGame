@@ -6,7 +6,6 @@ import map.resources.Resource;
 import map.resources.ResourceTypes;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 class MapBuilder {
     private Tile[][] map;
@@ -195,7 +194,7 @@ class MapBuilder {
     }
 
     public Coordinates generateNewCityCoordinates() {
-        final int CITY_BORDER_SIZE = 3;
+        final int CITY_BORDER_SIZE = 1;
         Coordinates coordinates;
         do {
             coordinates = getRandomGrassTileCoordinates();
@@ -215,45 +214,5 @@ class MapBuilder {
             if (cityHasBeenPlaced)
                 return coordinates;
         } while (true);
-    }
-}
-
-class RandomValues {
-    private int intensity;
-    private Random random;
-
-    RandomValues() {
-        random = new Random();
-    }
-
-    public void setIntensity(int min, int max) {
-        this.intensity = random.nextInt(max - min + 1) + min;
-    }
-
-    public int getIntensity() {
-        return intensity;
-    }
-
-    public int randomInt(int bound) {
-        return random.nextInt(bound);
-    }
-
-    public Coordinates getRandomCoordinates(int mapsize) {
-        return new Coordinates(random.nextInt(mapsize), random.nextInt(mapsize));
-    }
-
-    public Coordinates getRandomDirection(Coordinates coordinates) {
-        int direction = random.nextInt(5) + 1;
-
-        if (direction == 1) { //North
-            coordinates.setCoordinates(coordinates.x, coordinates.y + 1);
-        } else if (direction == 2) { //South
-            coordinates.setCoordinates(coordinates.x, coordinates.y - 1);
-        } else if (direction == 3) { //East
-            coordinates.setCoordinates(coordinates.x + 1, coordinates.y);
-        } else if (direction == 4) { //West
-            coordinates.setCoordinates(coordinates.x - 1, coordinates.y);
-        }
-        return coordinates;
     }
 }

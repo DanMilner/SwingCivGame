@@ -54,14 +54,14 @@ public class TileOwnerHandlerTest {
     public void borderRequiredAdjacentNull() {
         map.getTile(new Coordinates(1,1)).setOwner(player);
         map.getTile(new Coordinates(1,2)).setOwner(null);
-        assertTrue(3 == tileOwnerHandler.borderRequired(new Coordinates(1, 1), new Coordinates(1, 2)));
+        assertTrue(tileOwnerHandler.borderRequired(new Coordinates(1, 1), new Coordinates(1, 2)));
     }
 
     @Test
     public void borderRequiredAdjacentSelf() {
         map.getTile(new Coordinates(1,1)).setOwner(player);
         map.getTile(new Coordinates(1,2)).setOwner(player);
-        assertFalse(3 == tileOwnerHandler.borderRequired(new Coordinates(1, 1), new Coordinates(1, 2)));
+        assertFalse(tileOwnerHandler.borderRequired(new Coordinates(1, 1), new Coordinates(1, 2)));
     }
 
     @Test
@@ -69,6 +69,6 @@ public class TileOwnerHandlerTest {
         Player enemy = new Player("Darth Vader", Color.red);
         map.getTile(new Coordinates(1,1)).setOwner(player);
         map.getTile(new Coordinates(1,2)).setOwner(enemy);
-        assertTrue(3 == tileOwnerHandler.borderRequired(new Coordinates(1, 1), new Coordinates(1, 2)));
+        assertTrue(tileOwnerHandler.borderRequired(new Coordinates(1, 1), new Coordinates(1, 2)));
     }
 }

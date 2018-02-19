@@ -15,7 +15,7 @@ public class City extends Building {
         this.resourceCost.put(ResourceTypes.STONE, 10);
 
         this.hasCityConnection = true;
-        this.borderSize = 3;
+        this.borderSize = 1;
         this.maxHealth = 1000;
         this.currentHealth = maxHealth;
 

@@ -58,9 +58,9 @@ public class GuiManager extends JFrame implements ActionListener {
         JButton endTurn = new JButton("End Turn");
         endTurn.setBounds(1830, 0, 90, 125);
         endTurn.addActionListener(arg0 -> {
-            gameController.nextPlayer();
+            gameController.endTurn();
             unitSelected = false;
-            updateBoardButtonIconsAndBorders();
+            updateAllButtonIconsAndBorders();
             hideUIButtons();
             uiTextManager.updateUI(gameController.getCurrentPlayer());
         });
@@ -92,7 +92,7 @@ public class GuiManager extends JFrame implements ActionListener {
 
         gameController.buttonClicked(coordinates, constructable);
 
-        updateBoardButtonIconsAndBorders();
+        updateLocalButtonIconsAndBorders();
         uiTextManager.updateUI(gameController.getCurrentPlayer());
 
         if (unitSelected) {
@@ -103,13 +103,20 @@ public class GuiManager extends JFrame implements ActionListener {
         }
     }
 
-    private void updateBoardButtonIconsAndBorders() {
+    private void updateAllButtonIconsAndBorders() {
+        updateBoardButtonIconsAndBorders(0, 0, MAPSIZE, MAPSIZE);
+    }
+
+    private void updateLocalButtonIconsAndBorders() {
         final int UPDATE_AREA = 10;
         int xHigh = Math.min(currentCoordinates.x + UPDATE_AREA, MAPSIZE);
         int yHigh = Math.min(currentCoordinates.y + UPDATE_AREA, MAPSIZE);
         int xLow = Math.max(currentCoordinates.x - UPDATE_AREA, 0);
         int yLow = Math.max(currentCoordinates.y - UPDATE_AREA, 0);
+        updateBoardButtonIconsAndBorders(xLow, yLow, xHigh, yHigh);
+    }
 
+    private void updateBoardButtonIconsAndBorders(int xLow, int yLow, int xHigh, int yHigh) {
         for (int x = xLow; x < xHigh; x++) {
             for (int y = yLow; y < yHigh; y++) {
                 BoardButton buttonBeingUpdated = boardButtons[x][y];
@@ -186,10 +193,10 @@ public class GuiManager extends JFrame implements ActionListener {
         Coordinates coord = buttonBeingUpdated.getCoordinates();
 
         buttonBeingUpdated.setBorder(BorderFactory.createMatteBorder(
-                gameController.getMap().borderRequired(coord, new Coordinates(coord.x, coord.y - 1)),
-                gameController.getMap().borderRequired(coord, new Coordinates(coord.x - 1, coord.y)),
-                gameController.getMap().borderRequired(coord, new Coordinates(coord.x, coord.y + 1)),
-                gameController.getMap().borderRequired(coord, new Coordinates(coord.x + 1, coord.y)),
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x, coord.y - 1)) ? 3 : 0,
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x - 1, coord.y)) ? 3 : 0,
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x, coord.y + 1)) ? 3 : 0,
+                gameController.getMap().borderRequired(coord, new Coordinates(coord.x + 1, coord.y)) ? 3 : 0,
                 borderColour));
     }
 
@@ -307,19 +314,19 @@ public class GuiManager extends JFrame implements ActionListener {
 
     private void deselectUnit() {
         unitSelected = false;
-        updateBoardButtonIconsAndBorders();
+        updateLocalButtonIconsAndBorders();
         hideUIButtons();
     }
 
     private void performUnitMovement(ActionEvent arg0, Coordinates coordinates) {
         if (gameController.attackIsPossible(currentCoordinates, coordinates)) {
             gameController.performAttack(currentCoordinates, coordinates);
-            updateBoardButtonIconsAndBorders();
+            updateLocalButtonIconsAndBorders();
             unitSelected = false;
         } else if (gameController.moveUnit(currentCoordinates, coordinates)) {
             boardButtons[currentCoordinates.x][currentCoordinates.y].setIcon(gameController.getTileImage(coordinates));
             unitSelected = false;
-            updateBoardButtonIconsAndBorders();
+            updateLocalButtonIconsAndBorders();
             actionPerformed(arg0);
         }
     }

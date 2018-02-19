@@ -36,7 +36,7 @@ public class Map {
         constructAndSetBuildingTile(Constructable.CITY, coordinates, owner);
     }
 
-    public int borderRequired(Coordinates coordinates, Coordinates adjacentCoordinates) {
+    public boolean borderRequired(Coordinates coordinates, Coordinates adjacentCoordinates) {
         return tileOwnerHandler.borderRequired(coordinates, adjacentCoordinates);
     }
 
@@ -100,7 +100,7 @@ public class Map {
                             setUnit(newCoordinates, unitOnTile);
 
                         farmBuilding.increaseResourceHarvestAmount(ResourceTypes.FOOD);
-                        farmBuilding.claimResourceTile(currentMap[x][y].getResource());
+                        farmBuilding.claimTile(currentMap[x][y]);
                     }
                 }
             }
@@ -152,7 +152,7 @@ public class Map {
 
     public void destroyBuildingAndRefundCost(Coordinates coordinates) {
         Tile tile = currentMap[coordinates.x][coordinates.y];
-        tile.getOwner().refundBuildingCost(tile.getBuilding());
+        tile.getOwner().destroyBuilding(tile.getBuilding());
         roadManager.removeRoad(tile);
         tile.setBuilding(null);
     }
@@ -171,31 +171,33 @@ class TileOwnerHandler {
         int startY = coordinates.y - borderSize;
         int endX = coordinates.x + borderSize;
         int endY = coordinates.y + borderSize;
+
+        Tile tempTile = map.getTile(coordinates);
+        claimTile(newBuilding, tempTile, owner);
+
         Coordinates tempCoordinates = new Coordinates(0, 0);
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 tempCoordinates.setCoordinates(x, y);
                 if (map.coordinatesOnMap(tempCoordinates)) {
-                    if (!map.getTile(tempCoordinates).hasOwner()) {
-                        map.getTile(tempCoordinates).setOwner(owner);
-                    }
+                    tempTile = map.getTile(tempCoordinates);
+                    if (!tempTile.hasOwner())
+                        claimTile(newBuilding, tempTile, owner);
                 }
             }
         }
     }
 
-    public int borderRequired(Coordinates coordinates, Coordinates adjacentCoordinates) {
-        final int BORDER_REQUIRED = 3;
-        final int BORDER_NOT_REQUIRED = 0;
+    private void claimTile(Building newBuilding, Tile tile, Player owner){
+        if(tile.hasOwner())
+            tile.getClaimedBy().releaseClaimedTile(tile);
+        tile.setOwner(owner);
+        newBuilding.claimTile(tile);
+        tile.setClaimedBy(newBuilding);
+    }
 
-        if (!map.coordinatesOnMap(adjacentCoordinates)) {
-            return BORDER_REQUIRED;
-        }
-        if (map.getTile(coordinates).getOwner() != map.getTile(adjacentCoordinates).getOwner()) {
-            return BORDER_REQUIRED;
-        } else {
-            return BORDER_NOT_REQUIRED;
-        }
+    public boolean borderRequired(Coordinates coordinates, Coordinates adjacentCoordinates) {
+        return !map.coordinatesOnMap(adjacentCoordinates) || map.getTile(coordinates).getOwner() != map.getTile(adjacentCoordinates).getOwner();
     }
 }
 
@@ -299,25 +301,29 @@ class ResourceYieldCalculator {
         int borderSize = building.getBorderSize();
         for (int i = coordinates.x - borderSize; i <= coordinates.x + borderSize; i++) {
             for (int j = coordinates.y - borderSize; j <= coordinates.y + borderSize; j++) {
-                Resource resourceBeingChecked = currentMap[i][j].getResource();
+                Tile tileBeingChecked = currentMap[i][j];
                 if (currentMap[i][j].getOwner() != currentPlayer)
                     continue;
-                if (resourceBeingChecked.isInUse())
+                if (tileBeingChecked.getResource().isInUse())
                     continue;
-                if (resourceBeingChecked.isHarvestable())
-                    findAdjacentResourceType(resourceBeingChecked, building);
+                if (tileBeingChecked.getResource().isHarvestable())
+                    findAdjacentResourceType(tileBeingChecked, building);
             }
         }
     }
 
-    private static void findAdjacentResourceType(Resource resourceTile, Building building) {
-        ResourceTypes resourceType = resourceTile.getResourceType();
+    private static void findAdjacentResourceType(Tile tileBeingChecked, Building building) {
+        ResourceTypes resourceType = tileBeingChecked.getResource().getResourceType();
         if (building.canHarvestResourceType(resourceType))
-            incrementTileResource(resourceType, building, resourceTile);
+            claimTileAndIncrementResource(resourceType, building, tileBeingChecked);
     }
 
-    private static void incrementTileResource(ResourceTypes resourceType, Building building, Resource resourceTile) {
+    private static void claimTileAndIncrementResource(ResourceTypes resourceType, Building building, Tile tileBeingChecked) {
         building.increaseResourceHarvestAmount(resourceType);
-        building.claimResourceTile(resourceTile);
+        if(tileBeingChecked.isClaimed())
+            tileBeingChecked.getClaimedBy().releaseClaimedTile(tileBeingChecked);
+        tileBeingChecked.setClaimedBy(building);
+        building.claimTile(tileBeingChecked);
+        tileBeingChecked.getResource().setInUse(true);
     }
 }

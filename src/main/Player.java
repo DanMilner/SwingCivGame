@@ -82,23 +82,35 @@ public class Player {
         units.remove(deadUnit);
     }
 
-    public void refundBuildingCost(Building destroyedBuilding) {
-        ResourceIterator resourceIterator = new ResourceIterator(destroyedBuilding, true);
-        while (resourceIterator.hasNext()) {
-            setResource(resourceIterator.getType(), resourceIterator.getValue());
-        }
+    private void removeBuilding(Building building){
+        buildings.remove(building);
+    }
 
-        if (destroyedBuilding.isResourceHarvester()) {
-            int multiplier = destroyedBuilding.getHasCityConnection() ? 1 : 2;
+    public void destroyBuilding(Building building){
+        refundBuildingCost(building);
+        removeHarvestedResources(building);
+        building.releaseClaimedTiles();
+        removeBuilding(building);
+    }
 
-            resourceIterator = new ResourceIterator(destroyedBuilding, false);
+    private void removeHarvestedResources(Building building){
+        ResourceIterator resourceIterator;
+
+        if (building.isResourceHarvester()) {
+            int multiplier = building.getHasCityConnection() ? 1 : 2;
+
+            resourceIterator = new ResourceIterator(building, false);
             while (resourceIterator.hasNext()) {
                 ResourceTypes resourceType = resourceIterator.getType();
                 setResource(resourceType, getResource(resourceType) - resourceIterator.getValue() * multiplier);
             }
-            destroyedBuilding.releaseClaimedTiles();
         }
+    }
 
-        buildings.remove(destroyedBuilding);
+    private void refundBuildingCost(Building destroyedBuilding) {
+        ResourceIterator resourceIterator = new ResourceIterator(destroyedBuilding, true);
+        while (resourceIterator.hasNext()) {
+            setResource(resourceIterator.getType(), resourceIterator.getValue());
+        }
     }
 }
