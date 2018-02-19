@@ -95,17 +95,20 @@ class MapBuilder {
         int rowsOfSnow = MAPSIZE / 20;
 
         for (int y = 0; y < rowsOfSnow; y++) {
-            for (int x = 0; x < MAPSIZE; x++) {
-                if(grassTiles.contains(map[x][y]))
-                    grassTiles.remove(map[x][y]);
-                constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
-            }
+            placeRowOfSnowOrIce(y);
         }
-
         for (int y = MAPSIZE - 1; y >= MAPSIZE - rowsOfSnow; y--) {
-            for (int x = 0; x < MAPSIZE; x++) {
-                if(grassTiles.contains(map[x][y]))
-                    grassTiles.remove(map[x][y]);
+            placeRowOfSnowOrIce(y);
+        }
+    }
+
+    private void placeRowOfSnowOrIce(int y){
+        for (int x = 0; x < MAPSIZE; x++) {
+            if(grassTiles.contains(map[x][y]))
+                grassTiles.remove(map[x][y]);
+            if(map[x][y].getResource().getResourceType() == ResourceTypes.WATER){
+                constructResourceTile(ResourceTypes.ICE, new Coordinates(x, y));
+            }else{
                 constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
             }
         }

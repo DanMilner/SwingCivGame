@@ -51,6 +51,8 @@ public class TileFactory {
                 return new Grass();
             case SNOW:
                 return new Snow();
+            case ICE:
+                return new Ice();
             case SAND:
                 return new Sand();
             case IRON:
