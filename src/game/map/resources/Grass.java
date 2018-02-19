@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Grass extends Resource {
     public Grass() {
-        this.resourceImage = new ImageIcon("textures\\terrain\\Grass.jpg");
+        this.resourceImage = new ImageIcon("textures\\terrain\\grass.png");
         this.resourceType = ResourceTypes.GRASS;
     }
 }

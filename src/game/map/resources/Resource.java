@@ -32,4 +32,8 @@ public abstract class Resource {
     public ResourceTypes getResourceType() {
         return resourceType;
     }
+
+    public void setIcon(ImageIcon resourceImage){
+        this.resourceImage = resourceImage;
+    }
 }
