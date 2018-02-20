@@ -7,19 +7,13 @@ import game.map.RandomValues;
 import game.map.resources.Resource;
 import game.map.resources.ResourceTypes;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 class MapBuilder {
     private Tile[][] map;
     private final int MAPSIZE;
     private RandomValues randomValues;
-    private MapData mapData;
+    private final MapData mapData;
     private ArrayList<Tile> grassTiles;
 
     MapBuilder(Tile[][] currentMap, MapData mapData) {
@@ -72,60 +66,6 @@ class MapBuilder {
         addResource(ResourceTypes.COAL, Math.round(resourcesAmount.floatValue() * 0.15f), 5, 10);
         addResource(ResourceTypes.DIAMONDS, Math.round(resourcesAmount.floatValue() * 0.05f), 1, 3);
         addResource(ResourceTypes.WOOD, Math.round(treesAmount.floatValue()), 1, 5);
-        try {
-            setCorrectGrassIcons();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setCorrectGrassIcons() throws IOException {
-        BufferedImage beach = ImageIO.read(new File("textures\\terrain\\beach.png"));
-        BufferedImage beachCorner = ImageIO.read(new File("textures\\terrain\\beachCorner.png"));
-
-        BufferedImage grass = ImageIO.read(new File("textures\\terrain\\grass.png"));
-
-        for (int x = 0; x < MAPSIZE; x++) {
-            for (int y = 0; y < MAPSIZE; y++) {
-                if(map[x][y].getResource().getResourceType() == ResourceTypes.GRASS){
-                    BufferedImage combined = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D g = combined.createGraphics();
-                    g.drawImage(grass, 0, 0, null);
-
-                    //checks if a beach is needed to the left or to the bottom left and then rotates the image
-                    Coordinates coordinates = new Coordinates(x-1, y);
-                    drawBeachIfRequired(coordinates, beach,g);
-                    coordinates.setCoordinates(x-1, y-1);
-                    drawBeachIfRequired(coordinates, beachCorner,g);
-                    g.rotate(Math.toRadians(90),25,25);
-
-                    coordinates.setCoordinates(x, y-1);
-                    drawBeachIfRequired(coordinates, beach,g);
-                    coordinates.setCoordinates(x+1, y-1);
-                    drawBeachIfRequired(coordinates, beachCorner,g);
-                    g.rotate(Math.toRadians(90),25,25);
-
-                    coordinates.setCoordinates(x+1, y);
-                    drawBeachIfRequired(coordinates, beach,g);
-                    coordinates.setCoordinates(x+1, y+1);
-                    drawBeachIfRequired(coordinates, beachCorner,g);
-                    g.rotate(Math.toRadians(90),25,25);
-
-                    coordinates.setCoordinates(x, y+1);
-                    drawBeachIfRequired(coordinates, beach,g);
-                    coordinates.setCoordinates(x-1, y+1);
-                    drawBeachIfRequired(coordinates, beachCorner,g);
-                    g.rotate(Math.toRadians(90),25,25);
-
-                    map[x][y].getResource().setIcon(new ImageIcon(combined));
-                }
-            }
-        }
-    }
-
-    private void drawBeachIfRequired(Coordinates coordinates, BufferedImage beach, Graphics2D g){
-        if(coordinatesOnMap(coordinates) && map[coordinates.x][coordinates.y].getResource().getResourceType() == ResourceTypes.WATER)
-            g.drawImage(beach, 0, 0, null);
     }
 
     private void addLand(int totalLandTiles) {
@@ -162,13 +102,13 @@ class MapBuilder {
         }
     }
 
-    private void placeRowOfSnowOrIce(int y){
+    private void placeRowOfSnowOrIce(int y) {
         for (int x = 0; x < MAPSIZE; x++) {
-            if(grassTiles.contains(map[x][y]))
+            if (grassTiles.contains(map[x][y]))
                 grassTiles.remove(map[x][y]);
-            if(map[x][y].getResource().getResourceType() == ResourceTypes.WATER){
+            if (map[x][y].getResource().getResourceType() == ResourceTypes.WATER) {
                 constructResourceTile(ResourceTypes.ICE, new Coordinates(x, y));
-            }else{
+            } else {
                 constructResourceTile(ResourceTypes.SNOW, new Coordinates(x, y));
             }
         }
@@ -207,7 +147,7 @@ class MapBuilder {
         int infiniteLoopPrevention = 0;
         ResourceTypes tempType;
 
-        Coordinates previousCoordinates = new Coordinates(coordinates.x,coordinates.y);
+        Coordinates previousCoordinates = new Coordinates(coordinates.x, coordinates.y);
         do {
             coordinates = randomValues.getRandomDirection(coordinates);
             if (!coordinatesOnMap(coordinates)) {

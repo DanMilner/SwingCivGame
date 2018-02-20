@@ -28,6 +28,10 @@ public class GuiManager extends JFrame implements ActionListener {
     public GuiManager(GameController gameController, int MAPSIZE) {
         this.MAPSIZE = MAPSIZE;
         this.gameController = gameController;
+
+        BeachIconHandler beachIconHandler = new BeachIconHandler(MAPSIZE, gameController.getMap());
+        beachIconHandler.setCorrectGrassIcons();
+
         boardButtons = new BoardButton[MAPSIZE][MAPSIZE];
         uiButtons = new ArrayList<>();
         currentCoordinates = new Coordinates(0, 0);
