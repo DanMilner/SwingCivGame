@@ -31,10 +31,19 @@ class BeachIconHandler {
         for (int x = 0; x < MAPSIZE; x++) {
             for (int y = 0; y < MAPSIZE; y++) {
                 Coordinates coordinates = new Coordinates(x, y);
-                if (map.getTile(coordinates).getResource().getResourceType() == ResourceTypes.GRASS) {
+                if (map.getTile(coordinates).getResource().getResourceType() == ResourceTypes.GRASS ||
+                        map.getTile(coordinates).getResource().getResourceType() == ResourceTypes.WOOD ) {
+
+                    ImageIcon aa = map.getTile(coordinates).getResource().getImage();
+                    BufferedImage bi = new BufferedImage(50,50, BufferedImage.TYPE_INT_RGB);
+                    Graphics gs = bi.createGraphics();
+// paint the Icon to the BufferedImage.
+                    aa.paintIcon(null, gs, 0,0);
+                    gs.dispose();
+
                     BufferedImage combined = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D g = combined.createGraphics();
-                    g.drawImage(grass, 0, 0, null);
+                    g.drawImage(bi, 0, 0, null);
                     addBeachImages(coordinates, g);
                     addBeachCorners(coordinates, g);
                     map.getTile(coordinates).getResource().setIcon(new ImageIcon(combined));
