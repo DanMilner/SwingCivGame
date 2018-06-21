@@ -1,6 +1,8 @@
 package game.gameModel;
 
-import game.map.*;
+import game.map.Constructable;
+import game.map.Coordinates;
+import game.map.RandomValues;
 import game.map.buildings.Building;
 import game.map.mapModel.Map;
 import game.map.mapModel.Tile;
@@ -8,15 +10,21 @@ import game.map.mapModel.Tile;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class BorderExpansionBehaviour {
+class BorderExpansionBehaviour {
     private Map map;
     private Player currentPlayer;
+    private RandomValues randomValues;
+    private ArrayList<Tile> frontLineTiles;
+    private Random random;
 
     BorderExpansionBehaviour(Map map) {
         this.map = map;
+        randomValues = new RandomValues();
+        frontLineTiles = new ArrayList<>();
+        random = new Random();
     }
 
-    public void expandBorders(Player currentPlayer) {
+    void expandBorders(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         ArrayList<Building> buildings = currentPlayer.getBuildings();
         for (Building building : buildings) {
@@ -27,31 +35,37 @@ public class BorderExpansionBehaviour {
     }
 
     private void expandBuildingBorders(Building building) {
-        RandomValues randomValues = new RandomValues();
-        ArrayList<Tile> frontLineTiles = new ArrayList<>();
+        findFrontLines(building);
+        if (frontLineTiles.isEmpty())
+            return;
+
+        Tile tileToExpandFrom;
+        Coordinates frontLineCoordinates;
+        Coordinates natureTileCoordinates;
+        do {
+            int index = random.nextInt(frontLineTiles.size());
+            tileToExpandFrom = frontLineTiles.get(index);
+
+            frontLineCoordinates = tileToExpandFrom.getCoordinates();
+
+            natureTileCoordinates = new Coordinates(frontLineCoordinates.x, frontLineCoordinates.y);
+            natureTileCoordinates = randomValues.getRandomDirection(natureTileCoordinates);
+        } while (!isNatureTile(natureTileCoordinates));
+
+        Tile tileToClaim = map.getTile(natureTileCoordinates);
+        tileToClaim.setOwner(currentPlayer);
+        tileToClaim.setClaimedBy(building);
+        building.claimTile(tileToClaim);
+        System.out.println(currentPlayer.getName() + " Claimed " + frontLineCoordinates.x + " " + frontLineCoordinates.y);
+    }
+
+    private void findFrontLines(Building building){
+        frontLineTiles.clear();
         for (Tile tile : building.getClaimedTiles()) {
             if (tileHasNatureAdjacent(tile)) {
                 frontLineTiles.add(tile);
             }
         }
-
-        Random random = new Random();
-        if (frontLineTiles.isEmpty())
-            return;
-        int index = random.nextInt(frontLineTiles.size());
-        Tile tileToExpandFrom = frontLineTiles.get(index);
-
-        Coordinates coordinates = tileToExpandFrom.getCoordinates();
-
-        Coordinates tempCoordinates = new Coordinates(coordinates.x, coordinates.y);
-        do {
-            randomValues.getRandomDirection(tempCoordinates);
-        } while (!isNatureTile(tempCoordinates));
-
-        tileToExpandFrom = map.getTile(tempCoordinates);
-        tileToExpandFrom.setOwner(currentPlayer);
-        building.claimTile(tileToExpandFrom);
-        System.out.println("Claimed " + coordinates.x + " " + coordinates.y);
     }
 
     private boolean tileHasNatureAdjacent(Tile tile) {
